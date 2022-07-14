@@ -32,8 +32,9 @@ x.tosend <- x %>%
          total_count, total_count_nodead, ad_female_count:unk_unk_count, 
          header_notes, census_notes, census_phocid_header_id, census_id)
 
-write_sheet(x.tosend, ss = url.export, sheet = "phocid_census_us_amlr")
-
+# write_sheet(x.tosend, ss = url.export, sheet = "phocid_census_us_amlr")
+# write.csv(x.tosend, row.names = FALSE, 
+#           file = "amlr_data/phocid_census_us_amlr.csv")
 
 # Write header data to sheet
 x.header <- tbl(con, "vCensus_Phocid_Header") %>% 
@@ -43,8 +44,9 @@ x.header <- tbl(con, "vCensus_Phocid_Header") %>%
   arrange(season_name, census_date_start) %>% 
   collect()
 
-write_sheet(x.header, ss = url.export, sheet = "phocid_census_header_us_amlr")
-
+# write_sheet(x.header, ss = url.export, sheet = "phocid_census_header_us_amlr")
+# write.csv(x.header, row.names = FALSE, 
+#           file = "amlr_data/phocid_census_header_us_amlr.csv")
 
 
 # sanity checks

@@ -41,8 +41,3 @@ The US AMLR phocid census data are in this folder: the header data (phocid_censu
 * **census_id**: census ID value for particular record
 
 'Regular survey beaches' in the data: Alcazar; Antartico, Bahamonde; Ballena Norte; Ballena Sur; Cachorros; Chungungo; Copi; Daniel; del Canal, Playa; del Lobero, Playa; El Plastico, Playa; Golondrina-del Lobero; Golondrina, Playa; Hue; Larga; Leopard Beach; Loberia; Maderas; Marko; Media Luna; Modulo; Nibaldo; Papua; Paulina-Aranda; Paulina, Playa; Pinochet de la Barra; Roquerio; Schiappacasse, Playa; Yamana, Playa; Yuseff, Punta
-
-## Other
-
-CSV files in this directory have been downloaded from <https://docs.google.com/spreadsheets/d/1bzjN_uUcJxc7o-CnPEa4U69QJWVlDpCB92oteaGM_Ec>
-

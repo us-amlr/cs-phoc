@@ -23,8 +23,7 @@ season.info <- tbl(con, "season_info") %>% collect()
 x.info.names <- c("season_name", "week", "census_date", "location")
 x.info.types <- c("text", "numeric", "date", "text")
 phocid.file.name <- file.path(
-  "inach_data", "renato_20220712", 
-  "phocids Cape shirreff 97-2007 VERSION july22.xlsx"
+  "inach_data", "phocids Cape shirreff 97-2007 VERSION july22.xlsx"
 )
 # "skip", "guess", "logical", "numeric", "date", "text" or "list"
 
@@ -138,7 +137,7 @@ x <- x.orig %>%
            TRUE ~ location
          ))
 
-write.csv(x, row.names = FALSE, file = "inach_data/phocids_inach_cs.csv")
+# write.csv(x, row.names = FALSE, file = "inach_data/phocids_inach_cs.csv")
 
 
 #-------------------------------------------------------------------------------

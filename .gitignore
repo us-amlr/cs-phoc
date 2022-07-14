@@ -37,3 +37,12 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+
+# Sam ignores
+15-Weekly Phocid census
+amlr_data
+amlr_plots
+inach_out
+inach_data
+*.docx

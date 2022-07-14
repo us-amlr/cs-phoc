@@ -8,7 +8,6 @@ library(tidyr)
 library(stringr)
 library(lubridate)
 library(readxl)
-library(DBI)
 library(odbc)
 
 tableNA <- function(...) table(..., useNA = 'ifany')

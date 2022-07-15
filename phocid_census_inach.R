@@ -106,12 +106,10 @@ stopifnot(
 
 ################################################################################
 # Organize combined data frame, and explore
-x <- x.orig %>% 
-  select(season_name, week, census_date, location, species, 
-         starts_with("ad_"), starts_with("juv"), starts_with("pup_"), 
-         unk_unk_count, notes) %>% 
+x <- x.orig  %>% 
   arrange(census_date, location, species) %>% 
-  mutate(research_program = "INACH", 
+  mutate(census_phocid_header_id = paste(season_name, week, sep = "-"), 
+         research_program = "INACH", 
          location = case_when(
            location == "All Cape" ~ "Cape Shirreff",
            location == "Angosta" ~ "Angosta, Playa",
@@ -135,9 +133,20 @@ x <- x.orig %>%
            # Rodrigo y Hucke-Gaete
            location == "Yamana" ~ "Yamana, Playa", 
            TRUE ~ location
-         ))
+         )) %>% 
+  select(census_phocid_header_id, season_name, week, census_date, location, species, 
+         starts_with("ad_"), starts_with("juv"), starts_with("pup_"), 
+         unk_unk_count, notes, research_program)
+
+x.header <- x %>% 
+  group_by(census_phocid_header_id, season_name, week) %>% 
+  summarise(census_date_start = min(census_date), 
+            census_date_end = max(census_date), 
+            surveyed_san_telmo = FALSE, 
+            .groups = "drop")
 
 # write.csv(x, row.names = FALSE, file = "inach_data/phocids_inach_cs.csv")
+# write.csv(x.header, row.names = FALSE, file = "inach_data/phocids_inach_cs_header.csv")
 
 
 #-------------------------------------------------------------------------------
@@ -178,6 +187,10 @@ tableNA(x.beach.unk$location)
 
 # write.csv(x.beach.unk, row.names = FALSE, na = "",
 #           file = "inach_out/phocid_census_inach_unkbeaches_20220714.csv")
+
+
+
+sum(xor(is.na(inach$pup_female_count), is.na(inach$pup_male_count)))
 
 
 #-------------------------------------------------------------------------------

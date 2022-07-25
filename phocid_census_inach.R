@@ -49,7 +49,6 @@ x.ls <- read_xlsx(phocid.file.name, sheet = "Leopard Seal",
          census_date = as.Date(census_date))
 
 
-# TODO: K490 is empty
 x.ses <- read_xlsx(phocid.file.name, sheet = "Elephant Seal", 
                    col_names = c(x.info.names, 
                                  "ad_male_count", "ad_female_count",
@@ -63,7 +62,6 @@ x.ses <- read_xlsx(phocid.file.name, sheet = "Elephant Seal",
          census_date = as.Date(census_date))
 
 
-# NOTE: had to convert top 136 records to 'date with 4 digit year' in Excel
 x.ws <- read_xlsx(phocid.file.name, sheet = "Weddell Seal", 
                   col_names = c(x.info.names, 
                                 "ad_male_count", "ad_female_count", "ad_unk_count",
@@ -114,24 +112,25 @@ x <- x.orig  %>%
            location == "All Cape" ~ "Cape Shirreff",
            location == "Angosta" ~ "Angosta, Playa",
            location == "Antartico" ~ "Antartico, Playa",
-           location == "Bahamondes" ~ "Bahamonde", 
-           location == "El Canal" ~ "del Canal, Playa", 
-           location == "El Lobero" ~ "del Lobero, Playa", 
+           location == "Bahamondes" ~ "Bahamonde",
+           location == "El Canal" ~ "del Canal, Playa",
+           location == "El Lobero" ~ "del Lobero, Playa",
            location == "El Modulo" ~ "Modulo",
            location %in% c("El Remanso", "Remanso") ~ "El Remanso, Playa",
-           location == "Golondrina" ~ "Golondrina, Playa", 
-           location == "Nibaldo Bahamondes" ~ "Cerro Gajardo, Peninsula", 
-           location %in% c("paulina", "Paulina") ~ "Paulina, Playa", 
+           location == "Golondrina" ~ "Golondrina, Playa",
+           location == "Nibaldo Bahamondes" ~ "Cerro Gajardo, Peninsula",
+           location %in% c("paulina", "Paulina") ~ "Paulina, Playa",
            location == "Pinochet de La Barra" ~ "Pinochet de la Barra",
-           location == "Plastico" ~ "El Plastico, Playa", 
-           location == "Pocitas" ~ "Pocitas, Playa", 
-           location == "Pta Oliva" ~ "Alcazar", 
-           location == "Pta Poblete" ~ "Poblete, Punta", 
-           location %in% c("Pta Ventana", "Punta Ventana") ~ "Ventana", 
-           # Roca granito 
-           location %in% c("Rocas Yeco", "Schiappacasse") ~ "Schiappacasse, Playa", 
+           location == "Plastico" ~ "El Plastico, Playa",
+           location == "Pocitas" ~ "Pocitas, Playa",
+           # location == "Pta Oliva" ~ "Alcazar",
+           location == "Pta Poblete" ~ "Poblete, Punta",
+           location %in% c("Pta Ventana", "Punta Ventana") ~ "Ventana",
+           # Roca granito
+           # location %in% c("Rocas Yeco", "Schiappacasse") ~ "Schiappacasse, Playa",
+           location %in% c("Schiappacasse") ~ "Schiappacasse, Playa",
            # Rodrigo y Hucke-Gaete
-           location == "Yamana" ~ "Yamana, Playa", 
+           location == "Yamana" ~ "Yamana, Playa",
            TRUE ~ location
          )) %>% 
   select(census_phocid_header_id, season_name, week, census_date, location, species, 
@@ -145,8 +144,8 @@ x.header <- x %>%
             surveyed_san_telmo = FALSE, 
             .groups = "drop")
 
-# write.csv(x, row.names = FALSE, file = "inach_data/phocids_inach_cs.csv")
-# write.csv(x.header, row.names = FALSE, file = "inach_data/phocids_inach_cs_header.csv")
+write.csv(x, row.names = FALSE, file = "inach_data/phocids_inach_cs.csv")
+write.csv(x.header, row.names = FALSE, file = "inach_data/phocids_inach_cs_header.csv")
 
 
 #-------------------------------------------------------------------------------
@@ -189,8 +188,8 @@ tableNA(x.beach.unk$location)
 #           file = "inach_out/phocid_census_inach_unkbeaches_20220714.csv")
 
 
-
-sum(xor(is.na(inach$pup_female_count), is.na(inach$pup_male_count)))
+# # Explore pup count columns
+# sum(xor(is.na(x$pup_female_count), is.na(x$pup_male_count)))
 
 
 #-------------------------------------------------------------------------------

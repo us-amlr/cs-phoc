@@ -16,7 +16,7 @@ inach <- read.csv("inach_data/phocids_inach_cs.csv") %>%
          notes = if_else(pup_live_count > 0, 
                          str_glue("pups: ",
                                   "{pup_female_count} females; ", 
-                                  "{pup_male_count} males; ", 
+                                  "{pup_male_count} males", 
                                   "{pup_unk_count} unknowns"), 
                          NA_character_)) %>% 
   select(-c(week, pup_female_count, pup_male_count, pup_unk_count)) %>% 
@@ -41,8 +41,9 @@ y <- bind_rows(usamlr, inach) %>%
          total_count_nodead = total_count-pup_dead_count) %>% 
   ungroup()
 
-write.csv(y, row.names = FALSE, file = "phocids_cs_combined.csv")
-write.csv(y.header, row.names = FALSE, file = "phocids_cs_header_combined.csv")
+write.csv(y, row.names = FALSE, na = "", file = "phocids_cs_combined.csv")
+write.csv(y.header, row.names = FALSE, na = "", 
+          file = "phocids_cs_header_combined.csv")
 
 
 # Explore

@@ -190,6 +190,8 @@ tableNA(x.beach.unk$location)
 
 # # Explore pup count columns
 # sum(xor(is.na(x$pup_female_count), is.na(x$pup_male_count)))
+with(x, tableNA(is.na(pup_female_count), is.na(pup_male_count), is.na(pup_unk_count)))
+with(x, tableNA(is.na(pup_female_count), is.na(pup_male_count)))
 
 
 #-------------------------------------------------------------------------------

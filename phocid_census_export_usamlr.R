@@ -44,9 +44,9 @@ x.header <- tbl(con, "vCensus_Phocid_Header") %>%
   arrange(season_name, census_date_start) %>% 
   collect()
 
-# write_sheet(x.header, ss = url.export, sheet = "phocid_census_header_us_amlr")
+# write_sheet(x.header, ss = url.export, sheet = "phocid_census_us_amlr_header")
 # write.csv(x.header, row.names = FALSE, 
-#           file = "amlr_data/phocid_census_header_us_amlr.csv")
+#           file = "amlr_data/phocid_census_header_us_amlr_header.csv")
 
 
 # sanity checks

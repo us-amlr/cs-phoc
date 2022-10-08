@@ -23,7 +23,7 @@ inach <- read.csv("inach_data/phocids_inach_cs.csv") %>%
   left_join(select(inach.header, -c(season_name, census_days)), 
             by = c("census_phocid_header_id"))
 
-usamlr.header <- read.csv("amlr_data/phocid_census_header_us_amlr.csv") %>% 
+usamlr.header <- read.csv("amlr_data/phocid_census_us_amlr_header.csv") %>% 
   mutate(census_phocid_header_id = as.character(census_phocid_header_id))
 usamlr <- read.csv("amlr_data/phocid_census_us_amlr.csv") %>% 
   mutate(census_phocid_header_id = as.character(census_phocid_header_id), 

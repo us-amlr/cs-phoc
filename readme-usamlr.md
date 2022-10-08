@@ -1,17 +1,40 @@
-# US AMLR Phocid Census Data 
+# US AMLR Phocid Census Data
 
-## Description
+Notes about US AMLR Cape Shirreff Phocid Census data ([phocid_census_us_amlr.csv](amlr_data/phocid_census_us_amlr.csv)). These data span 2009/10 - present.
+
+## Database Structure
 
 The phocid census data in the US AMLR Pinnipeds database is split into two tables: census_phocid_header and census. Each phocid census record in the census table has a census_phocid_header record ID, which allows each record to be joined with its corresponding census_phocid_header record. Having the header table allows us to two important things: 
 
 1) explicitly group census records from the same phocid census that occurred on different days, e.g., if the census effort was split across a Thursday and a Friday. 
-2) explicitly indicate if Punta San Telmo was surveyed so we can differentiate between 'there are no San Telmo records because no one surveyed it' and 'there are no San Telmo record because there were no phocids'.
+2) explicitly indicate if Punta San Telmo was surveyed to differentiate between 'there are no San Telmo records because no one surveyed it' and 'there are no San Telmo records because there were no phocids'.
 
-The other important note about the US AMLR phocid census data is that the data is not explicit, meaning that field biologists do not enter '0' records if there are no phocids of a particular species on a beach. However, you can assume that if there is no record for a particular species on a 'regular survey beach', then that beach was surveyed and zero pinnipeds were observed. 'Regular survey beaches' consist of: Media Luna through Marko to Ballena Norte, Bahamonde to Antartico, and Loberia to del Canal (see complete list below). Phocid census records for all other beaches (other than Punta San Telmo - see above) should be considered 'opportunistic', and thus the lack of a census record should not be interpreted as no phocids.
+[phocid_census_us_amlr_header.csv](amlr_data/phocid_census_us_amlr_header.csv) contains only the US AMLR phocid census header data, without the census count records.
 
-The US AMLR phocid census data are in this folder: the header data (phocid_census_header_us_amlr.csv) and the phocid census data joined to the header data (phocid_census_us_amlr.csv). 
+## Beaches
+
+The raw US AMLR phocid census data are not explicit, meaning that field biologists do not enter '0' records if there are no phocids of a particular species on a beach. However, you can assume that if there is no record for a particular species on a '[regular survey beach](#regular-survey-beaches)', then that beach was surveyed and zero pinnipeds were observed.
+
+Phocid census records for all other beaches (other than Punta San Telmo - see [Database Structure](#database-structure) should be considered 'opportunistic', and thus the lack of a census record should NOT be interpreted as no phocids.
+
+### 'Regular Survey Beaches'
+
+The following beaches are all assumed to have been surveyed during every US AMLR phocid census survey:
+
+Media Luna, Punta Yuseff, Larga, Marko, Daniel, Modulo, Hue, Copi, Maderas, Cachorros, Chungungo, Ballena Sur, Ballena Norte, Bahamonde, Nibaldo, Roquerio, Alcazar, Pinochet de la Barra, Papua, Antarctico, Loberia, Yamana, Golondrina, del Lobero, Paulina, Schiappacasse, El Plastico, Leopard, del Canal.
+
+NOTE: The west coast south of Yamana (Golondrina to del Canal) was not recorded individually until the 2018/19 season. Prior to this, these beaches were grouped into two 'blocks': Golondrina-del Lobero (Golondrina, del Lobero) and Paulina-Aranda (Paulina, Schiappacasse, El Plastico, Leopard, del Canal).
+TODO: should this be 'Paulina-delLobero'? Seems unlikely Aranda was surveyed every time
+
+### Other
+
+Notes about the glacier: what is the south end of Media Luna by season?
+
+Any other beaches that might have year-specific ranges?
 
 ## Data Columns
+
+Column descriptions for ([phocid_census_us_amlr.csv](amlr_data/phocid_census_us_amlr.csv). See [Column Use By Season](#column-use-by-season) for a list of which count columns were used in which years.
 
 * **season_name**: season in which this census occurred; derived from census_date
 * **census_date_start**, **census_date_end**: from census_phocid_header; start and end dates of phocid census survey
@@ -40,4 +63,14 @@ The US AMLR phocid census data are in this folder: the header data (phocid_censu
 * **census_phocid_header_id**: census_phocid_header ID value for particular record
 * **census_id**: census ID value for particular record
 
-'Regular survey beaches' in the data: Alcazar; Antartico, Bahamonde; Ballena Norte; Ballena Sur; Cachorros; Chungungo; Copi; Daniel; del Canal, Playa; del Lobero, Playa; El Plastico, Playa; Golondrina-del Lobero; Golondrina, Playa; Hue; Larga; Leopard Beach; Loberia; Maderas; Marko; Media Luna; Modulo; Nibaldo; Papua; Paulina-Aranda; Paulina, Playa; Pinochet de la Barra; Roquerio; Schiappacasse, Playa; Yamana, Playa; Yuseff, Punta
+### Column Use By Season
+
+This section details which counts were recorded (i.e., which columns were used) in which seasons of US AMLR data.
+
+**ad_female_count**, **ad_male_count**, **ad_unk_count**, **juv_female_count**, **juv_male_count**, **juv_unk_count**, **pup_live_count**: used in all seasons (2009/10 to present)
+
+**pup_dead_count**: used from 2012/13 to present
+
+**unk_female_count** and **unk_male_count**: used from 2017/18 to present
+
+**unk_unk_count**: used from 2014/15 to present

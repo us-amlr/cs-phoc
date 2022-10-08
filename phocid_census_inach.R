@@ -144,8 +144,8 @@ x.header <- x %>%
             surveyed_san_telmo = FALSE, 
             .groups = "drop")
 
-write.csv(x, row.names = FALSE, file = "inach_data/phocids_inach_cs.csv")
-write.csv(x.header, row.names = FALSE, file = "inach_data/phocids_inach_cs_header.csv")
+write.csv(x, row.names = FALSE, file = "inach_data/phocids_cs_inach.csv")
+write.csv(x.header, row.names = FALSE, file = "inach_data/phocids_cs_inach_header.csv")
 
 
 #-------------------------------------------------------------------------------

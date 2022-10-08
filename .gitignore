@@ -43,4 +43,4 @@ vignettes/*.pdf
 15-Weekly Phocid census
 amlr_plots
 inach_out
-*_exp.R
+*_exp*

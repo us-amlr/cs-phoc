@@ -42,9 +42,9 @@ y <- bind_rows(usamlr, inach) %>%
   ungroup()
 
 write.csv(y, row.names = FALSE, na = "", 
-          file = "cs_combined_out/phocids_cs_combined.csv")
+          file = "cs_combined_data/phocids_cs_combined.csv")
 write.csv(y.header, row.names = FALSE, na = "", 
-          file = "cs_combined_out/phocids_cs_combined_header.csv")
+          file = "cs_combined_data/phocids_cs_combined_header.csv")
 
 
 # Explore

@@ -7,7 +7,7 @@ tableNA <- function(...) table(..., useNA = 'ifany')
 
 ### Read in data, light processing
 inach.header <- read.csv("inach_data/phocids_inach_cs_header.csv") %>% 
-  mutate(census_days = as.numeric(difftime(as.Date(census_date_end), 
+  mutate(census_days = 1 + as.numeric(difftime(as.Date(census_date_end), 
                                            as.Date(census_date_start), 
                                            units = "days"))) %>% 
   select(-week)
@@ -41,10 +41,12 @@ y <- bind_rows(usamlr, inach) %>%
          total_count_nodead = total_count-pup_dead_count) %>% 
   ungroup()
 
-write.csv(y, row.names = FALSE, na = "", file = "phocids_cs_combined.csv")
+write.csv(y, row.names = FALSE, na = "", 
+          file = "cs_combined_out/phocids_cs_combined.csv")
 write.csv(y.header, row.names = FALSE, na = "", 
-          file = "phocids_cs_header_combined.csv")
+          file = "cs_combined_out/phocids_cs_header_combined.csv")
 
 
 # Explore
 tableNA(y.header$census_days)
+

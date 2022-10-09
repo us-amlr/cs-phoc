@@ -264,13 +264,13 @@ x.200910.list$census <- x.200910.list$census %>%
     census_date == dmy("21-Nov-09") & Beach %in% beach.21nov09.rb ~ "11:30:00", 
     census_date == dmy("21-Nov-09") & Beach %in% beach.21nov09.meg ~ "11:40:00", 
     census_date == dmy("21-Nov-09") & Beach %in% beach.21nov09.rmb ~ "11:30:00", 
-    TRUE ~ NA_character_
+    TRUE ~ time_start
   ), 
   time_end = case_when(
     census_date == dmy("21-Nov-09") & Beach %in% beach.21nov09.rb ~ "14:30:00", 
     census_date == dmy("21-Nov-09") & Beach %in% beach.21nov09.meg ~ "13:10:00", 
     census_date == dmy("21-Nov-09") & Beach %in% beach.21nov09.rmb ~ "14:35:00", 
-    TRUE ~ NA_character_
+    TRUE ~ time_end
   ), 
   census_date = case_when(
     census_date == ymd("2009-12-12") & Beach %in% beach.11dec09 ~ ymd("2009-12-11"), 
@@ -327,6 +327,39 @@ stopifnot(
   nrow(census.toimport) == nrow(x.200910.list$census) + nrow(x.201011.list$census)
 )
 # DBI::dbAppendTable(con, "census", census.toimport)
+
+
+#------------------------------------------------
+### 9 Oct 2022: Update 2009/10 records with times
+# 21 Nov 2009 are (were) only record in DB with times
+
+# con.update <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
+#                         Server = "swc-***REMOVED***-s", 
+#                         Database = "***REMOVED***",
+#                         Trusted_Connection = "Yes", Encrypt = "optional")
+
+x.toupdate <- tbl(con.update, "census") %>% 
+  filter(census_type == "Phocid", 
+         between(census_date, "2009-10-01", "2010-05-01"), 
+         is.na(time_start)) %>%
+  select(ID, census_date, Beach_ID, species) %>% 
+  collect() %>% 
+  mutate(census_date = as.Date(census_date))
+
+x.toupdate.merge <- x.toupdate %>% 
+  left_join(select(x.200910.census, census_date, Beach_ID, species, 
+                   time_start, time_end), 
+            by = c("census_date", "Beach_ID", "species"))
+# mutate(sql_update = glue::glue("select *, ", 
+#                                "time_start = '{time_start}', ", 
+#                                "time_end = '{time_end}' ", 
+#                                "from census where ID = {ID}"))
+
+
+update <- dbSendQuery(
+  con.update, 'UPDATE census SET "time_start"=?, "time_end"=? WHERE ID=?'
+)
+dbBind(update, select(x.toupdate.merge, time_start, time_end, ID))  # send the updated data
 
 
 

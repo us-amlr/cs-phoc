@@ -8,7 +8,10 @@ con <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
                  Trusted_Connection = "Yes", 
                  Encrypt = "Optional")
 
-url.export <- "https://docs.google.com/spreadsheets/d/1bzjN_uUcJxc7o-CnPEa4U69QJWVlDpCB92oteaGM_Ec"
+url.export <- paste0(
+  "https://docs.google.com/spreadsheets/d/", 
+  "1bzjN_uUcJxc7o-CnPEa4U69QJWVlDpCB92oteaGM_Ec"
+)
 
 
 # Get all data and write to a sheet
@@ -22,7 +25,7 @@ x <- tbl(con, "vCensus_Phocid") %>%
                                   na.rm = TRUE)) %>% 
   ungroup()
 
-# write_sheet(x, ss = url.export, sheet = "phocids_cs_amlr_all")
+write_sheet(x, ss = url.export, sheet = "phocids_cs_amlr_all")
 
 
 # Select columns of data and write to a sheet
@@ -32,7 +35,7 @@ x.tosend <- x %>%
          total_count, total_count_nodead, ad_female_count:unk_unk_count, 
          header_notes, census_notes, census_phocid_header_id, census_id)
 
-# write_sheet(x.tosend, ss = url.export, sheet = "phocids_cs_amlr")
+write_sheet(x.tosend, ss = url.export, sheet = "phocids_cs_amlr")
 write.csv(x.tosend, row.names = FALSE,
           file = "amlr_data/phocids_cs_amlr.csv")
 
@@ -44,7 +47,7 @@ x.header <- tbl(con, "vCensus_Phocid_Header") %>%
   arrange(season_name, census_date_start) %>% 
   collect()
 
-# write_sheet(x.header, ss = url.export, sheet = "phocids_cs_amlr_header)
+write_sheet(x.header, ss = url.export, sheet = "phocids_cs_amlr_header")
 write.csv(x.header, row.names = FALSE,
           file = "amlr_data/phocids_cs_amlr_header.csv")
 

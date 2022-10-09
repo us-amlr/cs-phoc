@@ -106,7 +106,9 @@ stopifnot(
 # Organize combined data frame, and explore
 x <- x.orig  %>% 
   arrange(census_date, location, species) %>% 
-  mutate(census_phocid_header_id = paste(season_name, week, sep = "-"), 
+  mutate(census_phocid_header_id = paste(season_name, 
+                                         str_pad(week, 2, "left", 0), 
+                                         sep = "-"), 
          research_program = "INACH", 
          location = case_when(
            location == "All Cape" ~ "Cape Shirreff",

@@ -1,0 +1,8 @@
+"season_name","week","census_date","location","species","ad_male_count","ad_female_count","ad_unk_count","juv_male_count","juv_female_count","juv_unk_count","pup_male_count","pup_female_count","pup_unk_count","unk_unk_count","notes","research_program"
+"2001/02",2,2001-12-15,"Roca granito","Weddell seal",0,0,,0,0,,0,1,,,,"INACH"
+"2001/02",2,2001-12-16,"Roca granito","Crabeater seal",0,0,,,,,,,,,,"INACH"
+"2001/02",2,2001-12-16,"Roca granito","Elephant seal",0,0,,0,0,,0,0,0,0,,"INACH"
+"2001/02",2,2001-12-16,"Roca granito","Leopard seal",0,0,0,,,,,,,,,"INACH"
+"2004/05",1,2004-12-19,"Rodrigo y Hucke-Gaete","Crabeater seal",0,0,,0,0,0,,,,,,"INACH"
+"2004/05",1,2004-12-19,"Rodrigo y Hucke-Gaete","Elephant seal",0,0,,0,0,,0,0,0,0,,"INACH"
+"2004/05",1,2004-12-19,"Rodrigo y Hucke-Gaete","Weddell seal",0,0,0,0,0,0,0,0,0,,,"INACH"

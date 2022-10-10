@@ -6,7 +6,7 @@ tableNA <- function(...) table(..., useNA = 'ifany')
 
 count_summ <- function(x) {
   x %>% 
-    group_by(census_phocid_header_id, species) %>% 
+    group_by(header_id, species) %>% 
     summarise(across(ends_with("_count"), sum), .groups = "drop")
 }
 
@@ -34,7 +34,7 @@ inach.orig <- read.csv("inach_data/phocids_cs_inach.csv") %>%
   select(-c(week, pup_female_count, pup_male_count, pup_unk_count)) %>% 
   rename(census_notes = notes) %>% 
   left_join(select(inach.header, -c(season_name, census_days)), 
-            by = c("census_phocid_header_id"))
+            by = c("header_id"))
 
 
 # Explore
@@ -51,7 +51,7 @@ inach <- inach.orig %>%
     location == "Paso Ancho" ~ "Media Luna", 
     TRUE ~ location)
   ) %>% 
-  group_by(census_phocid_header_id, location_group, species) %>% 
+  group_by(header_id, location_group, species) %>% 
   summarise(across(ends_with("_count"), sum), 
             across(
               c(research_program, season_name, surveyed_san_telmo, 
@@ -76,9 +76,9 @@ waldo::compare(d1, d2); rm(d1, d2)
 #-------------------------------------------------------------------------------
 ### Read in AMLR data, light processing. Add explicit 0 records below
 amlr.header <- read.csv("amlr_data/phocids_cs_amlr_header.csv") %>% 
-  mutate(census_phocid_header_id = as.character(census_phocid_header_id))
+  mutate(header_id = as.character(header_id))
 amlr.orig <- read.csv("amlr_data/phocids_cs_amlr.csv") %>% 
-  mutate(census_phocid_header_id = as.character(census_phocid_header_id), 
+  mutate(header_id = as.character(header_id), 
          census_date = as.Date(census_date), 
          research_program = "USAMLR")
 
@@ -90,7 +90,7 @@ names.agg <- setdiff(
 )
 amlr.agg <- amlr.orig %>% 
   select(-c(observer, total_count, total_count_nodead)) %>% 
-  group_by(census_phocid_header_id, location_group, species) %>% 
+  group_by(header_id, location_group, species) %>% 
   summarise(across(ends_with("_count"), sum), 
             across(
               c(research_program, season_name, surveyed_san_telmo, 
@@ -113,8 +113,8 @@ amlr.agg <- amlr.orig %>%
 d1 <- count_summ(amlr.agg)
 d2 <- count_summ(amlr.agg)
 waldo::compare(d1, d2); rm(d1, d2)
-#doesn't add up because there aren't necessarily multiple records
-nrow(amlr.orig %>% filter(location != location_group)) 
+# #doesn't add up because there aren't necessarily multiple records, fine
+# nrow(amlr.orig %>% filter(location != location_group)) 
 #no time NA
 amlr.agg %>% filter(is.na(time_start) | is.na(time_end))
 
@@ -122,9 +122,10 @@ amlr.agg %>% filter(is.na(time_start) | is.na(time_end))
 # Explore
 # #reminder that there are a few instances of folks putting 0 records for beaches,
 # #which will mean that these 0s will have exact times in explicit data
-# amlr0 <- amlr.orig %>% 
-#   rowwise() %>% 
-#   mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), na.rm = TRUE)) %>%
+# amlr0 <- amlr.orig %>%
+#   rowwise() %>%
+#   mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), 
+#                            na.rm = TRUE)) %>%
 #   filter(total_count == 0)
 
 
@@ -151,7 +152,7 @@ func_amlr_mgmt <- function(x) {
              census_date > as.Date("2014-07-01") & is.na(unk_unk_count), 
              as.integer(0), unk_unk_count)) %>% 
     # select(!!names(amlr.agg)) %>% #for ordering, note this removes census_days
-    select(census_phocid_header_id, season_name, census_date, time_start, time_end, 
+    select(header_id, season_name, census_date, time_start, time_end, 
            location, species, ends_with("_count"), 
            census_notes, header_notes, research_program, orig_record) %>% 
     arrange(census_date, location, species)
@@ -192,21 +193,20 @@ location.st <- "San Telmo, Punta"
 
 # Make 'pre' data frames for adding explicit 0s
 amlr.agg.pre <- amlr.agg %>%
-  select(-c(season_name:surveyed_san_telmo, header_notes), 
-         -c(time_start, time_end)) %>% 
+  select(-c(season_name:surveyed_san_telmo, header_notes, 
+            time_start, time_end)) %>% 
   mutate(orig_record = TRUE)
 
 amlr.header.pre <- amlr.header %>% 
-  select(census_phocid_header_id, season_name, census_date_end, 
-         header_notes = census_phocid_header_notes) %>% 
+  select(header_id, season_name, census_date_end, header_notes) %>% 
   mutate(census_date_end = as.Date(census_date_end))
 
 
 
 # Made data frame with date for each header/location combo
 amlr.agg.date <- amlr.agg %>% 
-  select(census_phocid_header_id, location, census_date_loc = census_date) %>% 
-  distinct(census_phocid_header_id, location, .keep_all = TRUE)
+  select(header_id, location, census_date_loc = census_date) %>% 
+  distinct(header_id, location, .keep_all = TRUE)
 
 # Made data frame with times for each date/location
 #   If multiple times for date/location, this keeps the first record
@@ -240,8 +240,8 @@ amlr.a.raw <- amlr.agg.pre %>%
 # table(amlr.a.raw$location); table(amlr.a.raw$species)
 # #Confirmed that header ID and date matches are all distinct
 # all.equal(
-#   length(unique(amlr.a.raw$census_phocid_header_id)), 
-#   amlr.a.raw %>% select(census_phocid_header_id, census_date) %>% 
+#   length(unique(amlr.a.raw$header_id)), 
+#   amlr.a.raw %>% select(header_id, census_date) %>% 
 #     distinct() %>% nrow()
 # )
 # #Confirmed that location_group and location are identical
@@ -249,16 +249,16 @@ amlr.a.raw <- amlr.agg.pre %>%
 # table(amlr.a.raw$location_group, amlr.a.raw$location)
 
 # Complete data frame
-#   Note for these records census_phocid_header_id and census_date are 
+#   Note for these records header_id and census_date are 
 #     a 1:1 match, so we can nest header and census_date.
 #     This is recommended here based on the assumption that the 
 #     whole west coast was surveyed on the same day.
 #   Number of expected records: 952 
-#     (2*4*n_distinct(amlr.a.raw$census_phocid_header_id))
+#     (2*4*n_distinct(amlr.a.raw$header_id))
 amlr.a.new <- amlr.a.raw %>% 
-  complete(nesting(census_phocid_header_id, census_date), location, species, 
+  complete(nesting(header_id, census_date), location, species, 
            fill = complete.fill, explicit = FALSE) %>% 
-  left_join(amlr.header.pre, by = "census_phocid_header_id") %>%
+  left_join(amlr.header.pre, by = "header_id") %>%
   left_join(amlr.agg.time, by = c("census_date", "location")) %>%
   func_amlr_time_minmax(amlr.time.minmax) %>%
   func_amlr_mgmt()
@@ -292,23 +292,23 @@ amlr.b.raw <- amlr.agg.pre %>%
 # table(amlr.b.raw$location); table(amlr.b.raw$species)
 # #Confirmed that header ID and date matches are all distinct
 # all.equal(
-#   length(unique(amlr.b.raw$census_phocid_header_id)),
-#   amlr.b.raw %>% select(census_phocid_header_id, census_date) %>%
+#   length(unique(amlr.b.raw$header_id)),
+#   amlr.b.raw %>% select(header_id, census_date) %>%
 #     distinct() %>% nrow()
 # )
 
 # Complete data frame
-#   Note for these records census_phocid_header_id and census_date are 
+#   Note for these records header_id and census_date are 
 #     a 1:1 match, so we can nest header and census_date.
 #     Like above, this is recommended here based on the assumption that the 
 #     whole west coast was surveyed on the same day.
-#     nrow(amlr.b.raw %>% distinct(census_phocid_header_id, census_date))
+#     nrow(amlr.b.raw %>% distinct(header_id, census_date))
 #   Number of expected records: 504 
-#     (length(location.regular.wc)*4*n_distinct(amlr.b.raw$census_phocid_header_id))
+#     (length(location.regular.wc)*4*n_distinct(amlr.b.raw$header_id))
 amlr.b.new <- amlr.b.raw %>% 
-  complete(nesting(census_phocid_header_id, census_date), location, species, 
+  complete(nesting(header_id, census_date), location, species, 
            fill = complete.fill, explicit = FALSE) %>% 
-  left_join(amlr.header.pre, by = "census_phocid_header_id") %>%
+  left_join(amlr.header.pre, by = "header_id") %>%
   left_join(amlr.agg.time, by = c("census_date", "location")) %>%
   func_amlr_time_minmax(amlr.time.minmax) %>% 
   func_amlr_mgmt()
@@ -329,16 +329,16 @@ amlr.c.raw <- amlr.agg %>%
 
 # Complete data frame
 #   Number of expected records: 15312 
-#     length(location.regular.nwc)*4*n_distinct(amlr.c.raw$census_phocid_header_id)
+#     length(location.regular.nwc)*4*n_distinct(amlr.c.raw$header_id)
 amlr.c.new <- amlr.c.raw %>% 
   select(-c(season_name:surveyed_san_telmo, header_notes), 
          -c(time_start, time_end)) %>% 
-  complete(census_phocid_header_id, location, species, 
+  complete(header_id, location, species, 
            fill = complete.fill, explicit = FALSE) %>% 
   # TODO: finalize questions about if location_group should be 
   #   only location that is included
   left_join(rename(amlr.header, header_notes = census_phocid_header_notes),
-            by = "census_phocid_header_id") %>%
+            by = "header_id") %>%
   # TODO: confirm we want to do this
   #end date is consistent with how census_date was assigned on import (see header notes)
   mutate(census_date = if_else(is.na(census_date), 
@@ -368,13 +368,13 @@ amlr.d.raw <- amlr.agg %>%
 # Sanity check - no san telmo records when Boolean is FALSE
 amlr.header %>%
   filter(!surveyed_san_telmo,
-         (census_phocid_header_id %in% amlr.d.raw$census_phocid_header_id)) %>% 
+         (header_id %in% amlr.d.raw$header_id)) %>% 
   nrow()
 
 # Make dummy records for header records with no corresponding data records
 header.needed <- amlr.header %>% 
   filter(surveyed_san_telmo, 
-         !(census_phocid_header_id %in% amlr.d.raw$census_phocid_header_id)) %>%
+         !(header_id %in% amlr.d.raw$header_id)) %>%
   rename(header_notes = census_phocid_header_notes) %>% 
   select(-census_days) %>% 
   mutate(census_date = as.Date(census_date_end), 
@@ -391,16 +391,16 @@ stopifnot( #confirm which count columns are 0 vs NA
 # Complete data frame
 #   Add header needed records 
 #   Number of expected records: 672 
-#     4*(n_distinct(amlr.d.raw$census_phocid_header_id)+nrow(header.needed))
+#     4*(n_distinct(amlr.d.raw$header_id)+nrow(header.needed))
 #     1 beach (length())
 amlr.d.new <- amlr.d.raw %>% 
   bind_rows(header.needed) %>% 
   select(-c(season_name:surveyed_san_telmo, header_notes), 
          -c(time_start, time_end)) %>% 
-  complete(census_phocid_header_id, location, species, 
+  complete(header_id, location, species, 
            fill = complete.fill, explicit = FALSE) %>% 
   left_join(rename(amlr.header, header_notes = census_phocid_header_notes),
-            by = "census_phocid_header_id") %>%
+            by = "header_id") %>%
   # TODO: confirm we want to do this
   #end date is consistent with how census_date was assigned on import (see header notes)
   mutate(census_date = if_else(is.na(census_date), 

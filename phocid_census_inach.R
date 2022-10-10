@@ -106,9 +106,8 @@ stopifnot(
 # Organize combined data frame, and explore
 x <- x.orig  %>% 
   arrange(census_date, location, species) %>% 
-  mutate(census_phocid_header_id = paste(season_name, 
-                                         str_pad(week, 2, "left", 0), 
-                                         sep = "-"), 
+  mutate(header_id = paste(season_name, str_pad(week, 2, "left", 0), 
+                           sep = "-"), 
          research_program = "INACH", 
          location = case_when(
            location == "All Cape" ~ "Cape Shirreff",
@@ -135,12 +134,12 @@ x <- x.orig  %>%
            location == "Yamana" ~ "Yamana, Playa",
            TRUE ~ location
          )) %>% 
-  select(census_phocid_header_id, season_name, week, census_date, location, species, 
+  select(header_id, season_name, week, census_date, location, species, 
          starts_with("ad_"), starts_with("juv"), starts_with("pup_"), 
          unk_unk_count, notes, research_program)
 
 x.header <- x %>% 
-  group_by(census_phocid_header_id, season_name, week) %>% 
+  group_by(header_id, season_name, week) %>% 
   summarise(census_date_start = min(census_date), 
             census_date_end = max(census_date), 
             surveyed_san_telmo = FALSE, 

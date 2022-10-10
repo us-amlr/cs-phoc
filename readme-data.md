@@ -1,15 +1,31 @@
 # Cape Shirreff Phocid Census Data
 
-## General TODO
+## TODO
 
-* Make US AMLR data explicit in terms of 0s
+General
 * Make combined data long
+
+INACH
+* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches does this include?
+* Map Paso Ancho records to Media Luna? This is what happens in US AMLR location_group.
+* Remove records from 1 Feb, 8 Feb, and 16 Feb 2007 based on "I would not trust this week" notes?
+* Confirm assumption that San Telmo was never surveyed in INACH data
+
+US AMLR
+* Make US AMLR data explicit in terms of 0s
+	* Need to confirm it's ok to aggregate up to location groups
+	* Need to decide how to fill in time values for 'explicit 0' records
+* Notes about the glacier: what is the south end of Media Luna, by season?
+	* 3 records have notes about surveying to the glacier
+	* I remember we normally surveyed this in 2016/17
+* Any other beaches that might have year-specific ranges?
+* Should 'Paulina-Aranda' actually be 'Paulina-delLobero'? Seems unlikely Remanso-Aranda were surveyed every time.
 
 ## Combined
 
 Notes about combined Cape Shirreff phocid census data ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08 and 2008/09 seasons.
 
-### Database Structure
+### Data Structure
 
 The phocid census data is split into two tables: a 'census header' table and a 'census data' table'. Each record in the data table has a header record ID, which allows each data record to be joined with its corresponding header record. Having the header table allows for two important things: 
 
@@ -20,7 +36,7 @@ The phocid census data is split into two tables: a 'census header' table and a '
 
 ### Data Columns
 
-Column descriptions for Cape Shirreff phocid census data. See TODO for a list of which count columns were used in which years, by program.
+Column descriptions for Cape Shirreff phocid census data. 
 
 * **season_name**: season in which this census occurred; derived from census_date
 * **census_date_start**, **census_date_end**: from census_phocid_header; start and end dates of phocid census survey
@@ -49,7 +65,7 @@ Column descriptions for Cape Shirreff phocid census data. See TODO for a list of
 * **census_phocid_header_id**: census_phocid_header ID value for particular record
 * **census_id**: census ID value for particular record
 
-Additional columns found in [phocids_cs_amlr.csv](amlr_data/phocids_cs_amlr.csv): todo after combining data and remembering what's there
+TODO: determine which of these columns to keep for data to be published
 
 ## INACH Phocid Census Data
 
@@ -61,17 +77,14 @@ These data were exctracted from historical INACH records by Renato Borras. These
 
 ### Beaches
 
-* 'Nibaldo Bahamondes' mapped to 'Peninsula Cerro Gajardo'
-* 'Punta Olivia' merged with 'Alcazar' records
-* 'Rocas Yeco' merged with 'Schiappacasse' records
+Note that in the INACH data, 
 
+* Records with 'Nibaldo Bahamondes' were mapped to 'Peninsula Cerro Gajardo' to be consistent with US AMLR data.
+* Records with location 'Punta Olivia' were merged with 'Alcazar' records.
+* Records with location 'Rocas Yeco' were merged with 'Schiappacasse' records.
+
+* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo".
 * Make note about Copihue: combo of Copi and Hue beahces
-
-### TODO:
-
-* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches does this include?
-* Map Paso Ancho records to Media Luna? This is what happens in US AMLR location_group. TODO: add location_group in combined data.
-* Remove records from 1 Feb, 8 Feb, and 16 Feb 2007 based on "I would not trust this week" notes?
 
 ## US AMLR Phocid Census Data
 
@@ -81,7 +94,7 @@ Notes specific to US AMLR Cape Shirreff Phocid Census data ([phocids_cs_amlr.csv
 
 The raw US AMLR phocid census data are not explicit, meaning that field biologists do not enter '0' records if there are no phocids of a particular species on a beach. However, you can assume that if there is no record for a particular species on a '[regular survey beach](#regular-survey-beaches)', then that beach was surveyed and zero pinnipeds were observed.
 
-Phocid census records for all other beaches (other than Punta San Telmo - see [Database Structure](#database-structure) should be considered 'opportunistic', and thus the lack of a census record should NOT be interpreted as no phocids.
+Phocid census records for all other beaches (other than Punta San Telmo - see [Data Structure](#data-structure) should be considered 'opportunistic', and thus the lack of a census record should NOT be interpreted as no phocids.
 
 Note that (TODO) the explicit zero records have been added in the 'combined' data.
 
@@ -104,9 +117,3 @@ This section details which counts were recorded (i.e., which columns were used) 
 **unk_female_count** and **unk_male_count**: used from 2017/18 to present
 
 **unk_unk_count**: used from 2014/15 to present
-
-### TODO: 
-
-* Notes about the glacier: what is the south end of Media Luna by season?
-* Any other beaches that might have year-specific ranges?
-* Should 'Paulina-Aranda' actually be 'Paulina-delLobero'? Seems unlikely Remanso-Aranda were surveyed every time.

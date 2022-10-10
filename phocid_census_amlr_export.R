@@ -1,6 +1,12 @@
+# Extract and export US AMLR phcoid census data from database and write to CSVs
+# NOTEs: 
+#   census_phocid_header_id is renamed to header_id
+
+
 library(odbc)
 library(dplyr)
 library(googlesheets4)
+
 
 con <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server", 
                  Server = "swc-***REMOVED***-s", 
@@ -23,7 +29,8 @@ x <- tbl(con, "vCensus_Phocid") %>%
          total_count_nodead = sum(c_across(c(ad_female_count:pup_live_count, 
                                              unk_female_count:unk_unk_count)), 
                                   na.rm = TRUE)) %>% 
-  ungroup()
+  ungroup() %>% 
+  rename(header_id = census_phocid_header_id)
 
 write_sheet(x, ss = url.export, sheet = "phocids_cs_amlr_all")
 
@@ -33,7 +40,7 @@ x.tosend <- x %>%
   select(season_name, census_date_start, census_date_end, surveyed_san_telmo, 
          observer:location_group, species, 
          total_count, total_count_nodead, ad_female_count:unk_unk_count, 
-         header_notes, census_notes, census_phocid_header_id, census_id)
+         header_notes, census_notes, header_id, census_id)
 
 write_sheet(x.tosend, ss = url.export, sheet = "phocids_cs_amlr")
 write.csv(x.tosend, row.names = FALSE,
@@ -43,7 +50,7 @@ write.csv(x.tosend, row.names = FALSE,
 x.header <- tbl(con, "vCensus_Phocid_Header") %>% 
   select(season_name, census_date_start, census_date_end, census_days, 
          surveyed_san_telmo, 
-         census_phocid_header_notes = notes, census_phocid_header_id) %>% 
+         header_notes = notes, header_id = census_phocid_header_id) %>% 
   arrange(season_name, census_date_start) %>% 
   collect()
 
@@ -57,9 +64,9 @@ table(x$location_group)
 stopifnot(
   all(x$census_type == "Phocid"), 
   0 == (x %>% 
-          group_by(census_phocid_header_id, species, location) %>% 
+          group_by(header_id, species, location) %>% 
           filter(n() > 1) %>% 
           nrow()), 
-  all(x.header$census_phocid_header_id %in% x.tosend$census_phocid_header_id), 
-  sum(is.na(x$census_phocid_header_id)) == 0
+  all(x.header$header_id %in% x.tosend$header_id), 
+  sum(is.na(x$header_id)) == 0
 )

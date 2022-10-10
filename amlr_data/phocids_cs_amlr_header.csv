@@ -1,4 +1,4 @@
-"season_name","census_date_start","census_date_end","census_days","surveyed_san_telmo","census_phocid_header_notes","census_phocid_header_id"
+"season_name","census_date_start","census_date_end","census_days","surveyed_san_telmo","header_notes","header_id"
 "2009/10",2009-10-23,2009-10-24,2,TRUE,"Imported from Excel files. Observers: RB & RMB. Note that associated census records were assigned the census_date_end value because Excel files did not specify which counts were from which day",149
 "2009/10",2009-11-01,2009-11-01,1,TRUE,"Imported from Excel files. Observers: RB, RMB",150
 "2009/10",2009-11-08,2009-11-08,1,TRUE,"Imported from Excel files. Observers: RB, RMB",151

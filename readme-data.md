@@ -1,3 +1,9 @@
+---
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
 # Cape Shirreff Combined Phocid Census Data
 
 This document details the creation of the combined Cape Shirreff phocid census dataset ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08 and 2008/09 seasons.
@@ -7,21 +13,25 @@ The INACH data were extracted from historical INACH records by Renato Borras, an
 ## TODO
 
 Confirm/ok assumptions/decisions that Sam made while combining the data:
+
 * Aggregated all records up to 'full beach' level (i.e., location_group in AMLR data). This loses some granularity, but standardizes location names in the data
 	* For instance: E/C/W/S records were aggregated to primary beach
 * Removed census_id and observer columns from the final combined output CSV
 
 General
+
 * Should we add (or more likely move?) research_program to the header table, since there was never an instance where a header record spans data records from both programs? Sam votes yes.
 * Should I change 'present' (e.g., 2009/10 to present) to '2021/22 season'?
 
 INACH
+
 * 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches can we assume that these surveys include?
 * Map Paso Ancho records to Media Luna? This is what happens in US AMLR data (via location_group).
 * Remove records from 1 Feb, 8 Feb, and 16 Feb 2007 based on "I would not trust this week" notes?
 * Confirm assumption that San Telmo was never surveyed in INACH data
 
 US AMLR
+
 * Notes about the glacier: what is the south end of Media Luna, by season?
 	* Only 3 records have notes about surveying to the glacier
 	* Sam remembers we normally surveyed this in 2016/17

@@ -162,7 +162,7 @@ View(
 complete.fill <- list(
   ad_female_count = 0, ad_male_count = 0, ad_unk_count = 0,
   juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
-  pup_live_count = 0
+  pup_live_count = 0, orig_record = FALSE
 )
 
 
@@ -213,6 +213,12 @@ amlr.agg.time <- amlr.agg %>%
   select(census_date, location, time_start, time_end) %>% 
   distinct(census_date, location, .keep_all = TRUE)
 
+# amlr.agg.time2 <- amlr.agg %>% 
+#   select(census_date, location, time_start, time_end) %>%
+#   distinct() %>%
+#   group_by(census_date, location) %>% 
+#   filter(n() > 1)
+
 # Generate data frame that has earliest/latest times, by day. 
 #   To join with completed data to at least give time range for 0s
 amlr.time.minmax <- amlr.orig %>% 
@@ -220,6 +226,16 @@ amlr.time.minmax <- amlr.orig %>%
   summarise(time_start_min = suppressWarnings(min(time_start, na.rm = TRUE)), 
             time_end_max = suppressWarnings(max(time_end, na.rm = TRUE)), 
             .groups = "drop")
+
+
+# Add necessary columns to ...header.needed data frames
+func_mutate_header_needed <- function(x) {
+  x %>% 
+    mutate(ad_female_count = 0, ad_male_count = 0, ad_unk_count = 0, 
+           juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
+           pup_live_count = 0, orig_record = FALSE) %>% 
+    mutate(across(ends_with("_count"), as.integer))
+}
 
 
 # Function for steps for making AMLR data explicit that apply to all pieces: 
@@ -272,11 +288,8 @@ amlr.a.header.needed <- amlr.a.header %>%
   # Need values/0s so as to not introduce NAs
   mutate(census_date = as.Date(census_date_end), 
          # all locations and species are accounted for in raw df
-         location = location.regular.wc.agg[1], species = "Elephant seal", 
-         ad_female_count = 0, ad_male_count = 0, ad_unk_count = 0, 
-         juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
-         pup_live_count = 0) %>% 
-  mutate(across(ends_with("_count"), as.integer)) %>% 
+         location = location.regular.wc.agg[1], species = "Elephant seal") %>% 
+  func_mutate_header_needed() %>% 
   select(!!intersect(names(amlr.a.raw), names(.)))
 
 
@@ -327,11 +340,8 @@ amlr.b.header.needed <- amlr.b.header %>%
   filter(!(header_id %in% amlr.b.raw$header_id)) %>% 
   # TODO: confirm we want to do dates this way
   mutate(census_date = as.Date(census_date_end), 
-         location = location.regular.wc[1], species = "Elephant seal", 
-         ad_female_count = 0, ad_male_count = 0, ad_unk_count = 0, 
-         juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
-         pup_live_count = 0) %>% 
-  mutate(across(ends_with("_count"), as.integer)) %>% 
+         location = location.regular.wc[1], species = "Elephant seal") %>% 
+  func_mutate_header_needed() %>% 
   select(!!intersect(names(amlr.b.raw), names(.)))
 
 # # Checks
@@ -372,8 +382,11 @@ amlr.c.raw <- amlr.agg.pre %>%
   filter(location %in% location.regular.nwc)
 
 # Get all header records for this time period - none needed to be added
-amlr.c.header.needed <- amlr.header %>% 
-  filter(!(header_id %in% amlr.c.raw$header_id))
+stopifnot(
+  0 == (amlr.header %>% 
+          filter(!(header_id %in% amlr.c.raw$header_id)) %>% 
+          nrow())
+)
 
 # Complete data frame
 #   Number of expected records: 15312 
@@ -400,7 +413,7 @@ count_compare(amlr.c.raw, amlr.c.new)
 with(amlr.c.new, tableNA(season_name, is.na(time_start)))
 
 # Clean up
-rm(amlr.c.raw, amlr.c.header.needed)
+rm(amlr.c.raw)
 
 
 #------------------------------------------------
@@ -423,16 +436,9 @@ amlr.d.header.needed <- amlr.d.header %>%
   filter(!(header_id %in% amlr.d.raw$header_id)) %>%
   # TODO: confirm we want to do dates this way
   mutate(census_date = as.Date(census_date_end), 
-         location = location.st, species = "Elephant seal", 
-         ad_female_count = 0, ad_male_count = 0, ad_unk_count = 0, 
-         juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
-         pup_live_count = 0, research_program = "USAMLR") %>% 
-  mutate(across(ends_with("_count"), as.integer)) %>% 
+         location = location.st, species = "Elephant seal") %>% 
+  func_mutate_header_needed() %>% 
   select(!!intersect(names(amlr.d.raw), names(.)))
-
-stopifnot( #confirm which count columns are 0 vs NA
-  all(as.Date(header.needed$census_date_start) < as.Date("2012-07-01"))
-)
 
 
 # Complete data frame
@@ -442,7 +448,7 @@ stopifnot( #confirm which count columns are 0 vs NA
 #     1*4*n_distinct(amlr.d.header$header_id)
 #     (1 beach: length(location.st))
 amlr.d.new <- amlr.d.raw %>% 
-  bind_rows(header.needed) %>% 
+  bind_rows(amlr.d.header.needed) %>% 
   complete(nesting(header_id, census_date), location, species, 
            fill = complete.fill, explicit = FALSE) %>% 
   left_join(amlr.header.pre, by = "header_id") %>%
@@ -496,13 +502,16 @@ combined.header <- amlr.header %>%
   mutate(census_date_start = as.Date(census_date_start), 
          census_date_end = as.Date(census_date_end)) %>% 
   bind_rows(inach.header) %>% 
+  left_join(distinct(bind_rows(amlr, inach), header_id, research_program), 
+            by = "header_id") %>% 
   select(-surveyed_san_telmo) %>% 
+  relocate(header_id) %>% 
   arrange(census_date_start)
 
 combined.wide <- bind_rows(amlr, inach) %>% 
   select(-c(census_date_start, census_date_end, surveyed_san_telmo, 
-            header_notes)) %>%
-  relocate(research_program, orig_record, header_id, 
+            header_notes, research_program)) %>%
+  relocate(orig_record, header_id, 
            .after = last_col()) %>% 
   arrange(census_date, location, species) %>% 
   rowwise() %>% 
@@ -510,16 +519,21 @@ combined.wide <- bind_rows(amlr, inach) %>%
          total_count_nodead = total_count-pup_dead_count) %>% 
   ungroup()
 
-### Checks
-tableNA(combined.header$season_name)
-tableNA(combined.wide$season_name)
-
 combined.join <- combined.wide %>% 
   #confirmed if this is commented then season_name.x and .y are equivalent
   select(-season_name) %>%
   left_join(combined.header, by = "header_id")
 
+
+
+### Checks
+tableNA(combined.header$season_name)
+tableNA(combined.wide$season_name)
+
+stopifnot(all(combined.header$research_program %in% c("INACH", "USAMLR")))
+
 with(combined.wide, stopifnot(
+  all(combined.header$research_program %in% c("INACH", "USAMLR")), 
   all(combined.header$header_id %in% header_id), 
   all(header_id %in% combined.header$header_id), 
   
@@ -528,7 +542,7 @@ with(combined.wide, stopifnot(
     function(i, j, k) between(i, j, k)
   ))), 
   
-  all(research_program %in% c("INACH", "USAMLR")), 
+  # all(research_program %in% c("INACH", "USAMLR")), 
   all(species %in% 
         paste(c("Crabeater", "Elephant", "Leopard", "Weddell"), "seal")), 
   
@@ -537,27 +551,29 @@ with(combined.wide, stopifnot(
   
   all(!is.na(ad_female_count)), 
   all(!is.na(ad_male_count)), 
-  all(!is.na(ad_unk_count[research_program == "USAMLR"])),
+  #`census_date > as.Date("2009-07-01")` is equivalent to 'USAMLR' filter
+  all(!is.na(ad_unk_count[census_date > as.Date("2009-07-01")])),
   # TODO: issue 56p
   # all(!is.na(juv_female_count[research_program == "USAMLR"])), 
   # all(!is.na(juv_male_count[research_program == "USAMLR"])), 
   # all(!is.na(juv_unk_count[research_program == "USAMLR"])), 
-  all(!is.na(pup_live_count[research_program == "USAMLR"])), 
+  all(!is.na(pup_live_count[census_date > as.Date("2009-07-01")])), 
   
   all(is.na(pup_dead_count[census_date < as.Date("2012-07-01")])), 
   all(is.na(unk_female_count[census_date < as.Date("2017-07-01")])), 
   all(is.na(unk_male_count[census_date < as.Date("2017-07-01")])), 
   all(is.na(unk_unk_count[
-    census_date < as.Date("2014-07-01") & research_program == "USAMLR"
+    census_date < as.Date("2014-07-01") & census_date > as.Date("2009-07-01")
   ])), 
   
   all(!is.na(pup_dead_count[census_date > as.Date("2012-07-01")])), 
   all(!is.na(unk_female_count[census_date > as.Date("2017-07-01")])), 
   all(!is.na(unk_male_count[census_date > as.Date("2017-07-01")])), 
   all(!is.na(unk_unk_count[
-    census_date > as.Date("2014-07-01") & research_program == "USAMLR"
+    census_date > as.Date("2014-07-01") & census_date > as.Date("2009-07-01")
   ]))
 )); rm(combined.join)
+
 
 
 ### Make long data
@@ -592,10 +608,10 @@ write.csv(combined.long, row.names = FALSE, na = "",
 
 
 #-------------------------------------------------------------------------------
-# Explore
-tableNA(combined.header$census_days)
-
-inach %>% 
-  group_by(species, season_name) %>% 
-  summarise(across(ends_with("_count"), function(i) sum(!is.na(i)))) %>% 
-  View()
+### Explore
+# tableNA(combined.header$census_days)
+# 
+# inach %>%
+#   group_by(species, season_name) %>%
+#   summarise(across(ends_with("_count"), function(i) sum(!is.na(i)))) %>%
+#   View()

@@ -1,24 +1,27 @@
 # Cape Shirreff Combined Phocid Census Data
 
-Notes about combined Cape Shirreff phocid census data ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08 and 2008/09 seasons.
+This document details the creation of the combined Cape Shirreff phocid census dataset ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08 and 2008/09 seasons.
 
-The INACH data were exctracted from historical INACH records by Renato Borras. These data include records with explicit 0s for when a beach was surveyed and no phocids (of a certain species) were observed. The US AMLR data were extracted from the program's Pinnipeds database. The combined data files were generated from the INACH and US AMLR datasets using [phocid_census_combine.R](phocid_census_combine.R). 
+The INACH data were extracted from historical INACH records by Renato Borras, and concatenated together using the [phocid_census_inach.R](phocid_census_inach.R) script. The US AMLR data were extracted from the AMLR program's Pinnipeds database using the [phocid_census_amlr_export.R](phocid_census_amlr_export.R) script. The combined data files were generated from the INACH and US AMLR datasets using the [phocid_census_combine.R](phocid_census_combine.R) script. 
 
 ## TODO
 
+Confirm/ok assumptions/decisions that Sam made while combining the data:
+* Aggregated all records up to 'full beach' level (i.e., location_group in AMLR data). This loses some granularity, but standardizes location names in the data
+	* For instance: E/C/W/S records were aggregated to primary beach
+* Removed census_id and observer columns from the final combined output CSV
+
 General
-* Add (or move?) research_program to the header table?
+* Should we add (or more likely move?) research_program to the header table, since there was never an instance where a header record spans data records from both programs? Sam votes yes.
+* Should I change 'present' (e.g., 2009/10 to present) to '2021/22 season'?
 
 INACH
-* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches does this include?
+* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches can we assume that these surveys include?
 * Map Paso Ancho records to Media Luna? This is what happens in US AMLR data (via location_group).
 * Remove records from 1 Feb, 8 Feb, and 16 Feb 2007 based on "I would not trust this week" notes?
 * Confirm assumption that San Telmo was never surveyed in INACH data
 
 US AMLR
-* Make US AMLR data explicit in terms of 0s
-	* Need to confirm it's ok to aggregate up to location groups
-	* Need to confirm method used to fill in time values for 'explicit 0' records
 * Notes about the glacier: what is the south end of Media Luna, by season?
 	* Only 3 records have notes about surveying to the glacier
 	* Sam remembers we normally surveyed this in 2016/17
@@ -90,7 +93,7 @@ Other counts were only recorded in certain seasons:
 
 ## INACH Data Decisions and Notes
 
-These INACH data include records with explicit 0s for when a beach was surveyed and (one or more) phocid species were not observed. 
+These INACH data include records with explicit zeros for when a beach was surveyed and (one or more) phocid species were not observed. 
 
 INACH data decisions:
 
@@ -115,65 +118,36 @@ NOTE: The west coast beaches south of Yamana, Golondrina to del Canal, were not 
 
 ### Adding Explicit Zero Records
 
+In the [phocid_census_combine.R](phocid_census_combine.R) script, the [complete](https://tidyr.tidyverse.org/reference/complete.html) function was used to add records with count values of zero as needed to the US AMLR data for 'regular survey beaches' before generating the combined dataset. The AMLR data were split into four parts for this effort:
 
+1) Explicit zero records were generated as needed for locations 'Golondrina-del Lobero' and 'Paulina-Aranda' for all census header records in the AMLR database from the 2009/10 season through the 2017/18 season. 
 
+2) Explicit zero records were generated as needed for granular west coast locations (Golondrina, del Lobero, Paulina, Schiappacasse, El Plastico, Leopard, del Canal) for all census header records in the AMLR database from the 2018/19 season through the present. It was assumed that these locations were always surveyed on the same day because of their proximity.
 
+3) Explicit zero records were generated for all other 'regular survey beaches' (Media Luna, Punta Yuseff, Larga, Marko, Daniel, Modulo, Hue, Copi, Maderas, Cachorros, Chungungo, Ballena Sur, Ballena Norte, Bahamonde, Nibaldo, Roquerio, Alcazar, Pinochet de la Barra, Papua, Antarctico, Loberia, Yamana) for all census header records in the AMLR database (2009/10 to present). 
 
+4) Explicit zero records were generated for Punta San Telmo for all census header records in the AMLR database (2009/10 to present) where the header flag 'surveyed_san_telmo' was recorded as TRUE. 
 
+Thus, the AMLR portion of the [combined data](cs_combined_data/phocids_cs_combined.csv) was the concatenation of the output of these four parts, as well as the remaining records from 'non-regular survey beaches'.
 
+The following sections detail assumptions were made when generating these explicit zero records.
 
+#### Dates: 
 
+* For all four parts, if a census record existed for a given header/location pair, that date was used for all other records at that location (e.g., if there was only a record for one species for a given location).
 
+* For parts 1 and 2, it was assumed that these locations (or location aggregations) were always surveyed on the same day because of their proximity whenever census date information was available for any beach. Thus, if there were any data records in these parts for a given header record, the other data records were assigned the same date.
 
+* For parts 3 and 4 if there were no data records for a particular location for a given header, and parts 1 and 2 when there were no data records at all for a given header record, then the explicit zero record was assigned the census_date_end value (the last day of that census) from the corresponding header record. This decision was consistent with the decision made when [importing historical US AMLR records](phocid_census_amlr_import.R) from Excel files.
 
+#### Times: 
 
-## INACH Phocid Census Data
+The following assumptions on assigning times for explicit zero records apply to all four parts:
 
-Notes specific to INACH Cape Shirreff Phocid Census data ([phocids_cs_inach.csv](inach_data/phocids_cs_inach.csv)).
+* For each explicit zero record, if there was a data record with a recorded start/end time for the same date/location, then the explicit zero record was assigned that start/end time. If there were multiple data records for the same date/location (e.g., records from multiple observers), then the data record with the earliest start time was used.
 
-### Description
+* For each explicit zero record, if there was no data record with a recorded start/end time for the same date/location, then the minimum start time and maximum end time was determined when considering all data records for that day. The explicit zero record was assigned these start/end times.
 
-These data were exctracted from historical INACH records by Renato Borras. These INACH data include records with explicit 0s for when a beach was surveyed and no phocids (of a certain species) were observed. 
+#### Counts:
 
-### Beaches
-
-Note that in the INACH data, 
-
-* Records with 'Nibaldo Bahamondes' were mapped to 'Peninsula Cerro Gajardo' to be consistent with US AMLR data.
-* Records with location 'Punta Olivia' were merged with 'Alcazar' records.
-* Records with location 'Rocas Yeco' were merged with 'Schiappacasse' records.
-
-* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo".
-* Make note about Copihue: combo of Copi and Hue beahces
-
-## US AMLR Phocid Census Data
-
-Notes specific to US AMLR Cape Shirreff Phocid Census data ([phocids_cs_amlr.csv](amlr_data/phocids_cs_amlr.csv)).
-
-### Beaches
-
-The raw US AMLR phocid census data are not explicit, meaning that field biologists do not enter '0' records if there are no phocids of a particular species on a beach. However, you can assume that if there is no record for a particular species on a '[regular survey beach](#regular-survey-beaches)', then that beach was surveyed and zero pinnipeds were observed.
-
-Phocid census records for all other beaches (other than Punta San Telmo - see [Data Structure](#data-structure) should be considered 'opportunistic', and thus the lack of a census record should NOT be interpreted as no phocids.
-
-Note that (TODO) the explicit zero records have been added in the 'combined' data.
-
-### 'Regular Survey Beaches'
-
-The following beaches are all assumed to have been surveyed during every US AMLR phocid census survey:
-
-Media Luna, Punta Yuseff, Larga, Marko, Daniel, Modulo, Hue, Copi, Maderas, Cachorros, Chungungo, Ballena Sur, Ballena Norte, Bahamonde, Nibaldo, Roquerio, Alcazar, Pinochet de la Barra, Papua, Antarctico, Loberia, Yamana, Golondrina, del Lobero, Paulina, Schiappacasse, El Plastico, Leopard, del Canal.
-
-NOTE: The west coast south of Yamana (Golondrina to del Canal) was not recorded individually until the 2018/19 season. Prior to this, these beaches were grouped into two 'blocks': Golondrina-del Lobero (Golondrina, del Lobero) and Paulina-Aranda (Paulina, Schiappacasse, El Plastico, Leopard, del Canal). See TODO below.
-
-### Data Column Use By Season
-
-This section details which counts were recorded (i.e., which columns were used) in which seasons of US AMLR data.
-
-**ad_female_count**, **ad_male_count**, **ad_unk_count**, **juv_female_count**, **juv_male_count**, **juv_unk_count**, **pup_live_count**: used in all seasons (2009/10 to present)
-
-**pup_dead_count**: used from 2012/13 to present
-
-**unk_female_count** and **unk_male_count**: used from 2017/18 to present
-
-**unk_unk_count**: used from 2014/15 to present
+Explicit zero records were assigned zero or NA values in a manner that was consistent with the count column used described in [Data Column Use](#data-column-use). For instance, **ad_female_count** values were always zero, while **unk_unk_count** values were NA or zero if the record date was before or after (inclusive) the 2014/15 season.

@@ -1,9 +1,3 @@
----
-output:
-  html_document: default
-  word_document: default
-  pdf_document: default
----
 # Cape Shirreff Combined Phocid Census Data
 
 This document details the creation of the combined Cape Shirreff phocid census dataset ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08 and 2008/09 seasons.

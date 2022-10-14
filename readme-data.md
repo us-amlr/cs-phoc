@@ -30,7 +30,7 @@ US AMLR
 	* Only 3 records have notes about surveying to the glacier
 	* Sam remembers we normally surveyed this in 2016/17
 * Any other beaches that might have year-specific ranges?
-* Should 'Paulina-Aranda' actually be 'Paulina-delLobero'? Seems unlikely Remanso-Aranda were surveyed every time.
+* Should 'Paulina-Aranda' actually be 'Paulina-delCanal'? Seems unlikely Remanso-Aranda were surveyed every time.
 
 ## Data Structure
 

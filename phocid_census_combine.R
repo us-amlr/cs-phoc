@@ -56,7 +56,6 @@ with(inach.orig %>%
      tableNA(location, season_name))
 
 
-# TODO: keep this?
 ### Aggregate Paso Ancho and Media Luna records
 inach <- inach.orig %>% 
   mutate(location_group = case_when(
@@ -95,8 +94,6 @@ amlr.orig <- read.csv("amlr_data/phocids_cs_amlr.csv") %>%
          research_program = "USAMLR")
 
 ### Aggregate up to location_group level
-# TODO: finalize questions about if location_group should be 
-#   only location that is included
 names.agg <- setdiff(
   names(amlr.orig), 
   c("location_group", "observer", "census_id", 
@@ -145,14 +142,6 @@ amlr.agg %>% filter(is.na(time_start) | is.na(time_end))
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 ### 'Complete' AMLR data with explicit zero records
-
-# TODO: Issue 56p
-View(
-  amlr.agg %>% 
-    group_by(season_name) %>% 
-    summarise(across(ad_female_count:unk_unk_count, function(i) sum(is.na(i))))
-)
-
 
 #-------------------------------------------------------------------------------
 ## prep
@@ -406,7 +395,7 @@ amlr.c.new <- amlr.c.raw %>%
          census_date = if_else(is.na(census_date), census_date_end, census_date)) %>% 
   # select(census_date_orig, census_date, census_date_loc, census_date_end, 
   #        everything())
-  func_amlr_explicit()
+  func_amlr_explicit() 
 
 # Sanity check that no counts were added, and that all times got values
 count_compare(amlr.c.raw, amlr.c.new)

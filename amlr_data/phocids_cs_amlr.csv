@@ -6,6 +6,7 @@
 "2009/10",2009-10-23,2009-10-24,TRUE,NA,2009-10-24,"11:45:00","16:30:00","Ballena Norte","Ballena Norte","Weddell seal",1,1,0,1,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RB & RMB. Note that associated census records were assigned the census_date_end value because Excel files did not specify which counts were from which day",NA,149,11567
 "2009/10",2009-10-23,2009-10-24,TRUE,NA,2009-10-24,"11:45:00","16:30:00","Ballena Sur","Ballena Sur","Weddell seal",1,1,1,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RB & RMB. Note that associated census records were assigned the census_date_end value because Excel files did not specify which counts were from which day",NA,149,11566
 "2009/10",2009-10-23,2009-10-24,TRUE,NA,2009-10-24,"11:45:00","16:30:00","Cachorros","Cachorros","Weddell seal",2,2,1,0,0,0,0,0,1,NA,NA,NA,NA,"Imported from Excel files. Observers: RB & RMB. Note that associated census records were assigned the census_date_end value because Excel files did not specify which counts were from which day",NA,149,11565
+"2009/10",2009-10-23,2009-10-24,TRUE,NA,2009-10-24,"11:45:00","16:30:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",1,1,0,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RB & RMB. Note that associated census records were assigned the census_date_end value because Excel files did not specify which counts were from which day",NA,149,12429
 "2009/10",2009-11-01,2009-11-01,TRUE,NA,2009-11-01,"12:15:00","18:00:00","Maderas","Maderas","Crabeater seal",1,1,0,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RB, RMB",NA,150,11578
 "2009/10",2009-11-01,2009-11-01,TRUE,NA,2009-11-01,"12:15:00","18:00:00","Media Luna","Media Luna","Elephant seal",41,41,15,7,0,0,0,0,19,NA,NA,NA,NA,"Imported from Excel files. Observers: RB, RMB",NA,150,11569
 "2009/10",2009-11-01,2009-11-01,TRUE,NA,2009-11-01,"12:15:00","18:00:00","Cachorros","Cachorros","Weddell seal",3,3,1,0,0,0,0,0,2,NA,NA,NA,NA,"Imported from Excel files. Observers: RB, RMB",NA,150,11573
@@ -505,36 +506,36 @@
 "2010/11",2011-01-07,2011-01-07,TRUE,NA,2011-01-07,"09:00:00","18:00:00","Roquerio","Roquerio","Weddell seal",2,2,0,0,0,1,1,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RMB, KWP, NP",NA,173,12056
 "2010/11",2011-01-07,2011-01-07,TRUE,NA,2011-01-07,"09:00:00","18:00:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",5,5,5,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RMB, KWP, NP",NA,173,12061
 "2010/11",2011-01-07,2011-01-07,TRUE,NA,2011-01-07,"09:00:00","18:00:00","Yuseff, Punta","Yuseff, Punta","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: RMB, KWP, NP",NA,173,12050
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Ballena Norte","Ballena Norte","Elephant seal",5,5,4,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12075
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Cachorros East","Cachorros","Elephant seal",1,1,0,0,0,0,0,1,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12074
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Larga","Larga","Elephant seal",7,7,0,0,0,2,5,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12070
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Loberia","Loberia","Elephant seal",3,3,0,0,0,0,0,3,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12077
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Maderas","Maderas","Elephant seal",1,1,0,0,0,0,1,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12073
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Marko","Marko","Elephant seal",4,4,1,0,0,0,3,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12071
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Media Luna","Media Luna","Elephant seal",39,39,2,0,0,0,37,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12068
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Modulo North","Modulo","Elephant seal",6,6,6,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12072
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Nibaldo","Nibaldo","Elephant seal",2,2,1,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12076
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Yamana, Playa","Yamana, Playa","Elephant seal",2,2,0,0,1,0,0,1,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12078
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Yuseff, Punta","Yuseff, Punta","Elephant seal",68,68,0,0,0,0,68,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12069
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Alcazar","Alcazar","Leopard seal",2,2,2,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12094
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Angosta, Playa","Angosta, Playa","Leopard seal",1,1,0,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12095
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Cachorros East","Cachorros","Leopard seal",4,4,4,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12093
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Golondrina-del Lobero","Golondrina-del Lobero","Leopard seal",1,1,1,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12096
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Paulina-Aranda","Paulina-Aranda","Leopard seal",9,9,9,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12097
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Alcazar","Alcazar","Weddell seal",5,5,2,2,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12089
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Bahamonde","Bahamonde","Weddell seal",2,2,0,0,2,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12087
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Ballena Norte","Ballena Norte","Weddell seal",1,1,0,0,0,0,1,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12086
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Hue East","Hue","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12084
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Larga","Larga","Weddell seal",3,3,1,2,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12081
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Maderas","Maderas","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12085
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Marko","Marko","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12082
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Media Luna","Media Luna","Weddell seal",3,3,3,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12079
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Modulo North","Modulo","Weddell seal",1,1,0,1,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12083
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Papua","Papua","Weddell seal",2,2,1,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12091
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Pinochet de la Barra","Pinochet de la Barra","Weddell seal",2,2,0,2,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12090
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Roquerio","Roquerio","Weddell seal",1,1,0,0,0,0,0,1,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12088
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Yamana, Playa","Yamana, Playa","Weddell seal",2,2,0,0,0,0,0,2,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12092
-"2010/11",2011-01-15,2011-01-15,TRUE,NA,2011-01-15,"09:00:00","12:00:00","Yuseff, Punta","Yuseff, Punta","Weddell seal",1,1,1,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12080
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Ballena Norte","Ballena Norte","Elephant seal",5,5,4,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12075
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Cachorros East","Cachorros","Elephant seal",1,1,0,0,0,0,0,1,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12074
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Larga","Larga","Elephant seal",7,7,0,0,0,2,5,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12070
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Loberia","Loberia","Elephant seal",3,3,0,0,0,0,0,3,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12077
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Maderas","Maderas","Elephant seal",1,1,0,0,0,0,1,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12073
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Marko","Marko","Elephant seal",4,4,1,0,0,0,3,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12071
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Media Luna","Media Luna","Elephant seal",39,39,2,0,0,0,37,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12068
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Modulo North","Modulo","Elephant seal",6,6,6,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12072
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Nibaldo","Nibaldo","Elephant seal",2,2,1,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12076
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Yamana, Playa","Yamana, Playa","Elephant seal",2,2,0,0,1,0,0,1,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12078
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Yuseff, Punta","Yuseff, Punta","Elephant seal",68,68,0,0,0,0,68,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12069
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Alcazar","Alcazar","Leopard seal",2,2,2,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12094
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Angosta, Playa","Angosta, Playa","Leopard seal",1,1,0,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12095
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Cachorros East","Cachorros","Leopard seal",4,4,4,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12093
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Golondrina-del Lobero","Golondrina-del Lobero","Leopard seal",1,1,1,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12096
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Paulina-Aranda","Paulina-Aranda","Leopard seal",9,9,9,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12097
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Alcazar","Alcazar","Weddell seal",5,5,2,2,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12089
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Bahamonde","Bahamonde","Weddell seal",2,2,0,0,2,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12087
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Ballena Norte","Ballena Norte","Weddell seal",1,1,0,0,0,0,1,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12086
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Hue East","Hue","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12084
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Larga","Larga","Weddell seal",3,3,1,2,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12081
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Maderas","Maderas","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12085
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Marko","Marko","Weddell seal",1,1,0,0,0,1,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12082
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Media Luna","Media Luna","Weddell seal",3,3,3,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12079
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Modulo North","Modulo","Weddell seal",1,1,0,1,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12083
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Papua","Papua","Weddell seal",2,2,1,0,1,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12091
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Pinochet de la Barra","Pinochet de la Barra","Weddell seal",2,2,0,2,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12090
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Roquerio","Roquerio","Weddell seal",1,1,0,0,0,0,0,1,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12088
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Yamana, Playa","Yamana, Playa","Weddell seal",2,2,0,0,0,0,0,2,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12092
+"2010/11",2011-01-15,2011-01-15,FALSE,NA,2011-01-15,"09:00:00","12:00:00","Yuseff, Punta","Yuseff, Punta","Weddell seal",1,1,1,0,0,0,0,0,0,NA,NA,NA,NA,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",NA,174,12080
 "2011/12",2011-11-23,2011-11-23,TRUE,NA,2011-11-23,"13:30:00","18:30:00","Modulo North","Modulo","Crabeater seal",1,1,0,0,0,0,0,0,1,NA,NA,NA,NA,NA,NA,1,12125
 "2011/12",2011-11-23,2011-11-23,TRUE,NA,2011-11-23,"13:30:00","18:30:00","Bahamonde","Bahamonde","Elephant seal",1,1,0,1,0,0,0,0,0,NA,NA,NA,NA,NA,NA,1,12106
 "2011/12",2011-11-23,2011-11-23,TRUE,NA,2011-11-23,"13:30:00","18:30:00","Ballena Norte","Ballena Norte","Elephant seal",2,2,0,0,0,0,2,0,0,NA,NA,NA,NA,NA,NA,1,12105
@@ -942,7 +943,7 @@
 "2012/13",2012-12-07,2012-12-07,TRUE,NA,2012-12-07,"14:40:00","18:30:00","Pinochet de la Barra","Pinochet de la Barra","Weddell seal",3,3,0,1,0,1,1,0,0,0,NA,NA,NA,NA,NA,18,494
 "2012/13",2012-12-07,2012-12-07,TRUE,NA,2012-12-07,"14:00:00","18:30:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",16,16,3,3,2,1,3,3,1,0,NA,NA,NA,NA,NA,18,499
 "2012/13",2012-12-07,2012-12-07,TRUE,NA,2012-12-07,"14:40:00","18:30:00","Yamana, Playa","Yamana, Playa","Weddell seal",2,2,1,0,1,0,0,0,0,0,NA,NA,NA,NA,NA,18,497
-"2012/13",2012-12-14,2012-12-14,TRUE,NA,2012-12-14,"11:30:00","15:00:00","Alcazar","Alcazar","Elephant seal",1,1,0,0,0,NA,0,1,0,0,NA,NA,NA,NA,NA,19,609
+"2012/13",2012-12-14,2012-12-14,TRUE,NA,2012-12-14,"11:30:00","15:00:00","Alcazar","Alcazar","Elephant seal",1,1,0,0,0,0,0,1,0,0,NA,NA,NA,NA,NA,19,609
 "2012/13",2012-12-14,2012-12-14,TRUE,NA,2012-12-14,"11:30:00","15:00:00","Bahamonde","Bahamonde","Elephant seal",8,8,0,0,0,0,4,3,1,0,NA,NA,NA,NA,NA,19,606
 "2012/13",2012-12-14,2012-12-14,TRUE,NA,2012-12-14,"11:30:00","15:00:00","Ballena Norte","Ballena Norte","Elephant seal",12,12,0,1,0,0,6,5,0,0,NA,NA,NA,NA,NA,19,505
 "2012/13",2012-12-14,2012-12-14,TRUE,NA,2012-12-14,"11:30:00","15:00:00","Ballena Sur","Ballena Sur","Elephant seal",1,1,0,0,0,0,1,0,0,0,NA,NA,NA,NA,NA,19,504
@@ -1051,7 +1052,7 @@
 "2012/13",2013-01-11,2013-01-11,TRUE,NA,2013-01-11,"11:30:00","14:00:00","Alcazar","Alcazar","Weddell seal",2,2,0,1,0,0,1,0,0,0,NA,NA,NA,NA,NA,23,988
 "2012/13",2013-01-11,2013-01-11,TRUE,NA,2013-01-11,"09:30:00","11:40:00","Media Luna","Media Luna","Weddell seal",2,2,1,0,0,1,0,0,0,0,NA,NA,NA,NA,NA,23,985
 "2012/13",2013-01-11,2013-01-11,TRUE,NA,2013-01-11,"09:30:00","11:40:00","Modulo North","Modulo","Weddell seal",1,1,1,0,0,0,0,0,0,0,NA,NA,NA,NA,NA,23,984
-"2012/13",2013-01-11,2013-01-11,TRUE,NA,2013-01-11,"14:53:00","17:00:00","Paulina-Aranda","Paulina-Aranda","Weddell seal",3,3,0,0,0,NA,1,2,0,0,NA,NA,NA,NA,"Beach was Playa Paulina to Aranda",23,998
+"2012/13",2013-01-11,2013-01-11,TRUE,NA,2013-01-11,"14:53:00","17:00:00","Paulina-Aranda","Paulina-Aranda","Weddell seal",3,3,0,0,0,0,1,2,0,0,NA,NA,NA,NA,"Beach was Playa Paulina to Aranda",23,998
 "2012/13",2013-01-11,2013-01-11,TRUE,NA,2013-01-11,"14:53:00","17:00:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",2,2,0,1,0,0,1,0,0,0,NA,NA,NA,NA,NA,23,999
 "2012/13",2013-01-18,2013-01-18,TRUE,NA,2013-01-18,"14:00:00","17:15:00","Alcazar","Alcazar","Elephant seal",5,5,0,0,0,1,2,2,0,0,NA,NA,NA,NA,NA,24,1017
 "2012/13",2013-01-18,2013-01-18,TRUE,NA,2013-01-18,"16:30:00","18:30:00","Ballena Sur","Ballena Sur","Elephant seal",4,4,0,0,0,3,0,1,0,0,NA,NA,NA,NA,NA,24,1022
@@ -2265,7 +2266,7 @@
 "2015/16",2016-01-29,2016-01-29,TRUE,"WHA",2016-01-29,"13:00:00","16:15:00","Modulo North","Modulo","Weddell seal",1,1,0,1,0,0,0,0,0,0,NA,NA,0,NA,"036",76,5158
 "2015/16",2016-01-29,2016-01-29,TRUE,"AJK",2016-01-29,"12:55:00","13:30:00","Nibaldo","Nibaldo","Weddell seal",1,1,0,0,0,1,0,0,0,0,NA,NA,0,NA,NA,76,5165
 "2015/16",2016-01-29,2016-01-29,TRUE,"MRK",2016-01-29,"13:40:00","13:59:00","Papua","Papua","Weddell seal",2,2,0,1,0,0,1,0,0,0,NA,NA,0,NA,NA,76,5163
-"2015/16",2016-01-29,2016-01-29,TRUE,"JXS",2016-01-29,"10:45:00","11:50:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",3,3,0,2,1,0,0,NA,0,0,NA,NA,0,NA,NA,76,5151
+"2015/16",2016-01-29,2016-01-29,TRUE,"JXS",2016-01-29,"10:45:00","11:50:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",3,3,0,2,1,0,0,0,0,0,NA,NA,0,NA,NA,76,5151
 "2015/16",2016-02-05,2016-02-05,TRUE,"MRK",2016-02-05,"12:25:00","12:39:00","Alcazar","Alcazar","Elephant seal",3,3,0,0,0,0,0,0,0,0,NA,NA,3,NA,NA,77,5184
 "2015/16",2016-02-05,2016-02-05,TRUE,"AJK",2016-02-05,"11:20:00","11:33:00","Ballena Norte","Ballena Norte","Elephant seal",14,14,0,0,0,0,0,0,0,0,NA,NA,14,NA,NA,77,5178
 "2015/16",2016-02-05,2016-02-05,TRUE,"AJK",2016-02-05,"11:20:00","11:33:00","Ballena Sur","Ballena Sur","Elephant seal",24,24,0,0,0,0,0,0,0,0,NA,NA,24,NA,NA,77,5177
@@ -2490,7 +2491,7 @@
 "2016/17",2016-11-25,2016-11-25,TRUE,"SMW",2016-11-25,"10:10:00","12:59:00","Cachorros","Cachorros","Elephant seal",2,2,0,0,0,0,0,0,2,0,NA,NA,0,NA,NA,86,5496
 "2016/17",2016-11-25,2016-11-25,TRUE,"SMW",2016-11-25,"10:10:00","12:59:00","Chungungo","Chungungo","Elephant seal",5,5,0,0,0,0,2,2,1,0,NA,NA,0,NA,NA,86,5498
 "2016/17",2016-11-25,2016-11-25,TRUE,"WMT",2016-11-25,"10:10:00","12:59:00","Copi","Copi","Elephant seal",1,1,0,0,0,0,0,1,0,0,NA,NA,0,NA,NA,86,5491
-"2016/17",2016-11-25,2016-11-25,TRUE,"MEG",2016-11-25,"09:40:00","11:25:00","Larga","Larga","Elephant seal",11,11,0,0,0,NA,5,3,3,0,NA,NA,0,NA,NA,86,6300
+"2016/17",2016-11-25,2016-11-25,TRUE,"MEG",2016-11-25,"09:40:00","11:25:00","Larga","Larga","Elephant seal",11,11,0,0,0,0,5,3,3,0,NA,NA,0,NA,NA,86,6300
 "2016/17",2016-11-25,2016-11-25,TRUE,"WMT",2016-11-25,"10:10:00","12:59:00","Loberia","Loberia","Elephant seal",1,1,0,0,0,1,0,0,0,0,NA,NA,0,NA,NA,86,5494
 "2016/17",2016-11-25,2016-11-25,TRUE,"WMT",2016-11-25,"10:10:00","12:59:00","Maderas","Maderas","Elephant seal",1,1,0,0,0,0,1,0,0,0,NA,NA,0,NA,"Weaned pup",86,5492
 "2016/17",2016-11-25,2016-11-25,TRUE,"MEG",2016-11-25,"09:40:00","11:25:00","Marko","Marko","Elephant seal",3,3,0,0,0,1,2,0,0,0,NA,NA,0,NA,NA,86,6299
@@ -2570,7 +2571,7 @@
 "2016/17",2016-12-16,2016-12-16,TRUE,"WMT",2016-12-16,"15:43:00","16:58:00","Modulo North","Modulo","Elephant seal",3,3,1,0,0,0,0,2,0,0,NA,NA,0,NA,NA,89,6571
 "2016/17",2016-12-16,2016-12-16,TRUE,"WMT",2016-12-16,"13:04:00","13:51:00","San Telmo, Punta","San Telmo, Punta","Elephant seal",31,31,0,0,0,0,5,9,3,0,NA,NA,14,NA,"pups=weaners",89,6568
 "2016/17",2016-12-16,2016-12-16,TRUE,"SMW",2016-12-16,"10:28:00","12:20:00","Cachorros","Cachorros","Leopard seal",1,1,1,0,0,0,0,0,0,0,NA,NA,0,NA,"Leopard orange 18. Another adult female (orange 398) showed up after I left",89,6557
-"2016/17",2016-12-16,2016-12-16,TRUE,"SMW",2016-12-16,"13:40:00","15:16:00","Paulina-Aranda","Paulina-Aranda","Leopard seal",2,2,1,0,0,0,NA,1,0,0,NA,NA,0,NA,"Juv unkn was orange 111. Female was on Leopard Beach   Beach was Playa Paulina to Aranda",89,6561
+"2016/17",2016-12-16,2016-12-16,TRUE,"SMW",2016-12-16,"13:40:00","15:16:00","Paulina-Aranda","Paulina-Aranda","Leopard seal",2,2,1,0,0,0,0,1,0,0,NA,NA,0,NA,"Juv unkn was orange 111. Female was on Leopard Beach   Beach was Playa Paulina to Aranda",89,6561
 "2016/17",2016-12-16,2016-12-16,TRUE,"NdG",2016-12-16,"12:10:00","12:18:00","Alcazar","Alcazar","Weddell seal",8,8,1,1,3,2,1,0,0,0,NA,NA,0,NA,NA,89,6564
 "2016/17",2016-12-16,2016-12-16,TRUE,"MRK",2016-12-16,"10:28:00","12:20:00","Ballena Norte","Ballena Norte","Weddell seal",5,5,2,2,0,1,0,0,0,0,NA,NA,0,NA,NA,89,6562
 "2016/17",2016-12-16,2016-12-16,TRUE,"WMT",2016-12-16,"13:04:00","13:51:00","Copi","Copi","Weddell seal",1,1,1,0,0,0,0,0,0,0,NA,NA,0,NA,"Hauled out on intertidal rocks",89,6570
@@ -3011,7 +3012,7 @@
 "2017/18",2017-12-15,2017-12-15,TRUE,"NdG",2017-12-15,"10:45:00","11:37:00","Bahamonde","Bahamonde","Weddell seal",2,2,1,1,0,0,0,0,0,0,0,0,0,NA,NA,108,10228
 "2017/18",2017-12-15,2017-12-15,TRUE,"NdG",2017-12-15,"10:45:00","11:37:00","Ballena Norte","Ballena Norte","Weddell seal",8,8,1,5,0,2,0,0,0,0,0,0,0,NA,NA,108,10226
 "2017/18",2017-12-15,2017-12-15,TRUE,"NdG",2017-12-15,"10:45:00","11:37:00","Ballena Sur","Ballena Sur","Weddell seal",1,1,0,1,0,0,0,0,0,0,0,0,0,NA,NA,108,10225
-"2017/18",2017-12-15,2017-12-15,TRUE,"ANF",2017-12-15,"11:30:00","14:00:00","Chungungo","Chungungo","Weddell seal",4,4,2,1,0,1,0,NA,0,0,0,0,0,NA,NA,108,10196
+"2017/18",2017-12-15,2017-12-15,TRUE,"ANF",2017-12-15,"11:30:00","14:00:00","Chungungo","Chungungo","Weddell seal",4,4,2,1,0,1,0,0,0,0,0,0,0,NA,NA,108,10196
 "2017/18",2017-12-15,2017-12-15,TRUE,"DJK",2017-12-15,"10:45:00","11:37:00","Daniel","Daniel","Weddell seal",1,1,0,0,0,0,1,0,0,0,0,0,0,NA,NA,108,10204
 "2017/18",2017-12-15,2017-12-15,TRUE,"SMW",2017-12-15,"10:05:00","11:35:00","Hue West","Hue","Weddell seal",1,1,0,0,0,0,1,0,0,0,0,0,0,NA,"May have been a pup",108,10230
 "2017/18",2017-12-15,2017-12-15,TRUE,"DJK",2017-12-15,"10:45:00","11:37:00","Larga","Larga","Weddell seal",3,3,0,0,0,2,1,0,0,0,0,0,0,NA,NA,108,10207
@@ -3135,7 +3136,7 @@
 "2017/18",2018-01-19,2018-01-19,TRUE,"SMW",2018-01-19,"09:50:00","11:45:00","San Telmo, Punta","San Telmo, Punta","Weddell seal",13,13,4,1,5,1,2,0,0,0,0,0,0,NA,NA,113,10483
 "2017/18",2018-01-26,2018-01-26,TRUE,"SLW",2018-01-26,"11:00:00","13:30:00","Antartico, Playa","Antartico, Playa","Elephant seal",1,1,0,0,0,0,0,1,0,0,0,0,0,NA,NA,114,10506
 "2017/18",2018-01-26,2018-01-26,TRUE,"SMW",2018-01-26,"09:44:00","11:42:00","Ballena Norte","Ballena Norte","Elephant seal",1,1,0,0,0,0,0,1,0,0,0,0,0,NA,NA,114,10511
-"2017/18",2018-01-26,2018-01-26,TRUE,"ANF",2018-01-26,"11:00:00","13:30:00","Chungungo","Chungungo","Elephant seal",24,24,24,0,0,0,0,NA,0,0,0,0,0,NA,NA,114,10496
+"2017/18",2018-01-26,2018-01-26,TRUE,"ANF",2018-01-26,"11:00:00","13:30:00","Chungungo","Chungungo","Elephant seal",24,24,24,0,0,0,0,0,0,0,0,0,0,NA,NA,114,10496
 "2017/18",2018-01-26,2018-01-26,TRUE,"JXS",2018-01-26,"12:45:00","15:15:00","Marko","Marko","Elephant seal",13,13,0,0,0,3,1,9,0,0,0,0,0,NA,NA,114,10514
 "2017/18",2018-01-26,2018-01-26,TRUE,"JXS",2018-01-26,"12:45:00","15:15:00","Media Luna","Media Luna","Elephant seal",276,276,2,0,0,19,11,0,0,0,0,0,244,NA,NA,114,10517
 "2017/18",2018-01-26,2018-01-26,TRUE,"SMW",2018-01-26,"09:44:00","11:42:00","Modulo North","Modulo","Elephant seal",2,2,0,0,0,0,0,1,0,0,0,0,1,NA,NA,114,10501
@@ -3352,7 +3353,7 @@
 "2018/19",2019-01-25,2019-01-25,TRUE,"AFC",2019-01-25,"11:00:00","13:00:00","Cachorros","Cachorros","Elephant seal",15,15,0,0,0,0,0,15,0,0,0,0,0,NA,NA,126,10733
 "2018/19",2019-01-25,2019-01-25,TRUE,"AFC",2019-01-25,"11:00:00","13:00:00","Chungungo","Chungungo","Elephant seal",14,14,0,0,0,4,0,10,0,0,0,0,0,NA,NA,126,10734
 "2018/19",2019-01-25,2019-01-25,TRUE,"MEG",2019-01-25,"11:00:00","13:00:00","Marko","Marko","Elephant seal",1,1,0,0,0,0,0,1,0,0,0,0,0,NA,NA,126,10728
-"2018/19",2019-01-25,2019-01-25,TRUE,"MEG",2019-01-25,"11:00:00","13:00:00","Media Luna","Media Luna","Elephant seal",159,159,147,0,0,NA,4,8,0,0,0,0,0,NA,NA,126,10730
+"2018/19",2019-01-25,2019-01-25,TRUE,"MEG",2019-01-25,"11:00:00","13:00:00","Media Luna","Media Luna","Elephant seal",159,159,147,0,0,0,4,8,0,0,0,0,0,NA,NA,126,10730
 "2018/19",2019-01-25,2019-01-25,TRUE,"ANF",2019-01-25,"14:00:00","16:00:00","San Telmo, Punta","San Telmo, Punta","Elephant seal",76,76,51,0,8,7,1,9,0,0,0,0,0,NA,NA,126,10738
 "2018/19",2019-01-25,2019-01-25,TRUE,"AFC",2019-01-25,"11:00:00","13:00:00","Yamana, Playa","Yamana, Playa","Elephant seal",1,1,0,0,0,0,0,1,0,0,0,0,0,NA,NA,126,10735
 "2018/19",2019-01-25,2019-01-25,TRUE,"MEG",2019-01-25,"11:00:00","13:00:00","Yuseff, Punta","Yuseff, Punta","Elephant seal",49,49,44,0,0,1,2,2,0,0,0,0,0,NA,NA,126,10729
@@ -3399,7 +3400,7 @@
 "2018/19",2019-02-08,2019-02-08,TRUE,"MEG",2019-02-08,"10:30:00","12:00:00","Marko","Marko","Elephant seal",3,3,0,0,0,2,1,0,0,0,0,0,0,NA,NA,128,10776
 "2018/19",2019-02-08,2019-02-08,TRUE,"MEG",2019-02-08,"10:30:00","12:00:00","Media Luna","Media Luna","Elephant seal",142,142,69,2,7,23,3,38,0,0,0,0,0,NA,NA,128,10773
 "2018/19",2019-02-08,2019-02-08,TRUE,"ANF",2019-02-08,"10:30:00","12:00:00","Nibaldo","Nibaldo","Elephant seal",1,1,0,0,0,0,0,1,0,0,0,0,0,NA,NA,128,10790
-"2018/19",2019-02-08,2019-02-08,TRUE,"ANF",2019-02-08,"10:30:00","12:00:00","San Telmo, Punta","San Telmo, Punta","Elephant seal",71,71,30,0,0,NA,0,41,0,0,0,0,0,NA,NA,128,10785
+"2018/19",2019-02-08,2019-02-08,TRUE,"ANF",2019-02-08,"10:30:00","12:00:00","San Telmo, Punta","San Telmo, Punta","Elephant seal",71,71,30,0,0,0,0,41,0,0,0,0,0,NA,NA,128,10785
 "2018/19",2019-02-08,2019-02-08,TRUE,"AFC",2019-02-08,"10:30:00","12:00:00","Yamana, Playa","Yamana, Playa","Elephant seal",1,1,0,0,0,1,0,0,0,0,0,0,0,NA,NA,128,10781
 "2018/19",2019-02-08,2019-02-08,TRUE,"MEG",2019-02-08,"10:30:00","12:00:00","Yuseff, Punta","Yuseff, Punta","Elephant seal",59,59,21,4,9,1,10,14,0,0,0,0,0,NA,NA,128,10774
 "2018/19",2019-02-08,2019-02-08,TRUE,"ANF",2019-02-08,"10:30:00","12:00:00","San Telmo, Punta","San Telmo, Punta","Leopard seal",7,7,7,0,0,0,0,0,0,0,0,0,0,NA,NA,128,10783
@@ -3431,7 +3432,7 @@
 "2018/19",2019-02-15,2019-02-15,TRUE,"AFC",2019-02-15,"10:00:00","11:50:00","Alcazar","Alcazar","Weddell seal",3,3,0,0,0,0,2,1,0,0,0,0,0,NA,NA,129,10811
 "2018/19",2019-02-15,2019-02-15,TRUE,"AFC",2019-02-15,"10:00:00","11:50:00","Bahamonde","Bahamonde","Weddell seal",2,2,1,0,0,0,0,1,0,0,0,0,0,NA,NA,129,10808
 "2018/19",2019-02-15,2019-02-15,TRUE,"AFC",2019-02-15,"10:00:00","11:50:00","Chungungo","Chungungo","Weddell seal",2,2,1,0,0,0,0,1,0,0,0,0,0,NA,NA,129,10803
-"2018/19",2019-02-15,2019-02-15,TRUE,"ANF",2019-02-15,"10:00:00","11:50:00","Hue East","Hue","Weddell seal",1,1,1,0,0,0,NA,0,0,0,0,0,0,NA,NA,129,10798
+"2018/19",2019-02-15,2019-02-15,TRUE,"ANF",2019-02-15,"10:00:00","11:50:00","Hue East","Hue","Weddell seal",1,1,1,0,0,0,0,0,0,0,0,0,0,NA,NA,129,10798
 "2018/19",2019-02-15,2019-02-15,TRUE,"MEG",2019-02-15,"10:00:00","11:50:00","Media Luna","Media Luna","Weddell seal",3,3,1,1,0,0,1,0,0,0,0,0,0,NA,NA,129,10797
 "2018/19",2019-02-15,2019-02-15,TRUE,"AFC",2019-02-15,"10:00:00","11:50:00","Nibaldo","Nibaldo","Weddell seal",2,2,0,0,1,0,0,1,0,0,0,0,0,NA,NA,129,10807
 "2018/19",2019-02-15,2019-02-15,TRUE,"AFC",2019-02-15,"10:00:00","11:50:00","Pinochet de la Barra","Pinochet de la Barra","Weddell seal",1,1,0,0,0,0,0,1,0,0,0,0,0,NA,NA,129,10813

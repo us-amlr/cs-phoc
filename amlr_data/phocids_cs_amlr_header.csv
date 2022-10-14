@@ -24,7 +24,7 @@
 "2010/11",2010-12-18,2010-12-18,1,FALSE,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",171
 "2010/11",2010-12-28,2010-12-30,3,TRUE,"Imported from Excel files. Observers: KWP, RMB, NP. Note that associated census records were assigned the census_date_end value because Excel files did not specify which counts were from which day",172
 "2010/11",2011-01-07,2011-01-07,1,TRUE,"Imported from Excel files. Observers: RMB, KWP, NP",173
-"2010/11",2011-01-15,2011-01-15,1,TRUE,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",174
+"2010/11",2011-01-15,2011-01-15,1,FALSE,"Imported from Excel files. Observers: KWP, MLM, RMB, NP",174
 "2011/12",2011-11-23,2011-11-23,1,TRUE,NA,1
 "2011/12",2011-12-01,2011-12-01,1,TRUE,NA,2
 "2011/12",2011-12-09,2011-12-09,1,TRUE,NA,3

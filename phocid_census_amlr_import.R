@@ -287,6 +287,7 @@ x.200910.list$census <- x.200910.list$census %>%
 
 #-------------------------------------------------------------------------------
 # Import data to ***REMOVED*** - done 8 March 2022
+# NOTE: see updates below
 
 ### Header data
 header.all <- bind_rows(x.200910.list$header, x.201011.list$header)
@@ -334,7 +335,7 @@ stopifnot(
 # 21 Nov 2009 are (were) only record in DB with times
 
 # con.update <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
-#                         Server = "swc-***REMOVED***-s", 
+#                         Server = "swc-***REMOVED***-s",
 #                         Database = "***REMOVED***",
 #                         Trusted_Connection = "Yes", Encrypt = "optional")
 
@@ -360,6 +361,41 @@ update <- dbSendQuery(
   con.update, 'UPDATE census SET "time_start"=?, "time_end"=? WHERE ID=?'
 )
 dbBind(update, select(x.toupdate.merge, time_start, time_end, ID))  # send the updated data
+
+
+#------------------------------------------------
+### 14 Oct 2022: 
+con.update2 <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
+                         Server = "swc-***REMOVED***-s",
+                         Database = "***REMOVED***",
+                         Trusted_Connection = "Yes", Encrypt = "optional")
+
+# a) add Weddell for San Telmo on 23 Oct 2009 (ignore ice flow record)
+wedd.toadd <- data.frame(
+  census_type = 'Phocid', 
+  census_phocid_header_id = tbl(con.update2, "census_phocid_header") |> 
+    filter(census_date_start == '2009-10-23') |> 
+    collect() |> pull(census_phocid_header_id), 
+  census_date = as.Date("2009-10-24"), 
+  time_start = "11:45:00", time_end = "16:30:00", 
+  Beach_ID = tbl(con.update2, "beaches") |> 
+    filter(name == 'San Telmo, Punta') |> 
+    collect() |> pull(ID),
+  species = 'Weddell seal', 
+  ad_female_count = 0, ad_male_count = 0, ad_unk_count = 1, 
+  juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
+  pup_live_count = 0, research_program = 'USAMLR'
+)
+dbAppendTable(con.update2, "census", wedd.toadd)
+
+
+# b) 15 Jan 2011 should be San Telmo not surveyed
+update <- dbSendQuery(
+  con.update2, 
+  paste("UPDATE census_phocid_header SET surveyed_san_telmo = 0", 
+        "where census_date_start = '2011-01-15'")
+)
+dbClearResult(update) 
 
 
 

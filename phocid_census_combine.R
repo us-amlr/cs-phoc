@@ -423,7 +423,6 @@ amlr.d.header <- amlr.header %>%
 
 amlr.d.header.needed <- amlr.d.header %>% 
   filter(!(header_id %in% amlr.d.raw$header_id)) %>%
-  # TODO: confirm we want to do dates this way
   mutate(census_date = as.Date(census_date_end), 
          location = location.st, species = "Elephant seal") %>% 
   func_mutate_header_needed() %>% 
@@ -561,7 +560,7 @@ with(combined.wide, stopifnot(
   all(!is.na(unk_unk_count[
     census_date > as.Date("2014-07-01") & census_date > as.Date("2009-07-01")
   ]))
-)); rm(combined.join)
+))
 
 
 
@@ -598,9 +597,16 @@ write.csv(combined.long, row.names = FALSE, na = "",
 
 #-------------------------------------------------------------------------------
 ### Explore
-# tableNA(combined.header$census_days)
-# 
 # inach %>%
 #   group_by(species, season_name) %>%
 #   summarise(across(ends_with("_count"), function(i) sum(!is.na(i)))) %>%
 #   View()
+
+tableNA(combined.header$census_days)
+tableNA(combined.header$season_name, combined.header$census_days)
+
+census.multdays <- combined.wide |> 
+  filter(header_id %in% (combined.header |> filter(census_days > 1) |> pull(header_id)), 
+         total_count > 1)
+
+tableNA(census.multdays$season_name)

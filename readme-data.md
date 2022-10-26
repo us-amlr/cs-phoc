@@ -15,8 +15,6 @@ Confirm/ok assumptions/decisions that Sam made while combining the data:
 
 General
 
-* Should we add (or more likely move?) research_program to the header table, since there was never an instance where a header record spans data records from both programs? Sam votes yes.
-
 INACH
 
 * 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches can we assume that these surveys include?

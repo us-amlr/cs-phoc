@@ -26,6 +26,11 @@ count_compare <- function(x, y) {
 # INACH
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+# Remove Feb 2007 dates based on notes from Renato
+inach.dates.toremove <- c(
+  as.Date("2007-02-01"), as.Date("2007-02-08"), as.Date("2007-02-16")
+)
+
 ### Read in INACH data, light processing
 inach.header <- read.csv("inach_data/phocids_cs_inach_header.csv") %>% 
   mutate(census_date_start = as.Date(census_date_start), 
@@ -34,7 +39,9 @@ inach.header <- read.csv("inach_data/phocids_cs_inach_header.csv") %>%
                                                as.Date(census_date_start), 
                                                units = "days")), 
          research_program = "INACH") %>% 
-  select(-week)
+  select(-week) %>%
+  filter(!(census_date_start %in% inach.dates.toremove))
+
 inach.orig <- read.csv("inach_data/phocids_cs_inach.csv") %>% 
   mutate(census_date = as.Date(census_date),
          pup_live_count = pup_female_count + pup_male_count, 
@@ -75,10 +82,10 @@ inach <- inach.orig %>%
               as.character(na.omit(census_notes)),
             .groups = "drop") %>% 
   rename(location = location_group) %>% 
-  select(!!names(inach.orig))
-
-# Sanity check
-count_compare(inach.orig, inach)
+  select(!!names(inach.orig)) %>%
+  # # Sanity check
+  # count_compare(inach.orig, inach)
+  filter(!(census_date %in% inach.dates.toremove))
 
 
 
@@ -242,17 +249,17 @@ func_amlr_explicit <- function(x) {
     mutate(time_start = if_else(is.na(time_start), time_start_min, time_start), 
            time_end = if_else(is.na(time_end), time_end_max, time_end)) %>% 
     mutate(pup_dead_count = if_else(
-             census_date > as.Date("2012-07-01") & is.na(pup_dead_count), 
-             as.integer(0), pup_dead_count), 
-           unk_female_count = if_else(
-             census_date > as.Date("2017-07-01") & is.na(unk_female_count), 
-             as.integer(0), unk_female_count), 
-           unk_male_count = if_else(
-             census_date > as.Date("2017-07-01") & is.na(unk_male_count), 
-             as.integer(0), unk_male_count), 
-           unk_unk_count = if_else(
-             census_date > as.Date("2014-07-01") & is.na(unk_unk_count), 
-             as.integer(0), unk_unk_count)) %>% 
+      census_date > as.Date("2012-07-01") & is.na(pup_dead_count), 
+      as.integer(0), pup_dead_count), 
+      unk_female_count = if_else(
+        census_date > as.Date("2017-07-01") & is.na(unk_female_count), 
+        as.integer(0), unk_female_count), 
+      unk_male_count = if_else(
+        census_date > as.Date("2017-07-01") & is.na(unk_male_count), 
+        as.integer(0), unk_male_count), 
+      unk_unk_count = if_else(
+        census_date > as.Date("2014-07-01") & is.na(unk_unk_count), 
+        as.integer(0), unk_unk_count)) %>% 
     select(header_id, season_name, census_date, time_start, time_end, 
            location, species, ends_with("_count"), 
            census_notes, header_notes, orig_record) %>% 

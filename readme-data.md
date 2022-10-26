@@ -8,25 +8,18 @@ The INACH data were extracted from historical INACH records by Renato Borras, an
 
 Confirm/ok assumptions/decisions that Sam made while combining the data:
 
-* Aggregated all records up to 'full beach' level (i.e., location_group in AMLR data). This loses some granularity, but standardizes location names across the two datasets
-	* For instance: E/C/W/S records were aggregated to primary beach. Paso Ancho aggregated to Media Luna in INACH data.
-* Removed census_id and observer columns from the final combined output CSV
 * Discuss/review assumptions used to fill in date/times. See sections below.
 
 General
 
 INACH
 
-* 2005/06: only a single entry for all of Cape Shirreff. Notes say "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo". What beaches can we assume that these surveys include?
-* Remove records from 1 Feb, 8 Feb, and 16 Feb 2007 based on "I would not trust this week" notes?
-* Confirm assumption that San Telmo was never surveyed in INACH data
-
 US AMLR
 
 * Notes about the glacier: what is the south end of Media Luna, by season?
 	* Only 3 records have notes about surveying to the glacier
 	* Sam remembers we normally surveyed this in 2016/17
-* Should 'Paulina-Aranda' actually be 'Paulina-delCanal'? Seems unlikely Remanso-Aranda were surveyed every time, but not sure how this was thoguht about in earlier seasons.
+* Should 'Paulina-Aranda' actually be 'Paulina-delCanal'? Seems unlikely Remanso-Aranda were surveyed every time, but not sure how this was thought about in earlier seasons.
 * Any other beaches that might have year-specific ranges?
 
 ## Data Structure
@@ -98,6 +91,7 @@ These INACH data include records with explicit zeros for when a beach was survey
 
 INACH data decisions:
 
+* Records from 1 Feb 2007, 8 Feb 2007, and 16 Feb 2007 were all removed from the INACH data because of incomplete records in the original Excel files.
 * Records with location 'Nibaldo Bahamondes' were mapped to 'Peninsula Cerro Gajardo' to be consistent with US AMLR data.
 * Records with location 'Punta Olivia' were merged with 'Alcazar' records.
 * Records with location 'Rocas Yeco' were merged with 'Schiappacasse' records.
@@ -107,7 +101,7 @@ INACH data notes:
 
 * Punta San Telmo was not surveyed during any INACH surveys.
 * The INACH data uses a single location, 'Copihue', rather than the 'Copi' and 'Hue' locations used in the US AMLR data. During the INACH surveys, the Copi and Hue beaches were considered a single location known as Copihue. 
-* For 2005/06 there is only a single entry for all of Cape Shirreff. This record contains a note: "There was no per beach countings in the documents. Only total of the whole cape not including San Telmo".
+* For each census date in 2005/06, there is only a single entry for all of Cape Shirreff. These records contains a note that all beaches (not including San Telmo) were recorded in a single count for this season.
 
 ## US AMLR Data Decisions and Notes
 

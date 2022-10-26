@@ -32,7 +32,8 @@ inach.header <- read.csv("inach_data/phocids_cs_inach_header.csv") %>%
          census_date_end = as.Date(census_date_end), 
          census_days = 1 + as.numeric(difftime(as.Date(census_date_end), 
                                                as.Date(census_date_start), 
-                                               units = "days"))) %>% 
+                                               units = "days")), 
+         research_program = "INACH") %>% 
   select(-week)
 inach.orig <- read.csv("inach_data/phocids_cs_inach.csv") %>% 
   mutate(census_date = as.Date(census_date),
@@ -43,9 +44,10 @@ inach.orig <- read.csv("inach_data/phocids_cs_inach.csv") %>%
                                   "{pup_male_count} males; ", 
                                   "{pup_unk_count} unknowns"), 
                          NA_character_)) %>% 
-  select(-c(week, pup_female_count, pup_male_count, pup_unk_count)) %>% 
+  select(-c(week, pup_female_count, pup_male_count, pup_unk_count, 
+            research_program)) %>% 
   rename(census_notes = notes) %>% 
-  left_join(select(inach.header, -c(season_name, census_days)), 
+  left_join(select(inach.header, -c(season_name, census_days, research_program)), 
             by = c("header_id"))
 
 
@@ -65,7 +67,7 @@ inach <- inach.orig %>%
   group_by(header_id, location_group, species) %>% 
   summarise(across(ends_with("_count"), sum), 
             across(
-              c(research_program, season_name, surveyed_san_telmo, 
+              c(season_name, surveyed_san_telmo, 
                 census_date_start, census_date_end, census_date), 
               unique), 
             #confirmed that all Paso Ancho notes are NA
@@ -87,11 +89,11 @@ count_compare(inach.orig, inach)
 #-------------------------------------------------------------------------------
 ### Read in AMLR data, light processing. Add explicit 0 records below
 amlr.header <- read.csv("amlr_data/phocids_cs_amlr_header.csv") %>% 
-  mutate(header_id = as.character(header_id))
+  mutate(header_id = as.character(header_id), 
+         research_program = "USAMLR")
 amlr.orig <- read.csv("amlr_data/phocids_cs_amlr.csv") %>% 
   mutate(header_id = as.character(header_id), 
-         census_date = as.Date(census_date), 
-         research_program = "USAMLR")
+         census_date = as.Date(census_date))
 
 ### Aggregate up to location_group level
 names.agg <- setdiff(
@@ -104,7 +106,7 @@ amlr.agg <- amlr.orig %>%
   group_by(header_id, location_group, species) %>% 
   summarise(across(ends_with("_count"), sum), 
             across(
-              c(research_program, season_name, surveyed_san_telmo, 
+              c(season_name, surveyed_san_telmo, 
                 census_date_start, census_date_end, census_date, 
                 header_notes), 
               unique), 
@@ -239,8 +241,7 @@ func_amlr_explicit <- function(x) {
     left_join(amlr.time.minmax, by = "census_date") %>% 
     mutate(time_start = if_else(is.na(time_start), time_start_min, time_start), 
            time_end = if_else(is.na(time_end), time_end_max, time_end)) %>% 
-    mutate(research_program = "USAMLR", 
-           pup_dead_count = if_else(
+    mutate(pup_dead_count = if_else(
              census_date > as.Date("2012-07-01") & is.na(pup_dead_count), 
              as.integer(0), pup_dead_count), 
            unk_female_count = if_else(
@@ -254,7 +255,7 @@ func_amlr_explicit <- function(x) {
              as.integer(0), unk_unk_count)) %>% 
     select(header_id, season_name, census_date, time_start, time_end, 
            location, species, ends_with("_count"), 
-           census_notes, header_notes, research_program, orig_record) %>% 
+           census_notes, header_notes, orig_record) %>% 
     arrange(census_date, location, species)
 }
 
@@ -490,7 +491,7 @@ combined.header <- amlr.header %>%
   mutate(census_date_start = as.Date(census_date_start), 
          census_date_end = as.Date(census_date_end)) %>% 
   bind_rows(inach.header) %>% 
-  left_join(distinct(bind_rows(amlr, inach), header_id, research_program), 
+  left_join(distinct(bind_rows(amlr, inach), header_id), 
             by = "header_id") %>% 
   select(-surveyed_san_telmo) %>% 
   relocate(header_id) %>% 
@@ -498,7 +499,7 @@ combined.header <- amlr.header %>%
 
 combined.wide <- bind_rows(amlr, inach) %>% 
   select(-c(census_date_start, census_date_end, surveyed_san_telmo, 
-            header_notes, research_program)) %>%
+            header_notes)) %>%
   relocate(orig_record, header_id, 
            .after = last_col()) %>% 
   arrange(census_date, location, species) %>% 

@@ -100,8 +100,8 @@ INACH data decisions:
 INACH data notes:
 
 * Punta San Telmo was not surveyed during any INACH surveys.
-* The INACH data uses a single location, 'Copihue', rather than the 'Copi' and 'Hue' locations used in the US AMLR data. During the INACH surveys, the Copi and Hue beaches were considered a single location known as Copihue. 
-* For each census date in 2005/06, there is only a single entry for all of Cape Shirreff. These records contains a note that all beaches (not including San Telmo) were recorded in a single count for this season.
+* The INACH data uses a single location, 'Copihue', rather than the 'Copi' and 'Hue' locations used in the US AMLR data. During the INACH surveys, the Copi and Hue beaches were considered a single location known as Copihue.
+* For each census date in 2005/06, there is only a single entry for all of Cape Shirreff. These records contains a note that all beaches (i.e., the US AMLR 'regular survey beaches'), except for Punta San Telmo, were recorded in a single count for this season. 
 
 ## US AMLR Data Decisions and Notes
 

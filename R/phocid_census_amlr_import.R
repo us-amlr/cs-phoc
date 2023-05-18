@@ -13,13 +13,9 @@ library(here)
 library(hms)
 library(amlrPinnipeds)
 
-# tableNA <- function(...) table(..., useNA = 'ifany')
-# source("C:/SMW/Databases/***REMOVED***/Scripts-general/mutate_location.R")
 
+### Connect to database and read in relevant tables
 con <- amlr_dbConnect(Database = "***REMOVED***")
-# dbConnect(odbc::odbc(), Driver = "ODBC Driver 18 for SQL Server", 
-#                Server = "swc-***REMOVED***-s", Database = "***REMOVED***",
-#                Encrypt = "Optional", Trusted_Connection = "True")
 
 census <- tbl(con, "census") %>% collect()
 census.phocid <- tbl(con, "vCensus_Phocid") %>% collect() %>% 
@@ -32,18 +28,20 @@ beaches <- tbl(con, "beaches") %>% collect()
 
 
 ### Read original Excel files
+path.amlrdata <- here("data", "amlr_data")
 col.types <- c(
   "numeric", "date", rep("text", 13), rep("numeric", 33), rep("numeric", 2), 
   "date", rep("numeric", 4)
 )
 
+
 x.200910.orig <- read_xlsx(
-  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2009-10.xlsx"), 
+  here(path.amlrdata, "Weekly Phocid Census 2009-10.xlsx"), 
   skip = 2, col_types = col.types
 )
 
 x.201011.orig <- read_xlsx( #same names as x.200910
-  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2010-11.xlsx"), 
+  here(path.amlrdata, "Weekly Phocid Census 2010-11.xlsx"), 
   skip = 2, col_types = col.types
 )
 
@@ -51,18 +49,18 @@ x_201112_time <- function(x) {
   as.character(as.numeric(hms::as_hms(format(x, format = "%H:%M:%S")))/(24*60*60))
 }
 x.201112.orig <- read_xlsx( #same names as x.200910
-  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2011-12.xlsx"), 
+  here(path.amlrdata, "Weekly Phocid Census 2011-12.xlsx"), 
   skip = 2
 ) %>% 
   mutate(`Start time` = x_201112_time(`Start time`), 
          `End time` = x_201112_time(`End time`))
 
 x.201213.orig <- read_xlsx(
-  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2012-13.xlsx"), 
+  here(path.amlrdata, "Weekly Phocid Census 2012-13.xlsx"), 
   sheet = "Weekly Phocid Census 2012-13", skip = 1
 )
 x.201213.orig.wx <- read_xlsx(
-  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2012-13.xlsx"), 
+  here(path.amlrdata, "Weekly Phocid Census 2012-13.xlsx"), 
   sheet = "Sheet1"
 )
 

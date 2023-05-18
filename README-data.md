@@ -1,8 +1,8 @@
 # Cape Shirreff Combined Phocid Census Data
 
-This document details the creation of the combined Cape Shirreff phocid census dataset ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08 and 2008/09 seasons.
+This document details the creation of the combined Cape Shirreff phocid census dataset ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08, 2008/09, and 2020/21 seasons.
 
-The INACH data were extracted from historical INACH records by Renato Borras, and concatenated together using the [phocid_census_inach.R](phocid_census_inach.R) script. The US AMLR data were extracted from the AMLR program's Pinnipeds database using the [phocid_census_amlr_export.R](phocid_census_amlr_export.R) script. The combined data files were generated from the INACH and US AMLR datasets using the [phocid_census_combine.R](phocid_census_combine.R) script. 
+The INACH data were extracted from historical INACH records by Renato Borras, and concatenated together using the [phocid_census_inach.R](R/phocid_census_inach.R) script. The combined data files were generated from the INACH files and US AMLR Pinnipeds database using the [phocid_census_combine.R](R/phocid_census_combine.R) script. 
 
 ## TODO
 
@@ -26,7 +26,7 @@ US AMLR
 
 The phocid census data is split into two tables: a 'census header' table and a 'census data' table'. Having the header table allows us to explicitly group census records from the same phocid census that occurred on multiple days, e.g., if the census effort was split across a Thursday and a Friday. Each record in the data table has a header record ID, which allows each data record to be joined with its corresponding header record.
 
-[phocids_cs_combined_header.csv](cs_combined_data/phocids_cs_combined_header.csv) contains only the phocid census header data, without the census count records. The combined data is provided in two forms: wide (one record per date/location/species; [phocids_cs_combined_wide.csv](cs_combined_data/phocids_cs_combined_wide.csv)) and long (one record per count; [phocids_cs_combined_long.csv](cs_combined_data/phocids_cs_combined_long.csv)). Note that all of the NA counts have been removed in the long data.
+[phocids_cs_combined_header.csv](data/cs_combined_data/phocids_cs_combined_header.csv) contains only the phocid census header data, without the census count records. The combined data is provided in two forms: wide (one record per date/location/species; [phocids_cs_combined_wide.csv](data/cs_combined_data/phocids_cs_combined_wide.csv)) and long (one record per count; [phocids_cs_combined_long.csv](data/cs_combined_data/phocids_cs_combined_long.csv)). Note that all of the NA counts have been removed in the long data.
 
 ### Data Columns
 
@@ -49,7 +49,7 @@ Column descriptions for combined Cape Shirreff phocid census header info and dat
 * **species** the phocid species
 * **census_notes**: observer notes
 * **research_program**: either 'INACH' or 'USAMLR'; the research program that was the source of the observation
-* **orig_record**: for US AMLR records only; a boolean indicating if this was a recorded observation (TRUE) or an explicit zero record that was generated in [phocid_census_combine.R](phocid_census_combine.R) (FALSE). See TODO for more information
+* **orig_record**: for US AMLR records only; a boolean indicating if this was a recorded observation (TRUE) or an explicit zero record that was generated in [phocid_census_combine.R](R/phocid_census_combine.R) (FALSE). See TODO for more information
 * **header_id**: the ID of the corresponding header record
 
 ##### Data table, wide:
@@ -113,7 +113,7 @@ NOTE: The west coast beaches south of Yamana, Golondrina to del Canal, were not 
 
 ### Adding Explicit Zero Records
 
-In the [phocid_census_combine.R](phocid_census_combine.R) script, the [complete](https://tidyr.tidyverse.org/reference/complete.html) function was used to add records with count values of zero as needed to the US AMLR data for 'regular survey beaches' before generating the combined dataset. The AMLR data were split into four parts for this effort:
+In the [phocid_census_combine.R](R/phocid_census_combine.R) script, the [complete](https://tidyr.tidyverse.org/reference/complete.html) function was used to add records with count values of zero as needed to the US AMLR data for 'regular survey beaches' before generating the combined dataset. The AMLR data were split into four parts for this effort:
 
 1) Explicit zero records were generated as needed for locations 'Golondrina-del Lobero' and 'Paulina-Aranda' for all census header records in the AMLR database from the 2009/10 season through the 2017/18 season. 
 
@@ -123,7 +123,7 @@ In the [phocid_census_combine.R](phocid_census_combine.R) script, the [complete]
 
 4) Explicit zero records were generated for Punta San Telmo for all census header records in the AMLR database (2009/10 to present) where the header flag 'surveyed_san_telmo' was recorded as TRUE. 
 
-Thus, the AMLR portion of the [combined data](cs_combined_data/phocids_cs_combined.csv) was the concatenation of the output of these four parts, as well as the remaining records from 'non-regular survey beaches'.
+Thus, the AMLR portion of the [combined data](data/cs_combined_data/phocids_cs_combined.csv) was the concatenation of the output of these four parts, as well as the remaining records from 'non-regular survey beaches'.
 
 The following sections detail assumptions were made when generating these explicit zero records.
 
@@ -133,7 +133,7 @@ The following sections detail assumptions were made when generating these explic
 
 * For parts 1 and 2, it was assumed that these locations (or location aggregations) were always surveyed on the same day because of their proximity whenever census date information was available for any beach. Thus, if there were any data records in these parts for a given header record, the other data records were assigned the same date.
 
-* For parts 3 and 4 if there were no data records for a particular location for a given header, and parts 1 and 2 when there were no data records at all for a given header record, then the explicit zero record was assigned the census_date_end value (the last day of that census) from the corresponding header record. This decision was consistent with the decision made when [importing historical US AMLR records](phocid_census_amlr_import.R) from Excel files.
+* For parts 3 and 4 if there were no data records for a particular location for a given header, and parts 1 and 2 when there were no data records at all for a given header record, then the explicit zero record was assigned the census_date_end value (the last day of that census) from the corresponding header record. This decision was consistent with the decision made when [importing historical US AMLR records](R/phocid_census_amlr_import.R) from Excel files.
 
 #### Times: 
 

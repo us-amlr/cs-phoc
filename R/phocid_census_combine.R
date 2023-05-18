@@ -5,18 +5,28 @@
 library(tidyverse)
 library(here)
 library(amlrPinnipeds)
+library(waldo)
 
 # Get sums of each count for two data frames, to confirm numbers are consistent
-count_compare <- function(x, y) {
-  count_summ <- function(i) {
-    i %>% 
-      group_by(header_id, species) %>% 
-      summarise(across(ends_with("_count"), sum), .groups = "drop")
-  }
+count_summ <- function(i, nozero = FALSE) {
+  tmp <- i %>% 
+    group_by(header_id, species) %>% 
+    summarise(across(ends_with("_count"), sum), .groups = "drop")
   
-  d1 <- count_summ(x)
-  d2 <- count_summ(y)
-  waldo::compare(d1, d2)
+  if (nozero) {
+    tmp %>% 
+      mutate(across(ends_with("_count"), ~ replace_na(.x, 0))) %>% 
+      rowwise() %>% 
+      filter(!all(c_across(ends_with("_count")) == 0)) %>% 
+      ungroup()
+  } else {
+    tmp
+  }
+}
+
+# Wrapper to quickly compare count_summ output
+count_compare <- function(x, y, nozero = FALSE) {
+  waldo::compare(count_summ(x, nozero), count_summ(y, nozero))
 }
 
 
@@ -96,23 +106,54 @@ inach <- inach.orig %>%
 # US AMLR
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-### Read in AMLR data, light processing. Add explicit 0 records below
-amlr.header <- read.csv(here("data", "amlr_data", 
-                             "phocids_cs_amlr_header.csv")) %>% 
+### Read in AMLR data from database, do light processing. 
+# Explicit 0 records are added below
+con <- amlr_dbConnect(Database="***REMOVED***")
+
+### Header
+amlr.header.orig <- tbl(con, "vCensus_Phocid_Header") %>% 
+  select(season_name, census_date_start, census_date_end, census_days, 
+         surveyed_san_telmo, 
+         header_notes = notes, header_id = census_phocid_header_id) %>% 
+  arrange(season_name, census_date_start) %>% 
+  collect()
+
+write.csv(amlr.header.orig, row.names = FALSE,
+          file = here("data", "amlr_data", "phocids_cs_amlr_header.csv"))
+
+amlr.header <- amlr.header.orig %>% 
   mutate(header_id = as.character(header_id), 
          research_program = "USAMLR")
 
-amlr.orig <- read.csv(here("data", "amlr_data", "phocids_cs_amlr.csv")) %>% 
-  mutate(header_id = as.character(header_id), 
-         census_date = as.Date(census_date))
 
-### Aggregate up to location_group level
+### Census data
+amlr.orig <- tbl(con, "vCensus_Phocid") %>% 
+  arrange(season_name, census_date, species, location_group) %>% 
+  rename(header_id = census_phocid_header_id) %>% 
+  collect() %>% 
+  rowwise() %>% 
+  mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), na.rm = TRUE), 
+         total_count_nodead = sum(c_across(c(ad_female_count:pup_live_count, 
+                                             unk_female_count:unk_unk_count)), 
+                                  na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  select(season_name, census_date_start, census_date_end, surveyed_san_telmo, 
+         observer:location_group, species, 
+         total_count, total_count_nodead, ad_female_count:unk_unk_count, 
+         header_notes, census_notes, header_id, census_id)
+
+write.csv(amlr.orig, row.names = FALSE,
+          file = here("data", "amlr_data", "phocids_cs_amlr.csv"))
+
+
+# Aggregate up to location_group level
 names.agg <- setdiff(
   names(amlr.orig), 
   c("location_group", "observer", "census_id", 
     "total_count", "total_count_nodead")
 )
 amlr.agg <- amlr.orig %>% 
+  mutate(header_id = as.character(header_id)) %>% 
   select(-c(observer, total_count, total_count_nodead)) %>% 
   group_by(header_id, location_group, species) %>% 
   summarise(across(ends_with("_count"), sum), 
@@ -133,8 +174,15 @@ amlr.agg <- amlr.orig %>%
 
 
 # Sanity checks - all ok
-# count_compare(select(amlr.orig, -total_count), amlr.agg)
-# amlr.agg %>% filter(is.na(time_start) | is.na(time_end))
+stopifnot(
+  nrow(amlr.agg %>% filter(is.na(time_start) | is.na(time_end))) == 0, 
+  all.equal(
+    amlr.orig %>% 
+      mutate(header_id = as.character(header_id)) %>% select(-total_count) %>% 
+      count_summ(), 
+    count_summ(amlr.agg)
+  )
+)
 
 
 # Explore
@@ -319,7 +367,7 @@ amlr.a.new <- amlr.a.raw %>%
   func_amlr_explicit()
 
 # Sanity check that no counts were added
-count_compare(amlr.a.raw, amlr.a.new)
+count_compare(amlr.a.raw, amlr.a.new, nozero = TRUE)
 
 # Clean up
 rm(amlr.a.raw, amlr.a.header, amlr.a.header.needed)
@@ -337,7 +385,6 @@ amlr.b.header <- amlr.header %>%
 
 amlr.b.header.needed <- amlr.b.header %>% 
   filter(!(header_id %in% amlr.b.raw$header_id)) %>% 
-  # TODO: confirm we want to do dates this way
   mutate(census_date = as.Date(census_date_end), 
          location = location.regular.wc[1], species = "Elephant seal") %>% 
   func_mutate_header_needed() %>% 
@@ -369,7 +416,7 @@ amlr.b.new <- amlr.b.raw %>%
   func_amlr_explicit()
 
 # Sanity check that no counts were added
-count_compare(amlr.b.raw, amlr.b.new)
+count_compare(amlr.b.raw, amlr.b.new, nozero = TRUE)
 
 # Clean up
 rm(amlr.b.raw, amlr.b.header, amlr.b.header.needed)
@@ -408,7 +455,7 @@ amlr.c.new <- amlr.c.raw %>%
   func_amlr_explicit() 
 
 # Sanity check that no counts were added, and that all times got values
-count_compare(amlr.c.raw, amlr.c.new)
+count_compare(amlr.c.raw, amlr.c.new, nozero = TRUE)
 with(amlr.c.new, tableNA(season_name, is.na(time_start)))
 
 # Clean up
@@ -453,7 +500,7 @@ amlr.d.new <- amlr.d.raw %>%
   func_amlr_explicit()
 
 # Sanity check that no counts were added
-count_compare(amlr.d.raw, amlr.d.new)
+count_compare(amlr.d.raw, amlr.d.new, nozero = TRUE)
 
 # Clean up 
 rm(amlr.d.raw, amlr.d.header, amlr.d.header.needed)
@@ -466,7 +513,7 @@ amlr.opportunistic <- amlr.agg %>%
   select(-c(season_name:surveyed_san_telmo, header_notes)) %>% 
   mutate(orig_record = TRUE) %>% 
   filter(!(location %in% c(location.regular.wc, location.regular.nwc, 
-                           location.regular.wc.agg))) %>% 
+                           location.regular.wc.agg, location.st))) %>% 
   left_join(amlr.header.pre, by = "header_id") %>%
   select(!!names(amlr.a.new))
 
@@ -480,12 +527,18 @@ amlr <- bind_rows(amlr.a.new, amlr.b.new, amlr.c.new, amlr.d.new,
          census_date_end = as.Date(census_date_end))
 
 # Sanity check that no counts were added, and that dates and times are ok
-count_compare(amlr.orig, amlr)
+d1 <- amlr.orig %>% 
+  mutate(header_id = as.character(header_id)) %>%  select(-total_count) %>% 
+  count_summ(nozero = TRUE)
+d2 <- count_summ(amlr, nozero = TRUE)
+count_compare(d1, d2, nozero = TRUE)
+
 stopifnot(
   0 == sum(is.na(amlr$census_date)), 
   0 == sum(is.na(amlr$time_start)), 
   0 == sum(is.na(amlr$time_end))
 )
+rm(d1, d2, amlr.a.new, amlr.b.new, amlr.c.new, amlr.d.new, amlr.opportunistic)
 
 
 
@@ -509,18 +562,12 @@ combined.header <- amlr.header %>%
 combined.wide <- bind_rows(amlr, inach) %>% 
   select(-c(census_date_start, census_date_end, surveyed_san_telmo, 
             header_notes)) %>%
-  relocate(orig_record, header_id, 
-           .after = last_col()) %>% 
-  arrange(census_date, location, species) %>% 
+  relocate(orig_record, header_id, .after = last_col())%>% 
   rowwise() %>% 
   mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), na.rm = TRUE), 
          total_count_nodead = total_count-pup_dead_count) %>% 
-  ungroup()
-
-combined.join <- combined.wide %>% 
-  #confirmed if this is commented then season_name.x and .y are equivalent
-  select(-season_name) %>%
-  left_join(combined.header, by = "header_id")
+  ungroup() %>% 
+  arrange(census_date, tolower(location), species) 
 
 
 
@@ -529,6 +576,11 @@ tableNA(combined.header$season_name)
 tableNA(combined.wide$season_name)
 
 stopifnot(all(combined.header$research_program %in% c("INACH", "USAMLR")))
+
+combined.join <- combined.wide %>% 
+  #confirmed if this is commented then season_name.x and .y are equivalent
+  select(-season_name) %>%
+  left_join(combined.header, by = "header_id")
 
 with(combined.wide, stopifnot(
   all(combined.header$research_program %in% c("INACH", "USAMLR")), 
@@ -551,7 +603,6 @@ with(combined.wide, stopifnot(
   all(!is.na(ad_male_count)), 
   #`census_date > as.Date("2009-07-01")` is equivalent to 'USAMLR' filter
   all(!is.na(ad_unk_count[census_date > as.Date("2009-07-01")])),
-  # TODO: issue 56p
   # all(!is.na(juv_female_count[research_program == "USAMLR"])), 
   # all(!is.na(juv_male_count[research_program == "USAMLR"])), 
   # all(!is.na(juv_unk_count[research_program == "USAMLR"])), 
@@ -597,13 +648,13 @@ combined.long <- combined.wide %>%
 
 
 ### Write to CSV
-data.combined <- here("data", "cs_combined_data")
+path.combined <- here("data", "cs_combined_data")
 write.csv(combined.header, row.names = FALSE, na = "",
-          file = here(data.combined, "phocids_cs_combined_header.csv"))
+          file = here(path.combined, "phocids_cs_combined_header.csv"))
 write.csv(combined.wide, row.names = FALSE, na = "",
-          file = here(data.combined, "phocids_cs_combined_wide.csv"))
+          file = here(path.combined, "phocids_cs_combined_wide.csv"))
 write.csv(combined.long, row.names = FALSE, na = "",
-          file = here(data.combined, "phocids_cs_combined_long.csv"))
+          file = here(path.combined, "phocids_cs_combined_long.csv"))
 
 
 #-------------------------------------------------------------------------------

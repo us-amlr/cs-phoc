@@ -5,6 +5,7 @@ library(tidyverse)
 library(readxl)
 library(lubridate)
 library(odbc)
+library(here)
 
 tableNA <- function(...) table(..., useNA = 'ifany')
 
@@ -22,8 +23,10 @@ season.info <- tbl(con, "season_info") %>% collect()
 ### Read in census data, one species to sheet
 x.info.names <- c("season_name", "week", "census_date", "location")
 x.info.types <- c("text", "numeric", "date", "text")
-phocid.file.name <- file.path(
-  "inach_data", "phocids Cape shirreff 97-2007 VERSION july22.xlsx"
+inach.data <- here("data", "inach_data")
+
+phocid.file.name <- here(
+  inach.data, "phocids Cape shirreff 97-2007 VERSION july22.xlsx"
 )
 # "skip", "guess", "logical", "numeric", "date", "text" or "list"
 
@@ -103,7 +106,7 @@ stopifnot(
 
 
 ################################################################################
-# Organize combined data frame, and explore
+# Organize combined data frame
 x <- x.orig  %>% 
   arrange(census_date, location, species) %>% 
   mutate(header_id = paste(season_name, str_pad(week, 2, "left", 0), 
@@ -145,9 +148,13 @@ x.header <- x %>%
             surveyed_san_telmo = FALSE, 
             .groups = "drop")
 
-write.csv(x, row.names = FALSE, file = "inach_data/phocids_cs_inach.csv")
-write.csv(x.header, row.names = FALSE, file = "inach_data/phocids_cs_inach_header.csv")
+write.csv(x, row.names = FALSE, file = here(inach.data, "phocids_cs_inach.csv"))
+write.csv(x.header, row.names = FALSE, 
+          file = here(inach.data, "phocids_cs_inach_header.csv"))
 
+
+################################################################################
+# Explore INACH data for potential issues
 
 #-------------------------------------------------------------------------------
 ### Issues/questions - v1 sent to Renato 9 Mar 2022

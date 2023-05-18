@@ -14,4 +14,4 @@ See the [readme-data](readme-data.md) markdown file for descriptions of the data
 
 * phocid_census_inach.R: Script to read in, process, and combine raw INACH phocid census data. Writes concatenated INACH data to 'inach_data' folder.
 
-* phocid_census_combine.R: Combine INACH and US AMLR data into single data frame(s), and write to CSV files in 'cs_combined_out' folder.
+* phocid_census_combine.R: Combine INACH and US AMLR data into single data frame(s), and write to CSV files in 'cs_combined_data' folder.

@@ -3,19 +3,19 @@
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 library(tidyverse)
-
-tableNA <- function(...) table(..., useNA = 'ifany')
+library(here)
+library(amlrPinnipeds)
 
 # Get sums of each count for two data frames, to confirm numbers are consistent
-count_summ <- function(i) {
-  i %>% 
-    group_by(header_id, species) %>% 
-    summarise(across(ends_with("_count"), sum), .groups = "drop")
-}
-
 count_compare <- function(x, y) {
-  d1 <- count_summ(inach.orig)
-  d2 <- count_summ(inach)
+  count_summ <- function(i) {
+    i %>% 
+      group_by(header_id, species) %>% 
+      summarise(across(ends_with("_count"), sum), .groups = "drop")
+  }
+  
+  d1 <- count_summ(x)
+  d2 <- count_summ(y)
   waldo::compare(d1, d2)
 }
 
@@ -31,8 +31,9 @@ inach.dates.toremove <- c(
   as.Date("2007-02-01"), as.Date("2007-02-08"), as.Date("2007-02-16")
 )
 
-### Read in INACH data, light processing
-inach.header <- read.csv("inach_data/phocids_cs_inach_header.csv") %>% 
+# Read in INACH data, light processing
+inach.header <- read.csv(here("data", "inach_data", 
+                              "phocids_cs_inach_header.csv")) %>% 
   mutate(census_date_start = as.Date(census_date_start), 
          census_date_end = as.Date(census_date_end), 
          census_days = 1 + as.numeric(difftime(as.Date(census_date_end), 
@@ -42,7 +43,7 @@ inach.header <- read.csv("inach_data/phocids_cs_inach_header.csv") %>%
   select(-week) %>%
   filter(!(census_date_start %in% inach.dates.toremove))
 
-inach.orig <- read.csv("inach_data/phocids_cs_inach.csv") %>% 
+inach.orig <- read.csv(here("data", "inach_data", "phocids_cs_inach.csv")) %>% 
   mutate(census_date = as.Date(census_date),
          pup_live_count = pup_female_count + pup_male_count, 
          notes = if_else(pup_live_count > 0, 
@@ -58,14 +59,16 @@ inach.orig <- read.csv("inach_data/phocids_cs_inach.csv") %>%
             by = c("header_id"))
 
 
-# Explore
-with(inach.orig %>% 
-       filter(location %in% c("Bahamonde", "Nibaldo", 
-                              "Cerro Gajardo, Peninsula", "Cape Shirreff")), 
-     tableNA(location, season_name))
+# # Explore
+# with(inach.orig %>% 
+#        filter(location %in% c("Bahamonde", "Nibaldo", 
+#                               "Cerro Gajardo, Peninsula", "Cape Shirreff")), 
+#      tableNA(season_name, location))
+# tableNA(inach.header$season_name)
 
 
-### Aggregate Paso Ancho and Media Luna records
+# Group/sum INACH records by header ID, location, and species
+#   Including Aggregate Paso Ancho and Media Luna records
 inach <- inach.orig %>% 
   mutate(location_group = case_when(
     location == "Paso Ancho" ~ "Media Luna", 
@@ -83,22 +86,23 @@ inach <- inach.orig %>%
             .groups = "drop") %>% 
   rename(location = location_group) %>% 
   select(!!names(inach.orig)) %>%
-  # # Sanity check
-  # count_compare(inach.orig, inach)
+  # # Sanity check: `count_compare(inach.orig, inach)`
   filter(!(census_date %in% inach.dates.toremove))
 
 
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# AMLR
+# US AMLR
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 ### Read in AMLR data, light processing. Add explicit 0 records below
-amlr.header <- read.csv("amlr_data/phocids_cs_amlr_header.csv") %>% 
+amlr.header <- read.csv(here("data", "amlr_data", 
+                             "phocids_cs_amlr_header.csv")) %>% 
   mutate(header_id = as.character(header_id), 
          research_program = "USAMLR")
-amlr.orig <- read.csv("amlr_data/phocids_cs_amlr.csv") %>% 
+
+amlr.orig <- read.csv(here("data", "amlr_data", "phocids_cs_amlr.csv")) %>% 
   mutate(header_id = as.character(header_id), 
          census_date = as.Date(census_date))
 
@@ -112,11 +116,10 @@ amlr.agg <- amlr.orig %>%
   select(-c(observer, total_count, total_count_nodead)) %>% 
   group_by(header_id, location_group, species) %>% 
   summarise(across(ends_with("_count"), sum), 
-            across(
-              c(season_name, surveyed_san_telmo, 
-                census_date_start, census_date_end, census_date, 
-                header_notes), 
-              unique), 
+            across(c(season_name, surveyed_san_telmo, 
+                     census_date_start, census_date_end, census_date, 
+                     header_notes), 
+                   unique), 
             #suppressWarnings is for message from min(NA)
             time_start = suppressWarnings(min(time_start, na.rm = TRUE)), 
             time_end = suppressWarnings(min(time_end, na.rm = TRUE)), 
@@ -129,22 +132,21 @@ amlr.agg <- amlr.orig %>%
   select(!!names.agg)
 
 
-# Sanity checks
-count_compare(amlr.orig, amlr.agg)
-# #doesn't add up because there aren't necessarily multiple records, fine
-# nrow(amlr.orig %>% filter(location != location_group)) 
-#no time NA
-amlr.agg %>% filter(is.na(time_start) | is.na(time_end))
+# Sanity checks - all ok
+# count_compare(select(amlr.orig, -total_count), amlr.agg)
+# amlr.agg %>% filter(is.na(time_start) | is.na(time_end))
 
 
 # Explore
-# #reminder that there are a few instances of folks putting 0 records for beaches,
-# #which will mean that these 0s will have exact times in explicit data
+# nrow(amlr.orig %>% filter(location != location_group)) 
 # amlr0 <- amlr.orig %>%
 #   rowwise() %>%
 #   mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), 
 #                            na.rm = TRUE)) %>%
 #   filter(total_count == 0)
+# ^ is a reminder that there are a few instances of entered 0 records for 
+#   beaches,which will mean that these 0s will have exact times in explicit data
+
 
 
 
@@ -595,12 +597,13 @@ combined.long <- combined.wide %>%
 
 
 ### Write to CSV
+data.combined <- here("data", "cs_combined_data")
 write.csv(combined.header, row.names = FALSE, na = "",
-          file = "cs_combined_data/phocids_cs_combined_header.csv")
+          file = here(data.combined, "phocids_cs_combined_header.csv"))
 write.csv(combined.wide, row.names = FALSE, na = "",
-          file = "cs_combined_data/phocids_cs_combined_wide.csv")
+          file = here(data.combined, "phocids_cs_combined_wide.csv"))
 write.csv(combined.long, row.names = FALSE, na = "",
-          file = "cs_combined_data/phocids_cs_combined_long.csv")
+          file = here(data.combined, "phocids_cs_combined_long.csv"))
 
 
 #-------------------------------------------------------------------------------

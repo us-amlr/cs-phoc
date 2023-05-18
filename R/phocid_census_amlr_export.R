@@ -3,22 +3,13 @@
 #   census_phocid_header_id is renamed to header_id
 
 
-library(odbc)
 library(dplyr)
 library(googlesheets4)
+library(here)
+library(amlrPinnipeds)
 
 
-con <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server", 
-                 Server = "swc-***REMOVED***-s", 
-                 Database = "***REMOVED***",
-                 Trusted_Connection = "Yes", 
-                 Encrypt = "Optional")
-
-# # Sheet deleted 14 Oct 2022
-# url.export <- paste0(
-#   "https://docs.google.com/spreadsheets/d/", 
-#   "1bzjN_uUcJxc7o-CnPEa4U69QJWVlDpCB92oteaGM_Ec"
-# )
+con <- amlr_dbConnect(Database = "***REMOVED***")
 
 
 # Get all data and write to a sheet
@@ -45,7 +36,7 @@ x.tosend <- x %>%
 
 # write_sheet(x.tosend, ss = url.export, sheet = "phocids_cs_amlr")
 write.csv(x.tosend, row.names = FALSE,
-          file = "amlr_data/phocids_cs_amlr.csv")
+          file = here("data", "amlr_data", "phocids_cs_amlr.csv"))
 
 # Write header data to sheet
 x.header <- tbl(con, "vCensus_Phocid_Header") %>% 
@@ -57,7 +48,7 @@ x.header <- tbl(con, "vCensus_Phocid_Header") %>%
 
 # write_sheet(x.header, ss = url.export, sheet = "phocids_cs_amlr_header")
 write.csv(x.header, row.names = FALSE,
-          file = "amlr_data/phocids_cs_amlr_header.csv")
+          file = here("data", "amlr_data", "phocids_cs_amlr_header.csv"))
 
 
 # sanity checks

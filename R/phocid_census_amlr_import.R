@@ -1,4 +1,4 @@
-# Import data from Mike's Excel files for 2009/10 - 2012/13. 
+# Import data from Excel files for 2009/10 - 2012/13. 
 # This script has been updated to account for the census_phocid_header table
 # See here for decisions: 
 #   https://docs.google.com/document/d/1B3xK8ba0YQE4y3MPw5E04O7IaYOz94DuljDAfA4-7iY
@@ -9,15 +9,17 @@ library(stringr)
 library(lubridate)
 library(readxl)
 library(odbc)
+library(here)
+library(hms)
+library(amlrPinnipeds)
 
-tableNA <- function(...) table(..., useNA = 'ifany')
-source("C:/SMW/Databases/***REMOVED***/Scripts-general/mutate_location.R")
+# tableNA <- function(...) table(..., useNA = 'ifany')
+# source("C:/SMW/Databases/***REMOVED***/Scripts-general/mutate_location.R")
 
-con <- dbConnect(odbc(), Driver = "SQL Server", #"SQL Server Native Client 11.0",
-                 Server = "swc-***REMOVED***-s", 
-                 Database = "***REMOVED***",
-                 # Database = "***REMOVED***_Test",
-                 Trusted_Connection = "True")
+con <- amlr_dbConnect(Database = "***REMOVED***")
+# dbConnect(odbc::odbc(), Driver = "ODBC Driver 18 for SQL Server", 
+#                Server = "swc-***REMOVED***-s", Database = "***REMOVED***",
+#                Encrypt = "Optional", Trusted_Connection = "True")
 
 census <- tbl(con, "census") %>% collect()
 census.phocid <- tbl(con, "vCensus_Phocid") %>% collect() %>% 
@@ -27,7 +29,6 @@ census.phocid <- tbl(con, "vCensus_Phocid") %>% collect() %>%
   ungroup() %>% 
   select(season_info_id:species, count_sum, everything())
 beaches <- tbl(con, "beaches") %>% collect()
-# lookup.age.class <- tbl(con, "lookup_age_class") %>% collect()
 
 
 ### Read original Excel files
@@ -37,28 +38,31 @@ col.types <- c(
 )
 
 x.200910.orig <- read_xlsx(
-  "15-Weekly Phocid census/Weekly Phocid Census 2009-10.xlsx", skip = 2, 
-  col_types = col.types
+  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2009-10.xlsx"), 
+  skip = 2, col_types = col.types
 )
+
 x.201011.orig <- read_xlsx( #same names as x.200910
-  "15-Weekly Phocid census/Weekly Phocid Census 2010-11.xlsx", skip = 2, 
-  col_types = col.types
+  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2010-11.xlsx"), 
+  skip = 2, col_types = col.types
 )
+
 x_201112_time <- function(x) {
   as.character(as.numeric(hms::as_hms(format(x, format = "%H:%M:%S")))/(24*60*60))
 }
 x.201112.orig <- read_xlsx( #same names as x.200910
-  "15-Weekly Phocid census/Weekly Phocid Census 2011-12.xlsx", skip = 2
+  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2011-12.xlsx"), 
+  skip = 2
 ) %>% 
   mutate(`Start time` = x_201112_time(`Start time`), 
          `End time` = x_201112_time(`End time`))
 
 x.201213.orig <- read_xlsx(
-  "15-Weekly Phocid census/Weekly Phocid Census 2012-13.xlsx", 
+  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2012-13.xlsx"), 
   sheet = "Weekly Phocid Census 2012-13", skip = 1
 )
 x.201213.orig.wx <- read_xlsx(
-  "15-Weekly Phocid census/Weekly Phocid Census 2012-13.xlsx", 
+  here("data", "15-Weekly Phocid census", "Weekly Phocid Census 2012-13.xlsx"), 
   sheet = "Sheet1"
 )
 
@@ -191,7 +195,6 @@ census_proc <- function(x.orig) {
            pup_live_count, everything(), research_program)
   
   ### Messages and error checks
-  # TODO: change to $name
   b.bad <- sort(unique(filter(x.census, !(location %in% beaches$name))$location))
   if (length(b.bad) > 0) {
     print("BEACHES TO FIX") 
@@ -238,9 +241,6 @@ census_proc <- function(x.orig) {
 x.200910.list <- census_proc(x.200910.orig)
 x.201011.list <- census_proc(x.201011.orig)
 
-# View(x.201011.list$header)
-# View(x.201011.list$census)
-
 
 ### 2009/10 specific processing based on comments
 x.200910.list$header <- x.200910.list$header %>% 
@@ -286,7 +286,7 @@ x.200910.list$census <- x.200910.list$census %>%
 
 
 #-------------------------------------------------------------------------------
-# Import data to ***REMOVED*** - done 8 March 2022
+# Import data to ***REMOVED*** - DONE 8 March 2022
 # NOTE: see updates below
 
 ### Header data
@@ -334,10 +334,7 @@ stopifnot(
 ### 9 Oct 2022: Update 2009/10 records with times
 # 21 Nov 2009 are (were) only record in DB with times
 
-# con.update <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
-#                         Server = "swc-***REMOVED***-s",
-#                         Database = "***REMOVED***",
-#                         Trusted_Connection = "Yes", Encrypt = "optional")
+# con.update <- amlr_dbConnect(Database = "***REMOVED***")
 
 x.toupdate <- tbl(con.update, "census") %>% 
   filter(census_type == "Phocid", 
@@ -351,11 +348,6 @@ x.toupdate.merge <- x.toupdate %>%
   left_join(select(x.200910.census, census_date, Beach_ID, species, 
                    time_start, time_end), 
             by = c("census_date", "Beach_ID", "species"))
-# mutate(sql_update = glue::glue("select *, ", 
-#                                "time_start = '{time_start}', ", 
-#                                "time_end = '{time_end}' ", 
-#                                "from census where ID = {ID}"))
-
 
 update <- dbSendQuery(
   con.update, 'UPDATE census SET "time_start"=?, "time_end"=? WHERE ID=?'
@@ -365,10 +357,8 @@ dbBind(update, select(x.toupdate.merge, time_start, time_end, ID))  # send the u
 
 #------------------------------------------------
 ### 14 Oct 2022: 
-con.update2 <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
-                         Server = "swc-***REMOVED***-s",
-                         Database = "***REMOVED***",
-                         Trusted_Connection = "Yes", Encrypt = "optional")
+
+# con.update2 <- amlr_dbConnect(Database = "***REMOVED***")
 
 # a) add Weddell for San Telmo on 23 Oct 2009 (ignore ice flow record)
 wedd.toadd <- data.frame(
@@ -414,7 +404,7 @@ x.201213 <- x.201213.orig %>%
          pup_live_count = pups_live_count, pup_dead_count = pups_dead_count, 
          notes_census = notes, created_dt_census = created_dt) %>% 
   mutate(species = str_to_sentence(species), 
-         location = case_when( #For matching with beaches.Name value
+         location = case_when( #For matching with beaches.name value
            location == "Punta Delphin to La Caverna" ~ "Punta Delphin-La Caverna", 
            location == "Playa Golondrina to P. del Lobero" ~ "Golondrina-del Lobero", 
            location == "Playa Paulina to Aranda" ~ "Paulina-Aranda", 
@@ -458,7 +448,7 @@ nojoin.summ <- bind_rows(ex.summ, db.summ) %>%
 
 
 #-------------------------------------------------------------------------------
-# 2011/12 comparison and reimport. Reimport done on 1 April 2022
+# 2011/12 comparison and reimport. Reimport DONE on 1 April 2022
 # NOTE 29 June 2022: 16 duplicate records were imported for 2011/12. 
 #   These were deleted using Access and history note added in 2019/20 Issue 56d
 x.201112.list <- census_proc(x.201112.orig)
@@ -511,8 +501,6 @@ z.201112.mismatch <- z.201112 %>%
 #   z.201112.mismatch, sheet = "phocid_mismatch_2011/12", 
 #   ss = "https://docs.google.com/spreadsheets/d/1naKQhjKdv8JsuiG3VANkeAk7uYtYYgSRgjIi7dQMObk"
 # )
-
-# dup.201112 <- y.201112 %>% census_dup() #all captured above now
 
 
 

@@ -1,6 +1,10 @@
-# US AMLR Phocid Census Data
+# US AMLR Phocid Census Data - Raw
 
-Notes about US AMLR Cape Shirreff Phocid Census data ([phocid_census_us_amlr.csv](amlr_data/phocid_census_us_amlr.csv)). These data span 2009/10 - present. This file was created using the [phocids_census_amlr_export.R](phocids_census_amlr_export.R) script.
+The 'Weekly Phocid Census YYYY-YY' files are the original files from the indicated field seasons. They were imported into the US AMLR Pinnipeds database using the [phocid_census_amlr_import](R/phocid_census_amlr_import.R) script.
+
+# US AMLR Phocid Census Data - Processed
+
+Notes about US AMLR Cape Shirreff Phocid Census data ([phocid_census_us_amlr_header.csv](data/amlr_data/phocid_census_us_amlr_header.csv) and [phocid_census_us_amlr.csv](data/amlr_data/phocid_census_us_amlr.csv)). These data span 2009/10 - present. These files were created in the [phocids_census_combine.R](R/phocids_census_combine.R) script.
 
 ## Database Structure
 
@@ -9,11 +13,11 @@ The phocid census data in the US AMLR Pinnipeds database is split into two table
 1) explicitly group census records from the same phocid census that occurred on different days, e.g., if the census effort was split across a Thursday and a Friday. 
 2) explicitly indicate if Punta San Telmo was surveyed to differentiate between 'there are no San Telmo records because no one surveyed it' and 'there are no San Telmo records because there were no phocids'.
 
-[phocid_census_us_amlr_header.csv](amlr_data/phocid_census_us_amlr_header.csv) contains only the US AMLR phocid census header data, without the census count records.
+[phocid_census_us_amlr_header.csv](data/amlr_data/phocid_census_us_amlr_header.csv) contains only the US AMLR phocid census header data, without the census count records.
 
 ## Data import
 
-The AMLR phocid census data had not been imported from Excel files for the 2009/10, 2010/11, and 2011/12 seasons. The [phocids_census_amlr_import.R](phocids_census_amlr_import.R) script reads in these data from the raw Excel files in the '15-Weekly Phocid census' folder, cleans and processes them, and imports them into the database
+The AMLR phocid census data had not been imported from Excel files for the 2009/10, 2010/11, and 2011/12 seasons. The [phocids_census_amlr_import.R](R/phocids_census_amlr_import.R) script reads in these data from the raw Excel files in the '15-Weekly Phocid census' folder, cleans and processes them, and imports them into the database
 
 ## Beaches
 
@@ -32,7 +36,7 @@ TODO: should this be 'Paulina-delLobero'? Seems unlikely Aranda was surveyed eve
 
 ## Data Columns
 
-Column descriptions for ([phocid_census_us_amlr.csv](amlr_data/phocid_census_us_amlr.csv). See [Column Use By Season](#column-use-by-season) for a list of which count columns were used in which years.
+Column descriptions for ([phocid_census_us_amlr.csv](data/amlr_data/phocid_census_us_amlr.csv). See [Column Use By Season](#column-use-by-season) for a list of which count columns were used in which years.
 
 * **season_name**: season in which this census occurred; derived from census_date
 * **census_date_start**, **census_date_end**: from census_phocid_header; start and end dates of phocid census survey

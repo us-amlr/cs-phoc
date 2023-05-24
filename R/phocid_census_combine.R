@@ -1,4 +1,4 @@
-# Combine USAMLR and INACH data, after some processing
+# Combine raw USAMLR and INACH data, after some processing
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -29,6 +29,12 @@ count_compare <- function(x, y, nozero = FALSE) {
   waldo::compare(count_summ(x, nozero), count_summ(y, nozero))
 }
 
+sum_all_counts <- function(i.df) {
+  i.df %>% 
+    summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>% 
+    sum()
+}
+
 
 
 #-------------------------------------------------------------------------------
@@ -36,68 +42,36 @@ count_compare <- function(x, y, nozero = FALSE) {
 # INACH
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# Remove Feb 2007 dates based on notes from Renato
-inach.dates.toremove <- c(
-  as.Date("2007-02-01"), as.Date("2007-02-08"), as.Date("2007-02-16")
-)
 
 # Read in INACH data, light processing
-inach.header <- read.csv(here("data", "inach_data", 
-                              "phocids_cs_inach_header.csv")) %>% 
-  mutate(census_date_start = as.Date(census_date_start), 
-         census_date_end = as.Date(census_date_end), 
-         census_days = 1 + as.numeric(difftime(as.Date(census_date_end), 
-                                               as.Date(census_date_start), 
-                                               units = "days")), 
-         research_program = "INACH") %>% 
-  select(-week) %>%
-  filter(!(census_date_start %in% inach.dates.toremove))
+inach.path <- here("data", "inach_data")
+inach.header <- read_csv(here(inach.path, "phocids_cs_inach_header.csv"), 
+                         col_types = c("ccDDlc")) %>% 
+  mutate(census_days = 1 + as.numeric(difftime(census_date_end, 
+                                               census_date_start, 
+                                               units = "days")))
 
-inach.orig <- read.csv(here("data", "inach_data", "phocids_cs_inach.csv")) %>% 
-  mutate(census_date = as.Date(census_date),
-         pup_live_count = pup_female_count + pup_male_count, 
-         notes = if_else(pup_live_count > 0, 
-                         str_glue("pups: ",
-                                  "{pup_female_count} females; ", 
-                                  "{pup_male_count} males; ", 
-                                  "{pup_unk_count} unknowns"), 
-                         NA_character_)) %>% 
-  select(-c(week, pup_female_count, pup_male_count, pup_unk_count, 
-            research_program)) %>% 
-  rename(census_notes = notes) %>% 
-  left_join(select(inach.header, -c(season_name, census_days, research_program)), 
-            by = c("header_id"))
+inach.orig <- read_csv(here(inach.path, "phocids_cs_inach.csv"), 
+                       col_types = "ccDccciiiiiiiicc") %>% 
+  rename(census_notes = notes) 
 
 
-# # Explore
-# with(inach.orig %>% 
-#        filter(location %in% c("Bahamonde", "Nibaldo", 
-#                               "Cerro Gajardo, Peninsula", "Cape Shirreff")), 
-#      tableNA(season_name, location))
-# tableNA(inach.header$season_name)
-
-
-# Group/sum INACH records by header ID, location, and species
-#   Including Aggregate Paso Ancho and Media Luna records
+# Group/sum INACH records by header ID, location_group, and species
 inach <- inach.orig %>% 
-  mutate(location_group = case_when(
-    location == "Paso Ancho" ~ "Media Luna", 
-    TRUE ~ location)
-  ) %>% 
   group_by(header_id, location_group, species) %>% 
-  summarise(across(ends_with("_count"), sum), 
-            across(
-              c(season_name, surveyed_san_telmo, 
-                census_date_start, census_date_end, census_date), 
-              unique), 
-            #confirmed that all Paso Ancho notes are NA
-            census_notes = if (all(is.na(census_notes))) NA_character_ else 
-              as.character(na.omit(census_notes)),
+  summarise(across(c(season_name, census_date, research_program), unique), 
+            across(ends_with("_count"), sum), 
+            census_notes = if_else(all(is.na(census_notes)), 
+                                   NA_character_,
+                                   paste(na.omit(census_notes), 
+                                         collapse = "; ")),
+            orig_record = TRUE, 
             .groups = "drop") %>% 
-  rename(location = location_group) %>% 
-  select(!!names(inach.orig)) %>%
-  # # Sanity check: `count_compare(inach.orig, inach)`
-  filter(!(census_date %in% inach.dates.toremove))
+  mutate(census_notes = if_else(census_notes == "pups: 3 females, 2 males, 2 unknowns; pups: 0 females, 0 males, 1 unknowns", 
+                                "pups: 3 females, 2 males, 3 unknowns", 
+                                census_notes)) %>% 
+  rename(location = location_group)
+# Sanity check: `count_compare(inach.orig, inach)`
 
 
 
@@ -181,7 +155,8 @@ stopifnot(
       mutate(header_id = as.character(header_id)) %>% select(-total_count) %>% 
       count_summ(), 
     count_summ(amlr.agg)
-  )
+  ), 
+  sum(amlr.orig$total_count) == sum_all_counts(amlr.agg)
 )
 
 
@@ -240,13 +215,12 @@ location.st <- "San Telmo, Punta"
 
 # Make 'pre' data frames for adding explicit 0s
 amlr.agg.pre <- amlr.agg %>%
-  select(-c(season_name:surveyed_san_telmo, header_notes, 
+  select(-c(season_name:surveyed_san_telmo, #header_notes, 
             time_start, time_end)) %>% 
   mutate(orig_record = TRUE)
 
 amlr.header.pre <- amlr.header %>% 
-  select(header_id, season_name, census_date_end, header_notes) %>% 
-  mutate(census_date_end = as.Date(census_date_end))
+  select(header_id, season_name, census_date_end)
 
 
 
@@ -312,7 +286,7 @@ func_amlr_explicit <- function(x) {
         as.integer(0), unk_unk_count)) %>% 
     select(header_id, season_name, census_date, time_start, time_end, 
            location, species, ends_with("_count"), 
-           census_notes, header_notes, orig_record) %>% 
+           census_notes, orig_record) %>% 
     arrange(census_date, location, species)
 }
 
@@ -335,7 +309,8 @@ amlr.a.header.needed <- amlr.a.header %>%
   # Need values/0s so as to not introduce NAs
   mutate(census_date = as.Date(census_date_end), 
          # all locations and species are accounted for in raw df
-         location = location.regular.wc.agg[1], species = "Elephant seal") %>% 
+         location = location.regular.wc.agg[1], 
+         species = "Elephant seal") %>% 
   func_mutate_header_needed() %>% 
   select(!!intersect(names(amlr.a.raw), names(.)))
 
@@ -440,9 +415,8 @@ stopifnot(
 amlr.c.new <- amlr.c.raw %>% 
   complete(header_id, location, species, 
            fill = complete.fill, explicit = FALSE) %>% 
-  # TODO: confirm we want to do dates this way
   # End date catch-all is consistent with date assignment on Excel data import, 
-  #   but this means there (likely) will be some that are off by one day
+  #   although this means there (likely) will be some that are off by one day
   #   For instance, Marko for header_id 10. 
   #   6708 records (174 unique headers) would be NA, without using end date rule
   left_join(amlr.agg.date, by = c("header_id", "location")) %>%
@@ -519,12 +493,13 @@ amlr.opportunistic <- amlr.agg %>%
 
 
 amlr <- bind_rows(amlr.a.new, amlr.b.new, amlr.c.new, amlr.d.new, 
-                  amlr.opportunistic) %>% 
-  arrange(census_date, location, species) %>% 
-  left_join(select(amlr.header, header_id, census_date_start, census_date_end), 
-            by = "header_id") %>% 
-  mutate(census_date_start = as.Date(census_date_start), 
-         census_date_end = as.Date(census_date_end))
+                  amlr.opportunistic) %>%
+  mutate(research_program = "USAMLR") %>% 
+  arrange(census_date, location, species)
+# left_join(select(amlr.header, header_id, census_date_start, census_date_end), 
+#           by = "header_id") %>% 
+# mutate(census_date_start = as.Date(census_date_start), 
+#        census_date_end = as.Date(census_date_end))
 
 # Sanity check that no counts were added, and that dates and times are ok
 d1 <- amlr.orig %>% 
@@ -550,22 +525,16 @@ rm(d1, d2, amlr.a.new, amlr.b.new, amlr.c.new, amlr.d.new, amlr.opportunistic)
 #-------------------------------------------------------------------------------
 ### Combine data
 combined.header <- amlr.header %>% 
-  mutate(census_date_start = as.Date(census_date_start), 
-         census_date_end = as.Date(census_date_end)) %>% 
   bind_rows(inach.header) %>% 
-  left_join(distinct(bind_rows(amlr, inach), header_id), 
-            by = "header_id") %>% 
-  select(-surveyed_san_telmo) %>% 
   relocate(header_id) %>% 
   arrange(census_date_start)
 
-combined.wide <- bind_rows(amlr, inach) %>% 
-  select(-c(census_date_start, census_date_end, surveyed_san_telmo, 
-            header_notes)) %>%
-  relocate(orig_record, header_id, .after = last_col())%>% 
+combined.wide <- bind_rows(amlr, inach) %>%
+  relocate(orig_record, .after = last_col())%>% 
   rowwise() %>% 
-  mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), na.rm = TRUE), 
-         total_count_nodead = total_count-pup_dead_count) %>% 
+  mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), 
+                           na.rm = TRUE)) %>% 
+  # total_count_nodead = total_count-pup_dead_count) %>% 
   ungroup() %>% 
   arrange(census_date, tolower(location), species) 
 
@@ -620,14 +589,18 @@ with(combined.wide, stopifnot(
   all(!is.na(unk_male_count[census_date > as.Date("2017-07-01")])), 
   all(!is.na(unk_unk_count[
     census_date > as.Date("2014-07-01") & census_date > as.Date("2009-07-01")
-  ]))
+  ])), 
+  
+  sum_all_counts(combined.wide %>% select(-total_count)) == 
+    (sum_all_counts(inach.orig) + 
+       sum_all_counts(amlr.orig %>% select(-total_count)))
+  
 ))
-
 
 
 ### Make long data
 combined.long <- combined.wide %>% 
-  select(-c(total_count, total_count_nodead)) %>% 
+  select(-c(total_count)) %>% #, total_count_nodead)) %>%
   pivot_longer(ends_with("count"), 
                names_to = "age_class_sex", values_to = "count") %>% 
   filter(!is.na(count)) %>% 

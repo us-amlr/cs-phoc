@@ -4,16 +4,10 @@
 library(tidyverse)
 library(readxl)
 library(lubridate)
-library(odbc)
+library(amlrPinnipeds)
 library(here)
 
-tableNA <- function(...) table(..., useNA = 'ifany')
-
-con <- dbConnect(odbc(), Driver = "ODBC Driver 18 for SQL Server",
-                 Server = "swc-***REMOVED***-s", 
-                 Database = "***REMOVED***",
-                 Trusted_Connection = "Yes", 
-                 Encrypt = "optional")
+con <- amlr_dbConnect(Database = "***REMOVED***")
 
 beaches <- tbl(con, "beaches") %>% collect()
 season.info <- tbl(con, "season_info") %>% collect()
@@ -106,9 +100,18 @@ stopifnot(
 
 
 ################################################################################
-# Organize combined data frame
-x <- x.orig  %>% 
-  arrange(census_date, location, species) %>% 
+# Organize combined data frames
+
+# Remove Feb 2007 dates based on notes from Renato
+inach.dates.toremove <- c(
+  as.Date("2007-02-01"), as.Date("2007-02-08"), as.Date("2007-02-16")
+)
+x.torm <- x.orig %>% filter(month(census_date) == 2, year(census_date) == 2007)
+# %>% select(census_date) %>% tableNA()
+
+### Census data
+x <- x.orig %>% 
+  filter(!(census_date %in% inach.dates.toremove)) %>% 
   mutate(header_id = paste(season_name, str_pad(week, 2, "left", 0), 
                            sep = "-"), 
          research_program = "INACH", 
@@ -127,34 +130,73 @@ x <- x.orig  %>%
            location == "Pinochet de La Barra" ~ "Pinochet de la Barra",
            location == "Plastico" ~ "El Plastico, Playa",
            location == "Pocitas" ~ "Pocitas, Playa",
-           # location == "Pta Oliva" ~ "Alcazar",
            location == "Pta Poblete" ~ "Poblete, Punta",
            location %in% c("Pta Ventana", "Punta Ventana") ~ "Ventana",
-           # Roca granito
-           # location %in% c("Rocas Yeco", "Schiappacasse") ~ "Schiappacasse, Playa",
            location %in% c("Schiappacasse") ~ "Schiappacasse, Playa",
-           # Rodrigo y Hucke-Gaete
            location == "Yamana" ~ "Yamana, Playa",
            TRUE ~ location
-         )) %>% 
-  select(header_id, season_name, week, census_date, location, species, 
-         starts_with("ad_"), starts_with("juv"), starts_with("pup_"), 
-         unk_unk_count, notes, research_program)
+         ), 
+         location_group = if_else(location == "Paso Ancho",
+                                  "Media Luna", location), 
+         # TODO: confirm with Renato
+         juv_female_count = if_else(
+           header_id == "1998/99-03" & location == 'Larga' & species == 'Elephant seal', 
+           as.integer(0), juv_female_count), 
+         pup_unk_count = if_else(
+           header_id == "1999/00-03" & location == 'Media Luna' & species == 'Elephant seal', 
+           as.integer(0), pup_unk_count)) %>% 
+  nest(pup_counts = c(pup_female_count, pup_male_count, pup_unk_count)) %>% 
+  mutate(pup_live_count = map_int(pup_counts, function(i) {
+    if_else(all(is.na(i)), NA_integer_, sum(i, na.rm = TRUE))
+  })) %>% 
+  unnest(cols = c(pup_counts)) %>% 
+  mutate(notes = case_when(
+    is.na(pup_live_count) ~ NA_character_, 
+    pup_live_count > 0 ~ str_glue("pups: ",
+                                  "{pup_female_count} females, ", 
+                                  "{pup_male_count} males, ", 
+                                  "{pup_unk_count} unknowns"), 
+    # NOTE: confirmed that don't need to keep any other notes from INACH data
+    TRUE ~ NA_character_)) %>% 
+  select(-c(pup_female_count, pup_male_count, pup_unk_count)) %>% 
+  select(header_id, season_name, census_date, location, location_group, #week, 
+         species, starts_with("ad_"), starts_with("juv"), starts_with("pup_"), 
+         unk_unk_count, notes, research_program) %>% 
+  arrange(census_date, location, species)
 
+# Sanity checks on row numbers, beach names, and rogue NAs
+stopifnot(
+  nrow(x.orig) == (nrow(x) + nrow(x.torm)), 
+  all(x$location %in% beaches$name), 
+  0 == nrow(x %>% 
+              group_by(header_id, species) %>% 
+              filter(if_any(ends_with("_count"), ~ any(is.na(.)) & any(!is.na(.))))), 
+  sum(x.orig %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) == 
+    sum(x %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) + 
+       sum(x.torm %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
+)
+
+
+### Census header data
 x.header <- x %>% 
-  group_by(header_id, season_name, week) %>% 
+  group_by(header_id, season_name) %>% 
   summarise(census_date_start = min(census_date), 
             census_date_end = max(census_date), 
             surveyed_san_telmo = FALSE, 
+            research_program = "INACH", 
             .groups = "drop")
 
+### Write to files
 write.csv(x, row.names = FALSE, file = here(inach.data, "phocids_cs_inach.csv"))
 write.csv(x.header, row.names = FALSE, 
           file = here(inach.data, "phocids_cs_inach_header.csv"))
 
 
 ################################################################################
+################################################################################
+################################################################################
 # Explore INACH data for potential issues
+#   NOTE: to run again, would need to comment out line removing 'week' from x
 
 #-------------------------------------------------------------------------------
 ### Issues/questions - v1 sent to Renato 9 Mar 2022
@@ -200,6 +242,15 @@ tableNA(x.beach.unk$location)
 # sum(xor(is.na(x$pup_female_count), is.na(x$pup_male_count)))
 with(x, tableNA(is.na(pup_female_count), is.na(pup_male_count), is.na(pup_unk_count)))
 with(x, tableNA(is.na(pup_female_count), is.na(pup_male_count)))
+
+# Check there aren't overlapping Nibaldo/Bahamonde and 
+# Cerro Gajardo, Peninsula records
+x %>% 
+  filter(location %in% c("Bahamonde", "Nibaldo", "Cerro Gajardo, Peninsula")) %>% 
+  group_by(header_id, species) %>% 
+  filter(any(location %in% c("Bahamonde", "Nibaldo")), 
+         any(location == "Cerro Gajardo, Peninsula"))
+
 
 
 #-------------------------------------------------------------------------------

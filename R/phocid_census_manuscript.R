@@ -249,9 +249,10 @@ write_csv(
 
 # TODO: remove census_notes? Not sure anything in here is useful to other users,
 #   especially at a 'core census locations' level.
-write.csv(combined.core.st, 
-          here("data", "cs_combined_data", "cs_phocid_census_records.csv"), 
-          row.names = FALSE, na = "")
+write_csv(
+  combined.core.st, na = "", 
+  here("data", "cs_combined_data", "cs_phocid_census_records.csv"), 
+)
 
 
 #-------------------------------------------------------------------------------

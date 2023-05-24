@@ -113,7 +113,7 @@ x.torm <- x.orig %>% filter(month(census_date) == 2, year(census_date) == 2007)
 x <- x.orig %>% 
   filter(!(census_date %in% inach.dates.toremove)) %>% 
   mutate(header_id = paste(season_name, str_pad(week, 2, "left", 0), 
-                           sep = "-"), 
+                           sep = "-w"), 
          research_program = "INACH", 
          location = case_when(
            location == "All Cape" ~ "Cape Shirreff",
@@ -140,10 +140,10 @@ x <- x.orig %>%
                                   "Media Luna", location), 
          # TODO: confirm with Renato
          juv_female_count = if_else(
-           header_id == "1998/99-03" & location == 'Larga' & species == 'Elephant seal', 
+           header_id == "1998/99-w03" & location == 'Larga' & species == 'Elephant seal', 
            as.integer(0), juv_female_count), 
          pup_unk_count = if_else(
-           header_id == "1999/00-03" & location == 'Media Luna' & species == 'Elephant seal', 
+           header_id == "1999/00-w03" & location == 'Media Luna' & species == 'Elephant seal', 
            as.integer(0), pup_unk_count)) %>% 
   nest(pup_counts = c(pup_female_count, pup_male_count, pup_unk_count)) %>% 
   mutate(pup_live_count = map_int(pup_counts, function(i) {

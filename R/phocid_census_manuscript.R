@@ -212,17 +212,17 @@ combined.st <- combined.wide %>%
            fill = c(complete.fill, location = location.st), explicit = FALSE) %>% 
   full_join(header.st, by = "header_id") %>% 
   mutate(pup_dead_count = if_else(
-           census_date_start > as.Date("2012-07-01") & is.na(pup_dead_count), 
-           as.integer(0), pup_dead_count), 
-         unk_female_count = if_else(
-           census_date_start > as.Date("2017-07-01") & is.na(unk_female_count), 
-           as.integer(0), unk_female_count), 
-         unk_male_count = if_else(
-           census_date_start > as.Date("2017-07-01") & is.na(unk_male_count), 
-           as.integer(0), unk_male_count), 
-         unk_unk_count = if_else(
-           census_date_start > as.Date("2014-07-01") & is.na(unk_unk_count), 
-           as.integer(0), unk_unk_count)) %>% 
+    census_date_start > as.Date("2012-07-01") & is.na(pup_dead_count), 
+    as.integer(0), pup_dead_count), 
+    unk_female_count = if_else(
+      census_date_start > as.Date("2017-07-01") & is.na(unk_female_count), 
+      as.integer(0), unk_female_count), 
+    unk_male_count = if_else(
+      census_date_start > as.Date("2017-07-01") & is.na(unk_male_count), 
+      as.integer(0), unk_male_count), 
+    unk_unk_count = if_else(
+      census_date_start > as.Date("2014-07-01") & is.na(unk_unk_count), 
+      as.integer(0), unk_unk_count)) %>% 
   rowwise() %>%
   mutate(total_count = sum(c_across(ad_female_count:unk_unk_count), na.rm = TRUE)) %>% 
   # total_count_nodead = total_count-pup_dead_count) %>%
@@ -235,18 +235,23 @@ combined.st <- combined.wide %>%
 
 # TODO: include total_count_nopup?
 combined.core.st <- bind_rows(combined.core, combined.st) %>% 
-  arrange(census_date_start, species)
+  arrange(census_date_start, species) %>% 
+  select(-c(census_date_start:research_program, orig_record))
 
 
 #-------------------------------------------------------------------------------
 ### Save data
-write.csv(combined.header, 
-          here("data", "cs_combined_data", "cs_phocid_census_header.csv"), 
-          row.names = FALSE)
+# TODO: remove header_notes? Nothing in there is relevant to general users
+write_csv(
+  combined.header, na = "", 
+  file = here("data", "cs_combined_data", "cs_phocid_census_header.csv")
+)
 
+# TODO: remove census_notes? Not sure anything in here is useful to other users,
+#   especially at a 'core census locations' level.
 write.csv(combined.core.st, 
-          here("data", "cs_combined_data", "cs_phocid_census_core_st.csv"), 
-          row.names = FALSE)
+          here("data", "cs_combined_data", "cs_phocid_census_records.csv"), 
+          row.names = FALSE, na = "")
 
 
 #-------------------------------------------------------------------------------

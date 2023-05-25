@@ -177,7 +177,7 @@ combined.core <- combined.wide %>%
             .groups = "drop") %>% 
   complete(header_id, species, fill = complete.fill, explicit = FALSE) %>% 
   full_join(combined.header, by = "header_id") %>% 
-  mutate(location = "Cape Shirreff core locations", 
+  mutate(location = "CS core census locations", 
          pup_dead_count = if_else(
            census_date_start > as.Date("2012-07-01") & is.na(pup_dead_count), 
            as.integer(0), pup_dead_count), 
@@ -236,7 +236,15 @@ combined.st <- combined.wide %>%
 # TODO: include total_count_nopup?
 combined.core.st <- bind_rows(combined.core, combined.st) %>% 
   arrange(census_date_start, species) %>% 
-  select(-c(census_date_start:research_program, orig_record))
+  select(-c(census_date_start:research_program, orig_record)) %>% 
+  mutate(species_common = if_else(species == "Elephant seal", 
+                                  "Southern elephant seal", species), 
+         species = case_when(
+           species_common == "Crabeater seal" ~ "Lobodon carcinophagus", 
+           species_common == "Southern elephant seal" ~ "Mirounga leonina",
+           species_common == "Leopard seal" ~ "Hydrurga leptonyx",
+           species_common == "Weddell seal" ~ "Leptonychotes weddellii")) %>% 
+  relocate(species_common, .after = species)
 
 
 #-------------------------------------------------------------------------------
@@ -244,14 +252,14 @@ combined.core.st <- bind_rows(combined.core, combined.st) %>%
 # TODO: remove header_notes? Nothing in there is relevant to general users
 write_csv(
   combined.header, na = "", 
-  file = here("data", "cs_combined_data", "cs_phocid_census_header.csv")
+  file = here("output", "cs_phocid_census_header.csv")
 )
 
 # TODO: remove census_notes? Not sure anything in here is useful to other users,
 #   especially at a 'core census locations' level.
 write_csv(
   combined.core.st, na = "", 
-  here("data", "cs_combined_data", "cs_phocid_census_records.csv"), 
+  here("output", "cs_phocid_census_records.csv"), 
 )
 
 

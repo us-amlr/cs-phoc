@@ -100,8 +100,10 @@ census_proc <- function(x.orig) {
   x.total <- x.orig %>% 
     select(week = `WEEK #...50`, census_date = `Date...51`, SES:CRB) %>% 
     rowwise() %>% 
-    filter(all(c(!is.na(week), !is.na(census_date), !is.na(c_across(SES:CRB))))) %>%
-    ungroup()
+    filter(all(c(!is.na(week), !is.na(census_date), !is.na(c_across(SES:CRB)), 
+                 sum(c_across(SES:CRB), na.rm = TRUE) > 0))) %>%
+    ungroup() %>% 
+    filter(census_date > as.Date("2000-01-01"), )
   
   x.renamed <- x.orig %>% 
     select(week = `WEEK #...1`, observer = Obs., census_date = Date...2, 
@@ -141,23 +143,25 @@ census_proc <- function(x.orig) {
   
   ### Start processing raw census data
   x.proc <- x.renamed %>% 
+    fill(week, species, #observer, census_date, time_start, time_end, 
+         .direction = "down") %>% 
     mutate(sex_age_class = tolower(sex_age_class),
            # time_start = as.character(chron::times(suppressWarnings(as.numeric(time_start)))),
            # time_end = as.character(chron::times(suppressWarnings(as.numeric(time_end)))),
            census_column = case_when(
              sex_age_class == "female" ~ "ad_female_count", 
              sex_age_class == "male" ~ "ad_male_count", 
-             sex_age_class == "unknown" ~ "ad_unk_count",
+             (sex_age_class == "unknown" & species != "Elephant seal") ~ "ad_unk_count",
+             (sex_age_class == "unknown" & species == "Elephant seal") ~ "unk_unk_count",
              sex_age_class == "juv female" ~ "juv_female_count", 
              sex_age_class == "juv male" ~ "juv_male_count", 
              sex_age_class == "juv unk" ~ "juv_unk_count", 
              sex_age_class == "pup" ~ "pup_live_count", 
              TRUE ~ NA_character_
-           )) %>% 
-    fill(week, species, #observer, census_date, time_start, time_end, 
-         .direction = "down")
+           ))
   print(tableNA(x.proc$species, x.proc$code))
-  print(as.data.frame(tableNA(x.proc$sex_age_class, x.proc$census_column)) %>% 
+  print(as.data.frame(tableNA(x.proc$species,
+                              x.proc$sex_age_class, x.proc$census_column)) %>% 
           filter(Freq != 0))
   
   ### Finish processing to get in same format as census table
@@ -179,7 +183,7 @@ census_proc <- function(x.orig) {
     left_join(select(x.header, week, census_date = census_date_end, 
                      time_start, time_end), by = "week") %>% 
     select(!c(sex_age_class, code)) %>% 
-    filter(!is.na(census_column)) %>% 
+    filter(!is.na(census_column), !is.na(census_date)) %>% 
     pivot_wider(names_from = census_column, values_from = count) %>% 
     rowwise() %>% 
     mutate(observer = NA_character_, 
@@ -217,6 +221,7 @@ census_proc <- function(x.orig) {
     summarise(count = sum(count_sum), .groups = "drop") %>% 
     pivot_wider(names_from = code, values_from = count) %>% 
     select(!!names(x.total))
+  
   print(waldo::compare(
     select(x.total, -census_date), select(x.census.summ, -census_date)
   ))

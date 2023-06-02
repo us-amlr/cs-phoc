@@ -1,5 +1,6 @@
 # Read in and explore INACH phocid census data from Renato
-# This script writes the combined INACH data to 'inach_data/phocids_inach_cs.csv'
+# This script writes the combined INACH data to both 
+#   'inach_data/phocids_inach_cs.csv', and the AMLR PINNIPEDS database
 
 library(tidyverse)
 library(readxl)
@@ -8,6 +9,8 @@ library(amlrPinnipeds)
 library(here)
 
 con <- amlr_dbConnect(Database = "***REMOVED***")
+write.files <- FALSE
+write.to.db <- FALSE
 
 beaches <- tbl(con, "beaches") %>% collect()
 season.info <- tbl(con, "season_info") %>% collect()
@@ -171,9 +174,10 @@ stopifnot(
   0 == nrow(x %>% 
               group_by(header_id, species) %>% 
               filter(if_any(ends_with("_count"), ~ any(is.na(.)) & any(!is.na(.))))), 
-  sum(x.orig %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) == 
+  sum(x.orig %>% 
+        summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) == 
     sum(x %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) + 
-       sum(x.torm %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
+    sum(x.torm %>% summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
 )
 
 
@@ -186,10 +190,63 @@ x.header <- x %>%
             research_program = "INACH", 
             .groups = "drop")
 
+
 ### Write to files
-write.csv(x, row.names = FALSE, file = here(inach.data, "phocids_cs_inach.csv"))
-write.csv(x.header, row.names = FALSE, 
-          file = here(inach.data, "phocids_cs_inach_header.csv"))
+if (write.files) {
+  write.csv(x, row.names = FALSE, 
+            file = here(inach.data, "phocids_cs_inach.csv"))
+  write.csv(x.header, row.names = FALSE, 
+            file = here(inach.data, "phocids_cs_inach_header.csv"))
+}
+
+
+### Write to database
+if (write.to.db) {
+  # con <- amlr_dbConnect(Database = "***REMOVED***_Test")
+  
+  # Prep header records and write to database
+  x.header.todb <- x.header %>% 
+    select(-c(header_id, season_name, research_program))
+  DBI::dbAppendTable(con, "census_phocid_header", x.header.todb)
+  
+  # Pull header info to get IDs, and get IDs to census records
+  db.header <- tbl(con, "census_phocid_header") %>% 
+    filter(census_date_start < as.Date("2009-07-01")) %>% 
+    select(-surveyed_san_telmo) %>% 
+    collect() %>% 
+    full_join(select(x.header, header_id, census_date_start, census_date_end), 
+              by = join_by(census_date_start, census_date_end)) %>% 
+    select(header_id, census_phocid_header_id)
+  stopifnot(nrow(db.header) == nrow(x.header))
+  
+  beaches.fordb <- beaches %>% select(Beach_ID = ID, location = name)
+  
+  # Prep census records and write to database
+  # note: explicit zero records were imported
+  x.todb <- x %>% 
+    left_join(db.header, by = join_by(header_id)) %>% 
+    left_join(beaches.fordb, by = join_by(location)) %>% 
+    select(-c(header_id, season_name, location, location_group)) %>% 
+    mutate(census_type = "Phocid", exclude_count = 0)
+  stopifnot(all(!is.na(x.todb$Beach_ID)), 
+            all(!is.na(x.todb$census_phocid_header_id)))
+  DBI::dbAppendTable(con, "census", x.todb)
+}
+
+# # DB import - Sanity check
+# d1 <- read_csv(here(inach.data, "phocids_cs_inach.csv"),
+#                col_types = "ccDccciiiiiiiicc") %>%
+#   select(-c(header_id, season_name)) %>%
+#   arrange(census_date, species, location)
+# d2 <- tbl(con, "vCensus_Phocid") %>%
+#   filter(census_date < as.Date("2009-07-01")) %>%
+#   rename(notes = census_notes) %>%
+#   collect() %>%
+#   select(!!names(d1)) %>%
+#   arrange(census_date, species, location)
+# waldo::compare(d1, d2)
+
+
 
 
 ################################################################################

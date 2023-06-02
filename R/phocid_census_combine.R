@@ -1,4 +1,7 @@
 # Combine raw USAMLR and INACH data, after some processing
+# NOTE: this file has been superceded by 'phocid_census_manuscript' for
+#   the purpose of preparing data for the data paper
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -92,8 +95,8 @@ amlr.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   arrange(season_name, census_date_start) %>% 
   collect()
 
-write.csv(amlr.header.orig, row.names = FALSE,
-          file = here("data", "amlr_data", "phocids_cs_amlr_header.csv"))
+# write.csv(amlr.header.orig, row.names = FALSE,
+#           file = here("data", "amlr_data", "phocids_cs_amlr_header.csv"))
 
 amlr.header <- amlr.header.orig %>% 
   mutate(header_id = as.character(header_id), 
@@ -116,8 +119,8 @@ amlr.orig <- tbl(con, "vCensus_Phocid") %>%
          total_count, total_count_nodead, ad_female_count:unk_unk_count, 
          header_notes, census_notes, header_id, census_id)
 
-write.csv(amlr.orig, row.names = FALSE,
-          file = here("data", "amlr_data", "phocids_cs_amlr.csv"))
+# write.csv(amlr.orig, row.names = FALSE,
+#           file = here("data", "amlr_data", "phocids_cs_amlr.csv"))
 
 
 # Aggregate up to location_group level

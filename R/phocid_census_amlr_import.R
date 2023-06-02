@@ -2,6 +2,10 @@
 # This script has been updated to account for the census_phocid_header table
 # See here for decisions: 
 #   https://docs.google.com/document/d/1B3xK8ba0YQE4y3MPw5E04O7IaYOz94DuljDAfA4-7iY
+# NOTE: after importing several updates have been made to the data:
+#   Issue 56f: fixing dates and times for multi-day censuses
+#   Issue 56g: changing ad-unk counts to unk_unk for eseals. 
+#     This was also changed in this import code
 
 library(dplyr)
 library(tidyr)

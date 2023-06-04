@@ -10,10 +10,10 @@ library(cowplot)
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in data, and do some prep
-z.header <- read_csv(here("output", "cs_phocid_census_header.csv"), 
+z.header <- read_csv(here("output", "cspc_header.csv"), 
                      col_types = "ccDDilc")
 
-z <- read_csv(here("output", "cs_phocid_census_records.csv"), 
+z <- read_csv(here("output", "cspc_records.csv"), 
               col_types = "cccciiiiiiiiiii")
 
 yr.pad.all <- str_pad(c(98, 99, 00, 1:23), width = 2, pad = "0")

@@ -239,20 +239,33 @@ cspc.core.pst <- bind_rows(cspc.core.complete, cspc.pst.complete)%>%
 # )
 
 
+# TODO: provide a long version of this stuff as well
+# cspc.core.pst.long <- cspc.core.pst %>% 
+#   select(-c(total_count)) %>% #, total_count_nodead)) %>%
+#   pivot_longer(ends_with("count"), 
+#                names_to = "age_class_sex", values_to = "count") %>% 
+#   filter(!is.na(count)) %>% 
+#   mutate(acs_split = str_split(age_class_sex, "_"), 
+#          age_class_pre = map_chr(acs_split, c(1)), 
+#          sex_pre = map_chr(acs_split, c(2)), 
+#          age_class = case_when(
+#            age_class_pre ==  "ad" ~ "Adult", 
+#            age_class_pre ==  "juv" ~ "Juvenile", 
+#            age_class_pre ==  "pup" & sex_pre == "live" ~ "Pup-live", 
+#            age_class_pre ==  "pup" & sex_pre == "dead" ~ "Pup-dead", 
+#            age_class_pre ==  "unk" ~ "Unknown"
+#          ), 
+#          sex = if_else(sex_pre %in% c("F", "M", "U"), 
+#                        sex_pre, NA_character_)) %>% 
+#   relocate(age_class, sex, count, .after = "species") %>% 
+#   select(-c(age_class_sex, acs_split, age_class_pre, sex_pre))
+
+
 
 #-------------------------------------------------------------------------------
 ### Save data
-write_csv(
-  cspc.header, na = "", 
-  file = here("output", "cs_phocid_census_header.csv")
-)
-
-write_csv(
-  cspc.core.pst, na = "", 
-  here("output", "cs_phocid_census_records.csv"), 
-)
-
-# TODO: provide a long version of this stuff as well
+write_csv(cspc.header, file = here("output", "cspc_header.csv"), na = "")
+write_csv(cspc.core.pst, here("output", "cspc_records.csv"), na = "")
 
 
 #-------------------------------------------------------------------------------

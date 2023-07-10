@@ -207,7 +207,8 @@ cspc.core.pst <- bind_rows(cspc.core.complete, cspc.pst.complete)%>%
            species_common == "Southern elephant seal" ~ "Mirounga leonina",
            species_common == "Leopard seal" ~ "Hydrurga leptonyx",
            species_common == "Weddell seal" ~ "Leptonychotes weddellii")) %>% 
-  relocate(species_common, .after = species)
+  relocate(species_common, .after = species) %>% 
+  rename(pup_count = pup_live_count)
 
 # # Sanity check
 # d.header <- read_csv(here("output", "cs_phocid_census_header.csv")) %>% 
@@ -283,11 +284,11 @@ waldo::compare(
     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>% 
     as.data.frame(), 
   (opportunistic %>% 
-      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
-      cspc.pst.complete %>% 
-      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
-      cspc.core.complete %>% 
-      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
+     cspc.pst.complete %>% 
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
+     cspc.core.complete %>% 
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
 )
 
 # cspc.wide %>% 
@@ -316,3 +317,31 @@ waldo::compare(
 #     cspc.core.complete %>% 
 #     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) %>% 
 #   glimpse()
+
+
+#-------------------------------------------------------------------------------
+### Create table with column descriptors
+x <- read_csv(here("output", "cspc_records.csv"), 
+              col_types = "cccciiiiiiiiiii") %>% 
+  as_data_frame()
+
+tbl1 <- tribble(
+  ~Column, ~Description,
+  "header_id",      "A unique identifier with which to join data records with survey-level information",
+  "location",       "The location for the corresponding count data",
+  "species",        "The scientific name of the phocid species", 
+  "species_common", "The common name of the phocid species",
+  "total_count",	    "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
+  "ad_female_count",  "Aggregate count of adult females for the corresponding census/location/species", 
+  "ad_male_count", 	  "Aggregate count of adult males",
+  "ad_unk_count", 	  "Aggregate count of adults of unknown sex",
+  "juv_female_count", "Aggregate count of juvenile females",
+  "juv_male_count", 	"Aggregate count of juvenile males",
+  "juv_unk_count", 	  "Aggregate count of juveniles of unknown sex",
+  "pup_count", 	      "Aggregate count of pups (less than one year old)",
+  "unk_female_count", "Aggregate count of females of unknown age class",
+  "unk_male_count", 	"Aggregate count of males of unknown age class",
+  "unk_unk_count",    "Aggregate count of animals of unknown sex or unknown age class"
+)
+
+write_csv(tbl1, file = here("output", "table1.csv"), na = "")

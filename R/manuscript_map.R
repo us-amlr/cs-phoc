@@ -18,28 +18,42 @@ g.map <- ggplot(data = world) +
   theme_bw()
 
 # g.map
+crs.laea <- "+proj=laea +lat_0=-75 +lon_0=-15 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
 
 # Define limits
-xlim.ssi <- c(-65, -53.5)
-ylim.ssi <- c(-65, -60.5)
+xlim.ssi <- c(-65.0, -53.5)
+ylim.ssi <- c(-65.35, -60.5)
 xlim.cs <- c(-60.9, -60.6)
 ylim.cs <- c(-62.56, -62.45)
+
+ssi.sfc.4326 <- st_as_sfc(st_bbox(c(xmin = xlim.ssi[1], xmax = xlim.ssi[2], 
+                                    ymax = ylim.ssi[2], ymin = ylim.ssi[1]), 
+                                  crs = st_crs(4326)))
+ssi.sfc.laea <- st_transform(ssi.sfc.4326, crs.laea)
 
 
 #-------------------------------------------------------------------------------
 # Maps
 
 ### of whole region
-g.region <- g.map + 
-  coord_sf(xlim = c(-90, -30), ylim = c(-72, -45), 
-           crs = st_crs(4326), expand = FALSE) + 
-  # annotation_north_arrow(location = "tr", which_north = "true", 
-  #                        pad_x = unit(0.1, "in"), pad_y = unit(0.5, "in"),
-  #                        style = north_arrow_fancy_orienteering) +
-  geom_rect(xmin = min(xlim.ssi), xmax = max(xlim.ssi), 
-            ymin = min(ylim.ssi), ymax = max(ylim.ssi), 
-            fill = NA, colour = "black", linewidth = 1.5)
+# g.region <- g.map + 
+#   coord_sf(xlim = c(-90, -30), ylim = c(-72, -45), 
+#            crs = st_crs(4326), expand = FALSE) + 
+#   # annotation_north_arrow(location = "tr", which_north = "true", 
+#   #                        pad_x = unit(0.1, "in"), pad_y = unit(0.5, "in"),
+#   #                        style = north_arrow_fancy_orienteering) +
+#   geom_rect(xmin = min(xlim.ssi), xmax = max(xlim.ssi), 
+#             ymin = min(ylim.ssi), ymax = max(ylim.ssi), 
+#             fill = NA, colour = "black", linewidth = 1.5)
 
+g.region <- g.map +
+  coord_sf(crs = crs.laea) + 
+  geom_rect(xmin = min(st_coordinates(ssi.sfc.laea)[, "X"]), 
+            xmax = max(st_coordinates(ssi.sfc.laea)[, "X"]), 
+            ymin = min(st_coordinates(ssi.sfc.laea)[, "Y"]), 
+            ymax = max(st_coordinates(ssi.sfc.laea)[, "Y"]), 
+            fill = NA, colour = "black", linewidth = 1.5) +
+  theme(panel.border = element_blank())
 
 
 # g.map + 
@@ -65,16 +79,28 @@ g.ssi <- g.map +
   xlab(NULL) +
   ylab(NULL)
 
-### of Cape Shirreff
-g.cs <- g.map + 
-  coord_sf(xlim = xlim.cs, ylim = ylim.cs, 
-           crs = st_crs(4326), expand = FALSE) +
-  ggtitle("Hi-res map with core census locations todo")
+# ### of Cape Shirreff
+# g.cs <- g.map + 
+#   coord_sf(xlim = xlim.cs, ylim = ylim.cs, 
+#            crs = st_crs(4326), expand = FALSE) +
+#   ggtitle("Hi-res map with core census locations todo")
+
+cs.image <- grid::rasterGrob(
+  png::readPNG("C:/SMW/Pinnipeds/phocid-census-cs/manuscript/CS map - shaded.png"),
+  width=ggplot2::unit(1,"npc"),
+  height=ggplot2::unit(1,"npc")
+)
+g.cs <- ggplot() + 
+  annotation_custom(cs.image, -Inf, Inf, -Inf, Inf)
+
 
 ### Grid
-g.grid2 <- plot_grid(plot_grid(g.region, g.ssi, nrow = 2), g.cs, 
-                     ncol=2)
-ggsave(here("output", "cs_map.png"), g.grid2, width = 10, height = 6)
+grid.map <- plot_grid(
+  plot_grid(g.region, g.ssi, nrow = 2, align = "v", axis = "lr"), 
+  g.cs, ncol = 2
+)
+# grid.map
+ggsave(here("output", "cs_map.png"), grid.map, width = 9, height = 6, bg = "white")
 
 
 
@@ -131,5 +157,5 @@ ggplot(data = ad.cs) +
   geom_sf() +
   theme_bw() + 
   coord_sf(crs = st_crs(4326))
-  annotation_scale(location = "tl", width_hint = 0.5)
-  
+annotation_scale(location = "tl", width_hint = 0.5)
+

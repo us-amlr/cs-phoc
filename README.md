@@ -1,12 +1,12 @@
-# phocid-census-cs
+# CS-PHOC
 
-An exploration of US AMLR and INACH phocid census data for Cape Shirreff. 
-
-Current efforts are to combine these data sets, document differences between both seasons and data sets, and to prepare the data for a data paper, a la [Ropert-Coudert et al 2020](https://doi.org/10.1038/s41597-020-0406-x).
+This repository holds the code and documentation for generating the Cape Shirreff PHOcid Census (CS-PHOC) dataset, as well as code and figures for the CS-PHOC data paper. 
 
 See the [readme-data](readme-data.md) markdown file for descriptions of the data.
 
 ## R Folder (scripts)
+
+Todo: document and outline all
 
 * phocid_census_amlr_import.R: Script used to import historical US AMLR phocid census data into the Pinnipeds database from Excel files. Requires access to the ***REMOVED*** database.
 

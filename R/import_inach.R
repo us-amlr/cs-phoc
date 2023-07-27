@@ -191,13 +191,13 @@ x.header <- x %>%
             .groups = "drop")
 
 
-### Write to files
-if (write.files) {
-  write.csv(x, row.names = FALSE, 
-            file = here(inach.data, "phocids_cs_inach.csv"))
-  write.csv(x.header, row.names = FALSE, 
-            file = here(inach.data, "phocids_cs_inach_header.csv"))
-}
+# ### Write to files
+# if (write.files) {
+#   write.csv(x, row.names = FALSE, 
+#             file = here(inach.data, "cs-phoc-inach.csv"))
+#   write.csv(x.header, row.names = FALSE, 
+#             file = here(inach.data, "cs-phoc-inach_header.csv"))
+# }
 
 
 ### Write to database

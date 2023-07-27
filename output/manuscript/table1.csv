@@ -1,0 +1,16 @@
+Column,Description
+header_id,A unique identifier with which to join data records with survey-level information
+location,The location for the corresponding count data
+species,The scientific name of the phocid species
+species_common,The common name of the phocid species
+total_count,"The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species"
+ad_female_count,Aggregate count of adult females for the corresponding census/location/species
+ad_male_count,Aggregate count of adult males
+ad_unk_count,Aggregate count of adults of unknown sex
+juv_female_count,Aggregate count of juvenile females
+juv_male_count,Aggregate count of juvenile males
+juv_unk_count,Aggregate count of juveniles of unknown sex
+pup_count,Aggregate count of pups (less than one year old)
+unk_female_count,Aggregate count of females of unknown age class
+unk_male_count,Aggregate count of males of unknown age class
+unk_unk_count,Aggregate count of animals of unknown sex or unknown age class

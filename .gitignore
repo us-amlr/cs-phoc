@@ -41,6 +41,4 @@ vignettes/*.pdf
 
 # Sam ignores
 amlr_plots
-*_exp.*
-manuscript-scidata/comments
-manuscript-scidata/misc
+*exp*

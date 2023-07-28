@@ -217,33 +217,10 @@ cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
   rename(pup_count = pup_live_count)
 
 
-# TODO: provide a long version of this stuff as well
-# cs.core.pst.long <- cs.core.pst %>% 
-#   select(-c(total_count)) %>% #, total_count_nodead)) %>%
-#   pivot_longer(ends_with("count"), 
-#                names_to = "age_class_sex", values_to = "count") %>% 
-#   filter(!is.na(count)) %>% 
-#   mutate(acs_split = str_split(age_class_sex, "_"), 
-#          age_class_pre = map_chr(acs_split, c(1)), 
-#          sex_pre = map_chr(acs_split, c(2)), 
-#          age_class = case_when(
-#            age_class_pre ==  "ad" ~ "Adult", 
-#            age_class_pre ==  "juv" ~ "Juvenile", 
-#            age_class_pre ==  "pup" & sex_pre == "live" ~ "Pup-live", 
-#            age_class_pre ==  "pup" & sex_pre == "dead" ~ "Pup-dead", 
-#            age_class_pre ==  "unk" ~ "Unknown"
-#          ), 
-#          sex = if_else(sex_pre %in% c("F", "M", "U"), 
-#                        sex_pre, NA_character_)) %>% 
-#   relocate(age_class, sex, count, .after = "species") %>% 
-#   select(-c(age_class_sex, acs_split, age_class_pre, sex_pre))
-
-
-
 #-------------------------------------------------------------------------------
 ### Save data
-write_csv(cs.header, file = here("output", "cs-phoc-header.csv"), na = "")
-write_csv(cs.core.pst, here("output", "cs-phoc-records.csv"), na = "")
+write_csv(cs.header, file = here("output", "cs-phoc-headers.csv"), na = "")
+write_csv(cs.core.pst, here("output", "cs-phoc-counts.csv"), na = "")
 
 
 #-------------------------------------------------------------------------------
@@ -299,7 +276,7 @@ write_csv(cs.core.pst, here("output", "cs-phoc-records.csv"), na = "")
 
 #-------------------------------------------------------------------------------
 ### Create table with column descriptors
-tbl1.ref <- read_csv(here("output", "cs-phoc-records.csv"), 
+tbl1.ref <- read_csv(here("output", "cs-phoc-counts.csv"), 
               col_types = "cccciiiiiiiiiii") %>% 
   as.data.frame()
 

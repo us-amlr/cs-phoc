@@ -14,11 +14,11 @@ save.image <- FALSE
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in data, and do some prep
-z.header <- read_csv(here("output", "cs-phoc-header.csv"), 
+z.header <- read_csv(here("output", "cs-phoc-headers.csv"), 
                      col_types = "ccDDilc")
 nrow(z.header)
 
-z <- read_csv(here("output", "cs-phoc-records.csv"), 
+z <- read_csv(here("output", "cs-phoc-counts.csv"), 
               col_types = "cccciiiiiiiiiii")
 
 yr.pad.all <- str_pad(c(98, 99, 00, 1:23), width = 2, pad = "0")

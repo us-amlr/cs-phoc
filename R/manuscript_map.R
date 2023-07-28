@@ -1,3 +1,5 @@
+# Code to create CS map (Figure 1)
+
 library(ggplot2)
 library(ggspatial)
 # theme_set(theme_bw())
@@ -86,7 +88,7 @@ g.ssi <- g.map +
 #   ggtitle("Hi-res map with core census locations todo")
 
 cs.image <- grid::rasterGrob(
-  png::readPNG("C:/SMW/Pinnipeds/phocid-census-cs/manuscript/CS map - shaded.png"),
+  png::readPNG("C:/SMW/Pinnipeds/CS-PHOC/manuscript-scidata/CS map - shaded.png"),
   width=ggplot2::unit(1,"npc"),
   height=ggplot2::unit(1,"npc")
 )
@@ -100,7 +102,8 @@ grid.map <- plot_grid(
   g.cs, ncol = 2
 )
 # grid.map
-ggsave(here("output", "cs_map.png"), grid.map, width = 9, height = 6, bg = "white")
+ggsave(here("output", "manuscript", "Fig1_cs_map.png"), 
+       grid.map, width = 9, height = 6, bg = "white")
 
 
 

@@ -7,7 +7,7 @@ library(amlrPinnipeds)
 library(glue)
 library(cowplot)
 
-con <- amlr_dbConnect(Database = "AMLR_PINNIPEDS_Test")
+con <- amlr_dbConnect(Database = "AMLR_PINNIPEDS")
 save.image <- FALSE
 
 

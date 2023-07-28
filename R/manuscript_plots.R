@@ -7,7 +7,7 @@ library(amlrPinnipeds)
 library(glue)
 library(cowplot)
 
-con <- amlr_dbConnect(Database = "***REMOVED***_Test")
+con <- amlr_dbConnect(Database = "***REMOVED***")
 save.image <- FALSE
 
 

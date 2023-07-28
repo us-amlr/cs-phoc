@@ -11,7 +11,7 @@ library(waldo)
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in census header and record data from AMLR_PINNIEPDS database
-con <- amlr_dbConnect(Database = "***REMOVED***_Test")
+con <- amlr_dbConnect(Database = "***REMOVED***")
 
 cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   arrange(census_date_start) %>% 
@@ -299,27 +299,27 @@ write_csv(cs.core.pst, here("output", "cs-phoc-records.csv"), na = "")
 
 #-------------------------------------------------------------------------------
 ### Create table with column descriptors
-x <- read_csv(here("output", "cs-phoc-records.csv"), 
+tbl1.ref <- read_csv(here("output", "cs-phoc-records.csv"), 
               col_types = "cccciiiiiiiiiii") %>% 
-  as_data_frame()
+  as.data.frame()
 
 tbl1 <- tribble(
-  ~Column, ~Description,
-  "header_id",      "A unique identifier with which to join data records with survey-level information",
-  "location",       "The location for the corresponding count data",
-  "species",        "The scientific name of the phocid species", 
-  "species_common", "The common name of the phocid species",
-  "total_count",	    "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
-  "ad_female_count",  "Aggregate count of adult females for the corresponding census/location/species", 
-  "ad_male_count", 	  "Aggregate count of adult males",
-  "ad_unk_count", 	  "Aggregate count of adults of unknown sex",
-  "juv_female_count", "Aggregate count of juvenile females",
-  "juv_male_count", 	"Aggregate count of juvenile males",
-  "juv_unk_count", 	  "Aggregate count of juveniles of unknown sex",
-  "pup_count", 	      "Aggregate count of pups (less than one year old)",
-  "unk_female_count", "Aggregate count of females of unknown age class",
-  "unk_male_count", 	"Aggregate count of males of unknown age class",
-  "unk_unk_count",    "Aggregate count of animals of unknown sex or unknown age class"
+  ~Column, ~`Data Type`, ~Description,
+  "header_id",      "character", "A unique identifier with which to join data records with survey-level information",
+  "location",       "character", "The location for the corresponding count data",
+  "species",        "character", "The scientific name of the phocid species", 
+  "species_common", "character", "The common name of the phocid species",
+  "total_count",	    "integer", "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
+  "ad_female_count",  "integer", "Aggregate count of adult females for the corresponding census/location/species", 
+  "ad_male_count", 	  "integer", "Aggregate count of adult males",
+  "ad_unk_count", 	  "integer", "Aggregate count of adults of unknown sex",
+  "juv_female_count", "integer", "Aggregate count of juvenile females",
+  "juv_male_count", 	"integer", "Aggregate count of juvenile males",
+  "juv_unk_count", 	  "integer", "Aggregate count of juveniles of unknown sex",
+  "pup_count", 	      "integer", "Aggregate count of pups (less than one year old)",
+  "unk_female_count", "integer", "Aggregate count of females of unknown age class",
+  "unk_male_count", 	"integer", "Aggregate count of males of unknown age class",
+  "unk_unk_count",    "integer", "Aggregate count of animals of unknown sex and unknown age class"
 )
 
-write_csv(tbl1, file = here("output", "Table1.csv"), na = "")
+write_csv(tbl1, file = here("output", "manuscript", "Table1.csv"), na = "")

@@ -7,16 +7,18 @@ library(amlrPinnipeds)
 library(glue)
 library(cowplot)
 
-con <- amlr_dbConnect(Database = "***REMOVED***")
+con <- amlr_dbConnect(Database = "***REMOVED***_Test")
+save.image <- FALSE
 
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in data, and do some prep
-z.header <- read_csv(here("output", "cspc_header.csv"), 
+z.header <- read_csv(here("output", "cs-phoc-header.csv"), 
                      col_types = "ccDDilc")
+nrow(z.header)
 
-z <- read_csv(here("output", "cspc_records.csv"), 
+z <- read_csv(here("output", "cs-phoc-records.csv"), 
               col_types = "cccciiiiiiiiiii")
 
 yr.pad.all <- str_pad(c(98, 99, 00, 1:23), width = 2, pad = "0")
@@ -72,7 +74,10 @@ g2
 
 g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1), align = "h", axis = "tb")
 g.grid
-ggsave(here("output", "census_surveys.png"), g.grid, width = 10, height = 6)
+
+if (save.image)
+  ggsave(here("output", "manuscript", "Fig2_census_surveys.png"), 
+         g.grid, width = 10, height = 6)
 
 rm(g.grid, g1, g2)
 
@@ -131,8 +136,11 @@ gg.hours <- ggplot(x, aes(census_hours_bar)) +
 
 g.timing <- plot_grid(gg.st.end, gg.mid, gg.hours, ncol = 1)
 g.timing
-ggsave(here("output", "census_record_times.png"), g.timing, width = 5, height = 10)
 
+if (save.image)
+  ggsave(here("output", "manuscript", "Fig3_census_record_times.png"), 
+         g.timing, width = 5, height = 10)
+rm(g.timing, gg.st.end, gg.mid, gg.hours)
 
 #------------------------------------------------
 # For multi-day records, should we use the start or end date?
@@ -155,18 +163,15 @@ date.test %>%
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# Join with header.toplot to get variables for plot axes
+# These line and dot plots are intended for exploration only
 z.toplot <- left_join(z, header.toplot, by = join_by(header_id))
-# i <- amlrPinnipeds::pinniped.phocid.sp[1]
+z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 
 
 #-------------------------------------------------------------------------------
 # Core census locations
-z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 
-
-### Dot counts
-# Try same as above, with counts controlled by dot size
+### Dot charts - Core locations
 for (i in amlrPinnipeds::pinniped.phocid.sp) {
   print(i)
   if (i == 'Elephant seal') i <- "Southern elephant seal"
@@ -183,13 +188,13 @@ for (i in amlrPinnipeds::pinniped.phocid.sp) {
     scale_y_discrete(drop=FALSE)
   
   i.filename <- str_replace(tolower(i), " ", "_")
-  ggsave(here("output", "scatterplot", paste0(i.filename, ".png")), 
-         g.curr, width = 10, height = 6)
+  if (save.image)
+    ggsave(here("output", "manuscript", "scatterplot", paste0(i.filename, ".png")), 
+           g.curr, width = 10, height = 6)
 }; rm(i, i.toplot, g.curr)
 
 
-### Line charts
-# Try same as above, with counts controlled by dot size
+### Line charts - Core locations
 for (i in amlrPinnipeds::pinniped.phocid.sp) {
   print(i)
   if (i == 'Elephant seal') i <- "Southern elephant seal"
@@ -205,11 +210,12 @@ for (i in amlrPinnipeds::pinniped.phocid.sp) {
     theme(axis.text.x = element_text(angle = 90)) +
     guides(color = guide_legend(title = "Season")) + 
     scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
-  print(g.curr)
+  # print(g.curr)
   
   i.filename <- str_replace(tolower(i), " ", "_")
-  ggsave(here("output", "line_graph", paste0(i.filename, ".png")),
-         g.curr, width = 10, height = 6)
+  if (save.image)
+    ggsave(here("output", "manuscript", "line_graph", paste0(i.filename, ".png")),
+           g.curr, width = 10, height = 6)
 }; rm(i, i.toplot, g.curr)
 
 
@@ -232,8 +238,7 @@ z.toplot.combo <- z %>%
 
 
 
-### Dot counts
-# Try same as above, with counts controlled by dot size
+### Dot counts - Core + PST locations
 for (i in amlrPinnipeds::pinniped.phocid.sp) {
   print(i)
   if (i == 'Elephant seal') i <- "Southern elephant seal"
@@ -250,13 +255,13 @@ for (i in amlrPinnipeds::pinniped.phocid.sp) {
     scale_y_discrete(drop=FALSE)
   
   i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
-  ggsave(here("output", "scatterplot", paste0(i.filename, ".png")), 
-         g.curr, width = 10, height = 6)
+  if (save.image)
+    ggsave(here("output", "manuscript", "scatterplot", paste0(i.filename, ".png")), 
+           g.curr, width = 10, height = 6)
 }; rm(i, i.toplot, g.curr)
 
 
-### Line charts
-# Try same as above, with counts controlled by dot size
+### Line charts - Core + PST locations
 for (i in amlrPinnipeds::pinniped.phocid.sp) {
   print(i)
   if (i == 'Elephant seal') i <- "Southern elephant seal"
@@ -274,18 +279,18 @@ for (i in amlrPinnipeds::pinniped.phocid.sp) {
   g.curr
   
   i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
-  ggsave(here("output", "line_graph", paste0(i.filename, ".png")), 
-         g.curr, width = 10, height = 6)
+  if (save.image)
+    ggsave(here("output", "manuscript", "line_graph", paste0(i.filename, ".png")), 
+           g.curr, width = 10, height = 6)
 }; rm(i, i.toplot, g.curr)
 
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# Explore grouping counts by month and season group
+# Fig 3: Group counts by month and season group, before plotting
 season.groups <- function(i) {
   case_when(
     i %in% c("1997/98", "1998/99", "1999/00", "2000/01", "2001/02") ~ "1997-2002", 
-    # i %in% c(, ) ~ "2000-2003", 
     i %in% c("2002/03", "2003/04", "2004/05", "2005/06", "2006/07") ~ "2002-2007", 
     i %in% c("2009/10", "2010/11", "2011/12", "2012/13") ~ "2009-2013", 
     i %in% c("2013/14", "2014/15", "2015/16", "2016/17") ~ "2013-2017", 
@@ -320,6 +325,7 @@ x.grp <- x %>%
          plot_date_start = mdy(glue("{census_month}-01-{plot_year}")))
 
 g.grp <- x.grp %>% 
+  filter(census_month %in% c(11, 12, 1, 2)) %>% 
   ggplot(aes(x = plot_date_start, y = total_count_mean, 
              color = season_group, group = season_group)) +
   # geom_point() +
@@ -421,7 +427,13 @@ y.long <- z.toplot.core %>%
   mutate(census_month = factor(census_month, levels = months.curr, 
                                labels = month.name[months.curr])) %>% 
   select(-total_count) %>% 
-  pivot_longer(ends_with("_count"), names_to = "age_sex", values_to = "count") %>% 
+  pivot_longer(ends_with("_count"), names_to = "age_sex_orig", 
+               values_to = "count") %>% 
+  mutate(age_sex_orig = age_sex_orig, 
+         age_sex = case_when(
+           str_detect(age_sex_orig , "juv_") ~ "juv_count", 
+           .default = age_sex_orig
+         )) %>% 
   filter(!is.na(count)) %>% 
   group_by(location, species, species_common, season_name, census_month, 
            age_sex) %>%
@@ -447,7 +459,7 @@ y.long <- z.toplot.core %>%
 #             count_sd = sd(count), .groups = "drop") %>% 
 #   mutate(count_sd = replace_na(count_sd, 0)) 
 
-g.month.ses <- y.long2 %>% 
+g.month.ses <- y.long %>% 
   ggplot(aes(season_name, count_mean, 
              color = age_sex, group = age_sex)) +
   geom_point(aes(size = count_sd)) +
@@ -473,5 +485,8 @@ grid.count <- plot_grid(
   g.grp, g.month.clw, g.month.ses, ncol = 1, align = "v", axis = "lr", 
   labels = c('A', 'B', 'C'), label_size = 15
 )
-ggsave(here("output", "census_counts.png"), grid.count, width = 20, height = 12)
+
+if (save.image)
+  ggsave(here("output", "manuscript", "Fig4_census_counts.png"), 
+         grid.count, width = 20, height = 12)
 

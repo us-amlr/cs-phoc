@@ -78,42 +78,47 @@ header_id,location,species,species_common,total_count,ad_female_count,ad_male_co
 1999/00-01,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-01,Core census locations,Mirounga leonina,Southern elephant seal,239,1,5,,25,70,,30,,,108
 1999/00-01,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
-1999/00-01,Core census locations,Leptonychotes weddellii,Weddell seal,16,4,5,,3,4,,0,,,
+1999/00-01,Core census locations,Leptonychotes weddellii,Weddell seal,17,4,5,0,3,4,1,0,,,
 1999/00-02,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-02,Core census locations,Mirounga leonina,Southern elephant seal,278,6,3,,31,69,,32,,,137
 1999/00-02,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
-1999/00-02,Core census locations,Leptonychotes weddellii,Weddell seal,19,2,5,,5,5,,2,,,
+1999/00-02,Core census locations,Leptonychotes weddellii,Weddell seal,30,2,5,0,5,5,11,2,,,
 1999/00-03,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-03,Core census locations,Mirounga leonina,Southern elephant seal,253,3,1,,32,70,,15,,,132
 1999/00-03,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
-1999/00-03,Core census locations,Leptonychotes weddellii,Weddell seal,13,4,3,,2,4,,0,,,
+1999/00-03,Core census locations,Leptonychotes weddellii,Weddell seal,13,4,3,0,2,4,0,0,,,
 1999/00-04,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-04,Core census locations,Mirounga leonina,Southern elephant seal,268,0,0,,27,36,,35,,,170
 1999/00-04,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
-1999/00-04,Core census locations,Leptonychotes weddellii,Weddell seal,23,5,3,,9,6,,0,,,
+1999/00-04,Core census locations,Leptonychotes weddellii,Weddell seal,25,5,3,0,9,6,2,0,,,
 1999/00-05,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-05,Core census locations,Mirounga leonina,Southern elephant seal,244,1,1,,36,50,,14,,,142
 1999/00-05,Core census locations,Hydrurga leptonyx,Leopard seal,1,0,1,0,,,,,,,
-1999/00-05,Core census locations,Leptonychotes weddellii,Weddell seal,21,4,4,,8,5,,0,,,
+1999/00-05,Core census locations,Leptonychotes weddellii,Weddell seal,22,4,4,0,8,5,1,0,,,
 1999/00-06,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,1,,,,,,,,
 1999/00-06,Core census locations,Mirounga leonina,Southern elephant seal,297,1,0,,54,64,,13,,,165
 1999/00-06,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
-1999/00-06,Core census locations,Leptonychotes weddellii,Weddell seal,14,1,4,,6,3,,0,,,
+1999/00-06,Core census locations,Leptonychotes weddellii,Weddell seal,17,1,4,0,6,3,3,0,,,
 1999/00-07,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-07,Core census locations,Mirounga leonina,Southern elephant seal,300,1,0,,64,31,,1,,,203
 1999/00-07,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
+1999/00-07,Core census locations,Leptonychotes weddellii,Weddell seal,24,3,2,0,7,8,4,0,,,
 1999/00-08,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-08,Core census locations,Mirounga leonina,Southern elephant seal,327,0,0,,62,9,,193,,,63
 1999/00-08,Core census locations,Hydrurga leptonyx,Leopard seal,1,0,0,1,,,,,,,
+1999/00-08,Core census locations,Leptonychotes weddellii,Weddell seal,23,6,1,4,6,6,0,0,,,
 1999/00-09,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-09,Core census locations,Mirounga leonina,Southern elephant seal,330,4,0,,60,4,,6,,,256
 1999/00-09,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
+1999/00-09,Core census locations,Leptonychotes weddellii,Weddell seal,24,3,0,2,9,10,0,0,,,
 1999/00-10,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 1999/00-10,Core census locations,Mirounga leonina,Southern elephant seal,295,3,0,,54,8,,15,,,215
 1999/00-10,Core census locations,Hydrurga leptonyx,Leopard seal,3,2,0,1,,,,,,,
+1999/00-10,Core census locations,Leptonychotes weddellii,Weddell seal,31,5,1,1,13,11,0,0,,,
 1999/00-11,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,1,,,,,,,,
 1999/00-11,Core census locations,Mirounga leonina,Southern elephant seal,159,0,1,,35,5,,2,,,116
 1999/00-11,Core census locations,Hydrurga leptonyx,Leopard seal,1,0,0,1,,,,,,,
+1999/00-11,Core census locations,Leptonychotes weddellii,Weddell seal,14,2,0,0,6,6,0,0,,,
 2000/01-01,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,,,,,,,
 2000/01-01,Core census locations,Mirounga leonina,Southern elephant seal,163,5,8,,8,38,,44,,,60
 2000/01-01,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
@@ -254,36 +259,36 @@ header_id,location,species,species_common,total_count,ad_female_count,ad_male_co
 2002/03-10,Core census locations,Mirounga leonina,Southern elephant seal,185,46,3,,7,25,,1,,,103
 2002/03-10,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,,,,,,,
 2002/03-10,Core census locations,Leptonychotes weddellii,Weddell seal,11,4,6,,1,0,,0,,,
-2003/04-01,Core census locations,Lobodon carcinophagus,Crabeater seal,2,0,0,,0,1,1,,,,
-2003/04-01,Core census locations,Mirounga leonina,Southern elephant seal,31,4,2,,3,8,,1,,,13
+2003/04-01,Core census locations,Lobodon carcinophagus,Crabeater seal,2,0,1,,0,0,1,,,,
+2003/04-01,Core census locations,Mirounga leonina,Southern elephant seal,248,25,10,,9,36,,1,,,167
 2003/04-01,Core census locations,Hydrurga leptonyx,Leopard seal,1,1,0,0,0,0,0,,,,
-2003/04-01,Core census locations,Leptonychotes weddellii,Weddell seal,19,5,5,1,2,4,0,2,,,
+2003/04-01,Core census locations,Leptonychotes weddellii,Weddell seal,23,7,6,1,3,4,0,2,,,
 2003/04-02,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,0,,1,0,0,,,,
-2003/04-02,Core census locations,Mirounga leonina,Southern elephant seal,31,4,3,,6,6,,0,,,12
+2003/04-02,Core census locations,Mirounga leonina,Southern elephant seal,260,33,12,,12,55,,0,,,148
 2003/04-02,Core census locations,Hydrurga leptonyx,Leopard seal,1,0,0,1,0,0,0,,,,
-2003/04-02,Core census locations,Leptonychotes weddellii,Weddell seal,23,7,10,2,1,0,0,3,,,
+2003/04-02,Core census locations,Leptonychotes weddellii,Weddell seal,44,19,14,6,1,0,0,4,,,
 2003/04-03,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,0,,0,0,1,,,,
-2003/04-03,Core census locations,Mirounga leonina,Southern elephant seal,29,8,2,,0,10,,0,,,9
+2003/04-03,Core census locations,Mirounga leonina,Southern elephant seal,249,59,5,,0,54,,0,,,131
 2003/04-03,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,,,,
-2003/04-03,Core census locations,Leptonychotes weddellii,Weddell seal,16,7,3,3,1,2,0,0,,,
+2003/04-03,Core census locations,Leptonychotes weddellii,Weddell seal,32,13,10,4,2,3,0,0,,,
 2003/04-04,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,0,,1,0,0,,,,
-2003/04-04,Core census locations,Mirounga leonina,Southern elephant seal,24,7,2,,3,2,,4,,,6
-2003/04-04,Core census locations,Hydrurga leptonyx,Leopard seal,5,2,0,3,0,0,0,,,,
-2003/04-04,Core census locations,Leptonychotes weddellii,Weddell seal,9,7,1,0,0,1,0,0,,,
+2003/04-04,Core census locations,Mirounga leonina,Southern elephant seal,308,77,5,,10,15,,4,,,197
+2003/04-04,Core census locations,Hydrurga leptonyx,Leopard seal,12,3,0,9,0,0,0,,,,
+2003/04-04,Core census locations,Leptonychotes weddellii,Weddell seal,11,9,1,0,0,1,0,0,,,
 2003/04-05,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,0,0,0,,,,
-2003/04-05,Core census locations,Mirounga leonina,Southern elephant seal,21,7,1,,7,2,,0,,,4
-2003/04-05,Core census locations,Hydrurga leptonyx,Leopard seal,6,3,0,3,0,0,0,,,,
-2003/04-05,Core census locations,Leptonychotes weddellii,Weddell seal,21,6,4,0,4,4,0,3,,,
+2003/04-05,Core census locations,Mirounga leonina,Southern elephant seal,283,111,7,,21,6,,0,,,138
+2003/04-05,Core census locations,Hydrurga leptonyx,Leopard seal,8,3,0,5,0,0,0,,,,
+2003/04-05,Core census locations,Leptonychotes weddellii,Weddell seal,28,11,4,0,4,5,0,4,,,
 2003/04-06,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,0,0,0,,,,
-2003/04-06,Core census locations,Mirounga leonina,Southern elephant seal,9,3,0,,2,2,,1,,,1
-2003/04-06,Core census locations,Hydrurga leptonyx,Leopard seal,4,2,0,2,0,0,0,,,,
-2003/04-06,Core census locations,Leptonychotes weddellii,Weddell seal,6,3,2,0,1,0,0,0,,,
+2003/04-06,Core census locations,Mirounga leonina,Southern elephant seal,280,238,0,,23,10,,1,,,8
+2003/04-06,Core census locations,Hydrurga leptonyx,Leopard seal,12,7,0,5,0,0,0,,,,
+2003/04-06,Core census locations,Leptonychotes weddellii,Weddell seal,12,7,4,0,1,0,0,0,,,
 2003/04-07,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,0,0,0,,,,
-2003/04-07,Core census locations,Mirounga leonina,Southern elephant seal,7,2,0,,1,1,,1,,,2
+2003/04-07,Core census locations,Mirounga leonina,Southern elephant seal,153,97,0,,3,6,,1,,,46
 2003/04-07,Core census locations,Hydrurga leptonyx,Leopard seal,2,1,0,1,0,0,0,,,,
-2003/04-07,Core census locations,Leptonychotes weddellii,Weddell seal,4,2,1,0,0,1,0,0,,,
+2003/04-07,Core census locations,Leptonychotes weddellii,Weddell seal,7,2,2,0,2,1,0,0,,,
 2003/04-08,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,0,0,0,,,,
-2003/04-08,Core census locations,Mirounga leonina,Southern elephant seal,21,2,2,,3,3,,4,,,7
+2003/04-08,Core census locations,Mirounga leonina,Southern elephant seal,191,15,6,,25,4,,6,,,135
 2003/04-08,Core census locations,Hydrurga leptonyx,Leopard seal,2,1,0,1,0,0,0,,,,
 2003/04-08,Core census locations,Leptonychotes weddellii,Weddell seal,9,3,2,0,2,2,0,0,,,
 2004/05-01,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,,0,0,0,,,,
@@ -573,7 +578,7 @@ header_id,location,species,species_common,total_count,ad_female_count,ad_male_co
 2010/11-06,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,0,1,0,0,0,0,,,
 2010/11-06,Core census locations,Mirounga leonina,Southern elephant seal,189,8,0,0,8,51,14,4,,,104
 2010/11-06,Core census locations,Hydrurga leptonyx,Leopard seal,4,4,0,0,0,0,0,0,,,
-2010/11-06,Core census locations,Leptonychotes weddellii,Weddell seal,34,8,5,3,5,7,5,1,,,
+2010/11-06,Core census locations,Leptonychotes weddellii,Weddell seal,34,8,5,3,6,6,5,1,,,
 2010/11-06,"San Telmo, Punta",Lobodon carcinophagus,Crabeater seal,1,0,0,1,0,0,0,0,,,
 2010/11-06,"San Telmo, Punta",Mirounga leonina,Southern elephant seal,31,0,0,0,0,31,0,0,,,0
 2010/11-06,"San Telmo, Punta",Hydrurga leptonyx,Leopard seal,2,2,0,0,0,0,0,0,,,

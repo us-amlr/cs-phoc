@@ -9,6 +9,26 @@ library(ggplot2)
 library(googlesheets4)
 library(amlrPinnipeds)
 
+#-------------------------------------------------------------------------------
+### Code to check if all species have records for all header records
+# `x` here is from import_inach.R
+d <- x %>% 
+  filter(census_date < as.Date("2009-07-01")) %>% 
+  group_by(header_id) %>% 
+  summarise(census_date = list(sort(unique(census_date))), 
+            has_crab = any(species == 'Crabeater seal'), 
+            has_ses = any(species == 'Elephant seal'), 
+            has_leop = any(species == 'Leopard seal'), 
+            has_wedd = any(species == 'Weddell seal')) %>% 
+  rowwise() %>% 
+  filter(!all(has_crab, has_ses, has_leop, has_wedd)) %>% 
+  ungroup()
+
+paste(d$census_date)
+
+
+
+#-------------------------------------------------------------------------------
 con <- amlr_dbConnect(Database = "***REMOVED***")
 census.phocid.orig <- tbl(con, "vCensus_Phocid") %>% collect()
 

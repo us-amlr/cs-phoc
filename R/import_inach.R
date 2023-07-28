@@ -202,7 +202,8 @@ x.header <- x %>%
 
 ### Write to database
 if (write.to.db) {
-  # con <- amlr_dbConnect(Database = "***REMOVED***_Test")
+  rm(con)
+  con <- amlr_dbConnect(Database = "***REMOVED***")
   
   # Prep header records and write to database
   x.header.todb <- x.header %>% 
@@ -234,10 +235,10 @@ if (write.to.db) {
 }
 
 # # DB import - Sanity check
-# d1 <- read_csv(here(inach.data, "phocids_cs_inach.csv"),
-#                col_types = "ccDccciiiiiiiicc") %>%
+# d1 <- x %>%
 #   select(-c(header_id, season_name)) %>%
-#   arrange(census_date, species, location)
+#   arrange(census_date, species, location) %>%
+#   mutate(across(ends_with("_count"), as.integer))
 # d2 <- tbl(con, "vCensus_Phocid") %>%
 #   filter(census_date < as.Date("2009-07-01")) %>%
 #   rename(notes = census_notes) %>%

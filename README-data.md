@@ -4,24 +4,6 @@ This document details the creation of the combined Cape Shirreff phocid census d
 
 The INACH data were extracted from historical INACH records by Renato Borras, and concatenated together using the [phocid_census_inach.R](R/phocid_census_inach.R) script. The combined data files were generated from the INACH files and US AMLR Pinnipeds database using the [phocid_census_combine.R](R/phocid_census_combine.R) script. 
 
-## TODO
-
-Confirm/ok assumptions/decisions that Sam made while combining the data:
-
-* Discuss/review assumptions used to fill in date/times. See sections below.
-
-General
-
-INACH
-
-US AMLR
-
-* Notes about the glacier: what is the south end of Media Luna, by season?
-	* Only 3 records have notes about surveying to the glacier
-	* Sam remembers we normally surveyed this in 2016/17
-* Should 'Paulina-Aranda' actually be 'Paulina-delCanal'? Seems unlikely Remanso-Aranda were surveyed every time, but not sure how this was thought about in earlier seasons.
-* Any other beaches that might have year-specific ranges?
-
 ## Data Structure
 
 The phocid census data is split into two tables: a 'census header' table and a 'census data' table'. Having the header table allows us to explicitly group census records from the same phocid census that occurred on multiple days, e.g., if the census effort was split across a Thursday and a Friday. Each record in the data table has a header record ID, which allows each data record to be joined with its corresponding header record.

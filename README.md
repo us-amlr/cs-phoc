@@ -2,6 +2,8 @@
 
 This repository contains the code and documentation for generating the Cape Shirreff PHOcid Census (CS-PHOC) dataset, as well as all code and figures for the CS-PHOC data paper. 
 
+Note that this repo/project uses [renv](https://github.com/rstudio/renv/) to document the project environment. Anyone using this project and wishing to use the same project environment can simply clone this repo and run `renv::restore()`, as described in the renv readme. This is not required, but could be helpful if you are running into errors when attempting to reproduce any part of the project.
+
 Note: README-data.md is outdated and needs to be updated.
 
 ## Directory Descriptions

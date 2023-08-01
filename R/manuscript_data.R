@@ -56,121 +56,21 @@ cs.wide <- tbl(con, "vCensus_Phocid") %>%
 # tableNA(cs.wide$location)
 
 
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-# General variables and functions 
-
-### Core Locations
-# TODO: move to amlrPinnipeds as data variable
-cs.locations.core <- c(
-  "Media Luna", "Yuseff, Punta", "Larga", "Marko", "Daniel", "Modulo", 
-  "Hue", "Copi", "Maderas", "Cachorros", "Chungungo", 
-  "Ballena Sur", "Ballena Norte", "Bahamonde", "Nibaldo", "Roquerio", 
-  "Alcazar", "Pinochet de la Barra", "Papua", "Antartico, Playa", 
-  "Loberia", "Yamana, Playa", 
-  "Golondrina, Playa", "del Lobero, Playa", "Paulina, Playa", 
-  "Schiappacasse, Playa", "El Plastico, Playa", "Leopard Beach", 
-  "del Canal, Playa", "Aranda", "El Remanso, Playa", 
-  "Golondrina-del Lobero", "Paulina-Aranda", 
-  "Cape Shirreff", "Copihue", "Cerro Gajardo, Peninsula"
-)
-
-# San Telmo
-cs.location.pst <- "San Telmo, Punta"
-
-
-### Functions used in combining
-# TODO: move to amlrPinnipeds
-cs_agg_amlr_complete <- function(x, x.header, fill.location = NULL) {
-  # Checks
-  stopifnot(
-    "research_program" %in% names(x), 
-    all(x$research_program == "USAMLR")
-  )
-  
-  
-  # Header mgmt
-  x.header <- x.header %>% filter(research_program == "USAMLR")
-  
-  header.id.class <- class(x.header$header_id)
-  as_header_id_func <- if (header.id.class == "character") {
-    as.character
-  } else if (header.id.class == "integer") {
-    as.integer
-  } else {
-    stop("Invalid header_id type")
-  }
-  
-  
-  # Fill variables
-  cs.fill <- list(
-    ad_female_count = 0, ad_male_count = 0, ad_unk_count = 0,
-    juv_female_count = 0, juv_male_count = 0, juv_unk_count = 0, 
-    pup_live_count = 0, research_program = "USAMLR"#, orig_record = FALSE
-  )
-  if (!is.null(fill.location)) cs.fill <- c(cs.fill, location = fill.location)
-  
-  
-  # Complete, and finish processing
-  x.out <- x %>% 
-    # Make to-complete columns factors to ensure all are created
-    mutate(header_id = fct(as.character(header_id), 
-                           as.character(x.header$header_id)), 
-           species = fct(species, amlrPinnipeds::pinniped.phocid.sp)) %>%
-    complete(header_id, species, fill = cs.fill, explicit = FALSE) %>% 
-    mutate(header_id = as_header_id_func(header_id), 
-           species = as.character(species)) %>% 
-    left_join(select(x.header, header_id, census_date_start), 
-              by = "header_id") %>% 
-    # These fills are based on PI info about when these columns were used
-    mutate(species = species, #hack for rstudio line formatting
-           unk_female_count = if_else(
-             census_date_start > ymd("2017-07-01") & is.na(unk_female_count), 
-             as.integer(0), unk_female_count), 
-           unk_male_count = if_else(
-             census_date_start > ymd("2017-07-01") & is.na(unk_male_count), 
-             as.integer(0), unk_male_count), 
-           unk_unk_count = if_else(
-             (census_date_start > ymd("2014-07-01") & is.na(unk_unk_count)) |
-               (species == "Elephant seal" & is.na(unk_unk_count)),
-             as.integer(0), unk_unk_count)) %>% 
-    select(-census_date_start) %>% 
-    select(header_id, location, species, everything()) 
-  
-  stopifnot(
-    identical(names(x.out), names(x)), 
-    identical(sapply(x.out, class), sapply(x, class))
-  )
-  
-  x.out
-}
-
-
-cs_sum <- function(x, na.rm = TRUE) {
-  if_else(all(is.na(x)), NA_integer_, sum(x, na.rm = na.rm))
-}
-
-cs_total_count <- function(x, na.rm = TRUE) {
-  x %>% 
-    rowwise() %>%
-    mutate(total_count = sum(c_across(ends_with("_count")), na.rm = TRUE)) %>% 
-    ungroup()
-}
-
-
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Aggregate by locations, complete, and combine
 
 ### Filter by core locations, group/summarise, and complete
 loc.core <- "Core census locations"
+loc.pst <- "Punta San Telmo"
+
+amlr.header <- cs.header %>% filter(research_program == "USAMLR")
 
 cs.core.agg <- cs.wide %>% 
   # Filter for core locations, sum by header_id/species
-  filter(location %in% c(cs.locations.core)) %>% 
+  filter(location %in% c(csphoc.core.location.groups)) %>% 
   group_by(header_id, location = loc.core, species) %>% 
-  summarise(across(ends_with("_count"), cs_sum),  
+  summarise(across(ends_with("_count"), sum_count),  
             # orig_record = TRUE, 
             .groups = "drop") %>% 
   left_join(select(cs.header, header_id, research_program), 
@@ -179,7 +79,7 @@ cs.core.agg <- cs.wide %>%
 # Complete the AMLR data, and bind all back together
 amlr.complete <- cs.core.agg %>% 
   filter(research_program == "USAMLR") %>% 
-  cs_agg_amlr_complete(cs.header, fill.location = loc.core)
+  csphoc_complete_aggregated(amlr.header, fill.location = loc.core)
 
 cs.core.complete <- cs.core.agg %>% 
   filter(research_program == "INACH") %>% 
@@ -192,17 +92,17 @@ cs.core.complete <- cs.core.agg %>%
 pst.header <- cs.header %>% filter(surveyed_san_telmo)
 
 cs.pst.complete <- cs.wide %>% 
-  filter(location %in% c(cs.location.pst)) %>% 
+  filter(location %in% c(loc.pst)) %>% 
   select(-c(census_date)) %>% 
   left_join(select(pst.header, header_id, research_program), 
             by = join_by(header_id)) %>% 
-  cs_agg_amlr_complete(pst.header, fill.location = cs.location.pst) %>% 
+  csphoc_complete_aggregated(pst.header, fill.location = loc.pst) %>% 
   select(-research_program)
 
 
 ### Bind core and pst records together
 cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
-  cs_total_count() %>%
+  amlrPinnipeds::total_count() %>%
   arrange(header_id, location, species) %>%
   relocate(location, .after = header_id) %>%
   relocate(total_count, .before = ad_female_count) %>% 
@@ -226,21 +126,21 @@ write_csv(cs.core.pst, here("output", "cs-phoc-counts.csv"), na = "")
 #-------------------------------------------------------------------------------
 # # Sanity checks
 # stopifnot(
-#   sum(is.na(cs.core.pst$header_id)) == 0, 
-#   sum(is.na(cs.core.pst$species)) == 0, 
-#   all(cs.header$header_id %in% cs.core.pst$header_id), 
-#   all(cs.core.pst$header_id %in% cs.header$header_id), 
-#   (nrow(cs.core.pst)) == 
+#   sum(is.na(cs.core.pst$header_id)) == 0,
+#   sum(is.na(cs.core.pst$species)) == 0,
+#   all(cs.header$header_id %in% cs.core.pst$header_id),
+#   all(cs.core.pst$header_id %in% cs.header$header_id),
+#   (nrow(cs.core.pst)) ==
 #     (4 * nrow(cs.header) + 4 * sum(cs.header$surveyed_san_telmo))
 # )
-# 
-# 
+
+
 # cs.wide %>%
-#   filter(!(location %in% cs.locations.core)) %>%
+#   filter(!(location %in% csphoc.core.location.groups)) %>%
 #   select(location) %>% tableNA()
-# 
+
 # opportunistic <- cs.wide %>%
-#   filter(!(location %in% c(cs.locations.core, cs.location.pst)))
+#   filter(!(location %in% c(csphoc.core.location.groups, loc.pst)))
 # # opportunistic %>%
 # #   summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>%
 # #   glimpse()
@@ -277,26 +177,29 @@ write_csv(cs.core.pst, here("output", "cs-phoc-counts.csv"), na = "")
 #-------------------------------------------------------------------------------
 ### Create table with column descriptors
 tbl1.ref <- read_csv(here("output", "cs-phoc-counts.csv"), 
-              col_types = "cccciiiiiiiiiii") %>% 
+                     col_types = "cccciiiiiiiiiii") %>% 
   as.data.frame()
 
-tbl1 <- tribble(
-  ~Column, ~`Data Type`, ~Description,
-  "header_id",      "character", "A unique identifier with which to join data records with survey-level information",
-  "location",       "character", "The location for the corresponding count data",
-  "species",        "character", "The scientific name of the phocid species", 
-  "species_common", "character", "The common name of the phocid species",
-  "total_count",	    "integer", "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
-  "ad_female_count",  "integer", "Aggregate count of adult females for the corresponding census/location/species", 
-  "ad_male_count", 	  "integer", "Aggregate count of adult males",
-  "ad_unk_count", 	  "integer", "Aggregate count of adults of unknown sex",
-  "juv_female_count", "integer", "Aggregate count of juvenile females",
-  "juv_male_count", 	"integer", "Aggregate count of juvenile males",
-  "juv_unk_count", 	  "integer", "Aggregate count of juveniles of unknown sex",
-  "pup_count", 	      "integer", "Aggregate count of pups (less than one year old)",
-  "unk_female_count", "integer", "Aggregate count of females of unknown age class",
-  "unk_male_count", 	"integer", "Aggregate count of males of unknown age class",
-  "unk_unk_count",    "integer", "Aggregate count of animals of unknown sex and unknown age class"
-)
+tbl1 <- data.frame(
+  Column = names(tbl1.ref), 
+  Data_Type = vapply(tbl1.ref, class, as.character(1))
+) %>% 
+  mutate(Description = case_when(
+    Column == "header_id"~         "A unique identifier with which to join data records with survey-level information",
+    Column == "location" ~         "The location for the corresponding count data",
+    Column == "species" ~          "The scientific name of the phocid species", 
+    Column == "species_common" ~   "The common name of the phocid species",
+    Column == "total_count" ~      "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
+    Column == "ad_female_count" ~  "Aggregate count of adult females for the corresponding census/location/species", 
+    Column == "ad_male_count" ~    "Aggregate count of adult males",
+    Column == "ad_unk_count" ~     "Aggregate count of adults of unknown sex",
+    Column == "juv_female_count" ~ "Aggregate count of juvenile females",
+    Column == "juv_male_count" ~   "Aggregate count of juvenile males",
+    Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
+    Column == "pup_count" ~        "Aggregate count of pups (less than one year old)",
+    Column == "unk_female_count" ~ "Aggregate count of females of unknown age class",
+    Column == "unk_male_count" ~   "Aggregate count of males of unknown age class",
+    Column == "unk_unk_count" ~    "Aggregate count of animals of unknown sex and unknown age class"
+  ))
 
 write_csv(tbl1, file = here("output", "manuscript", "Table1.csv"), na = "")

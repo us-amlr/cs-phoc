@@ -10,7 +10,7 @@ ad_unk_count,integer,Aggregate count of adults of unknown sex
 juv_female_count,integer,Aggregate count of juvenile females
 juv_male_count,integer,Aggregate count of juvenile males
 juv_unk_count,integer,Aggregate count of juveniles of unknown sex
-pup_count,integer,Aggregate count of pups (less than one year old)
-unk_female_count,integer,Aggregate count of females of unknown age class
-unk_male_count,integer,Aggregate count of males of unknown age class
-unk_unk_count,integer,Aggregate count of animals of unknown sex and unknown age class
+pup_count,integer,"Aggregate count of pups (young of the year, less than one year old) of all sexes"
+unk_female_count,integer,Aggregate count of unknown age class females
+unk_male_count,integer,Aggregate count of unknown age class males
+unk_unk_count,integer,Aggregate count of animals of unknown age class and unknown sex

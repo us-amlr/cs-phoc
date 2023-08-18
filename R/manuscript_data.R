@@ -119,8 +119,8 @@ cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
 
 #-------------------------------------------------------------------------------
 ### Save data
-write_csv(cs.header, file = here("output", "cs-phoc-headers.csv"), na = "")
-write_csv(cs.core.pst, here("output", "cs-phoc-counts.csv"), na = "")
+write_csv(cs.header, file = here("manuscript", "cs-phoc-headers.csv"), na = "")
+write_csv(cs.core.pst, here("manuscript", "cs-phoc-counts.csv"), na = "")
 
 
 #-------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ write_csv(cs.core.pst, here("output", "cs-phoc-counts.csv"), na = "")
 
 #-------------------------------------------------------------------------------
 ### Create table with column descriptors
-tbl1.ref <- read_csv(here("output", "cs-phoc-counts.csv"), 
+tbl1.ref <- read_csv(here("manuscript", "cs-phoc-counts.csv"), 
                      col_types = "cccciiiiiiiiiii") %>% 
   as.data.frame()
 
@@ -196,10 +196,10 @@ tbl1 <- data.frame(
     Column == "juv_female_count" ~ "Aggregate count of juvenile females",
     Column == "juv_male_count" ~   "Aggregate count of juvenile males",
     Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
-    Column == "pup_count" ~        "Aggregate count of pups (less than one year old)",
-    Column == "unk_female_count" ~ "Aggregate count of females of unknown age class",
-    Column == "unk_male_count" ~   "Aggregate count of males of unknown age class",
-    Column == "unk_unk_count" ~    "Aggregate count of animals of unknown sex and unknown age class"
+    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of all sexes",
+    Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
+    Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
+    Column == "unk_unk_count" ~    "Aggregate count of animals of unknown age class and unknown sex"
   ))
 
-write_csv(tbl1, file = here("output", "manuscript", "Table1.csv"), na = "")
+write_csv(tbl1, file = here("manuscript", "figures+tables", "Table1.csv"), na = "")

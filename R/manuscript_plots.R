@@ -6,19 +6,32 @@ library(here)
 library(amlrPinnipeds)
 library(glue)
 library(cowplot)
+library(viridis)
+library(ggsci)
 
 con <- amlr_dbConnect(Database = "***REMOVED***")
-save.image <- FALSE
+save.image <- TRUE
+
+scale_color_csphoc <- function() {
+  # scale_color_npg()
+  # scale_color_brewer(palette = "Set2")
+  scale_color_viridis(discrete = TRUE)
+}
+scale_fill_csphoc <- function() {
+  # scale_fill_npg()
+  # scale_fill_brewer(palette = "Set2")
+  scale_fill_viridis(discrete = TRUE)
+}
 
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in data, and do some prep
-z.header <- read_csv(here("output", "cs-phoc-headers.csv"), 
+z.header <- read_csv(here("manuscript", "cs-phoc-headers.csv"), 
                      col_types = "ccDDilc")
 nrow(z.header)
 
-z <- read_csv(here("output", "cs-phoc-counts.csv"), 
+z <- read_csv(here("manuscript", "cs-phoc-counts.csv"), 
               col_types = "cccciiiiiiiiiii")
 
 yr.pad.all <- str_pad(c(98, 99, 00, 1:23), width = 2, pad = "0")
@@ -45,7 +58,7 @@ g1 <- ggplot(header.toplot, aes(x = plot_date_start, y = season_name)) +
   geom_point(aes(col = research_program,
                  # shape = surveyed_san_telmo, 
                  size = census_days)) +
-  labs(title = "Cape Shirreff phocid census surveys, by season", 
+  labs(title = "CS-PHOC surveys, by season", 
        x = "Date", y = "Season") +
   theme(axis.text.x = element_text(angle = 90),
         legend.position = "bottom") +
@@ -54,29 +67,28 @@ g1 <- ggplot(header.toplot, aes(x = plot_date_start, y = season_name)) +
          size = guide_legend(title = "Days", order = 2)) + 
   scale_x_date(date_breaks = "1 week", date_labels = "%b %d") + 
   scale_y_discrete(drop = FALSE) + 
-  scale_size(breaks = 1:3)
-g1
-
-# library(ggExtra)
-# g1marg <- ggMarginal(g1, type = "histogram", fill="transparent", margins = "y")
-# ggsave(here("output", "census_timing.png"), g1marg, width = 10, height = 6)
+  scale_size(breaks = 1:3) +
+  # scale_color_csphoc()
+  # scale_color_brewer(palette = "Set2")
+  scale_color_manual(values = viridis(3)[1:2])
+# g1
 
 g2 <- ggplot(header.toplot, aes(x = season_name)) + 
   geom_histogram(stat = "count") + 
   scale_x_discrete(drop = FALSE) + 
-  labs(y = "Count") + 
+  # labs(y = "# of surveys") + 
+  labs(y = "Number of surveys") + 
   coord_flip() +
-  # theme_minimal() + 
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
-g2
+# g2
 
-g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1), align = "h", axis = "tb")
-g.grid
+g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1.5), align = "h", axis = "tb")
+# g.grid
 
 if (save.image)
-  ggsave(here("output", "manuscript", "Fig2_census_surveys.png"), 
+  ggsave(here("manuscript", "figures+tables", "Fig2_census_surveys.png"), 
          g.grid, width = 10, height = 6)
 
 rm(g.grid, g1, g2)
@@ -85,7 +97,7 @@ rm(g.grid, g1, g2)
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Census timing - start and end times
-x <- tbl(con, "vCensus_Phocid") %>% 
+csphoc.times <- tbl(con, "vCensus_Phocid") %>% 
   filter(!is.na(time_start), !is.na(time_end)) %>% 
   collect() %>% 
   mutate(census_dt_start = ymd_hms(paste(census_date, time_start)), 
@@ -100,47 +112,49 @@ x <- tbl(con, "vCensus_Phocid") %>%
                                             units = "hours")), 
          census_hours_bar = round(census_hours/0.5) * 0.5)
 
-# summary(x$census_date)
-# summary(x$census_hours)
-# nrow(x)
+# summary(csphoc.times$census_date)
+# summary(csphoc.times$census_hours)
+nrow(csphoc.times)
 
-gg.st.end <- x %>% 
+gg.st.end <- csphoc.times %>% 
   select(census_dt_start, census_dt_end) %>% 
   pivot_longer(c(census_dt_start, census_dt_end), 
                names_to = "dt_type", values_to = "dt") %>% 
   mutate(type = case_when(str_detect(dt_type, "start") ~ "start", 
                           str_detect(dt_type, "end") ~ "end"), 
+         type = factor(type, levels = c("start", "end")), 
          dt_hours = as.numeric(format(dt, format="%H"))) %>% 
   ggplot(aes(x=dt_hours, fill=type)) +
   geom_bar(alpha=0.6, position = 'identity') + 
   guides(fill = guide_legend(title = "Time type")) + 
-  scale_fill_discrete(limits = c("start", "end")) + 
+  # scale_fill_discrete(limits = c("start", "end")) + 
   ggtitle("Census record start and end times") + 
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
-  scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL)
+  scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL) +
+  scale_fill_csphoc()
 
-gg.mid <- ggplot(x, aes(census_dt_midpoint_24h)) + 
+gg.mid <- ggplot(csphoc.times, aes(census_dt_midpoint_24h)) + 
   geom_bar() + 
   ggtitle("Midpoint time of census records") + 
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
   scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL)
 
-gg.hours <- ggplot(x, aes(census_hours_bar)) + 
+gg.hours <- ggplot(csphoc.times, aes(census_hours_bar)) + 
   geom_bar() + 
-  ggtitle("Length of census records") + 
+  ggtitle("Length time of census records") + 
   xlab("Hours") + 
   ylab("Number of records") + 
   scale_x_continuous(breaks = 0:10)
 
 g.timing <- plot_grid(gg.st.end, gg.mid, gg.hours, ncol = 1)
-g.timing
+# g.timing
 
 if (save.image)
-  ggsave(here("output", "manuscript", "Fig3_census_record_times.png"), 
+  ggsave(here("manuscript", "figures+tables", "Fig3_census_record_times.png"), 
          g.timing, width = 5, height = 10)
-rm(g.timing, gg.st.end, gg.mid, gg.hours)
+rm(csphoc.times, g.timing, gg.st.end, gg.mid, gg.hours)
 
 #------------------------------------------------
 # For multi-day records, should we use the start or end date?
@@ -163,126 +177,130 @@ date.test %>%
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# These line and dot plots are intended for exploration only
 z.toplot <- left_join(z, header.toplot, by = join_by(header_id))
 z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 
 
 #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+# These line and dot plots are intended for exploration only
+
+
+#-------------------------------------------------------------------------------
 # Core census locations
 
-### Dot charts - Core locations
-for (i in amlrPinnipeds::pinniped.phocid.sp) {
-  print(i)
-  if (i == 'Elephant seal') i <- "Southern elephant seal"
-  i.toplot <- z.toplot.core %>% filter(species_common == i)
-  
-  g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = season_name)) +
-    geom_point(aes(size = total_count)) +
-    labs(title = paste("Cape Shirreff phocid census counts", 
-                       "Core census locations", i, sep = " - "),
-         x = "Date", y = "Season") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    guides(size = guide_legend(title = "Count")) + 
-    scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
-    scale_y_discrete(drop=FALSE)
-  
-  i.filename <- str_replace(tolower(i), " ", "_")
-  if (save.image)
-    ggsave(here("output", "manuscript", "scatterplot", paste0(i.filename, ".png")), 
-           g.curr, width = 10, height = 6)
-}; rm(i, i.toplot, g.curr)
-
-
-### Line charts - Core locations
-for (i in amlrPinnipeds::pinniped.phocid.sp) {
-  print(i)
-  if (i == 'Elephant seal') i <- "Southern elephant seal"
-  i.toplot <- z.toplot.core %>% filter(species_common == i) 
-  #, season_name == "2003/04")
-  
-  g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = total_count)) +
-    geom_point(aes(color = season_name)) +
-    geom_line(aes(color = season_name)) + 
-    labs(title = paste("Cape Shirreff phocid census counts", 
-                       "Core census locations", i, sep = " - "),
-         x = "Date", y = "Count") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    guides(color = guide_legend(title = "Season")) + 
-    scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
-  # print(g.curr)
-  
-  i.filename <- str_replace(tolower(i), " ", "_")
-  if (save.image)
-    ggsave(here("output", "manuscript", "line_graph", paste0(i.filename, ".png")),
-           g.curr, width = 10, height = 6)
-}; rm(i, i.toplot, g.curr)
+# ### Dot charts - Core locations
+# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+#   print(i)
+#   if (i == 'Elephant seal') i <- "Southern elephant seal"
+#   i.toplot <- z.toplot.core %>% filter(species_common == i)
+#   
+#   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = season_name)) +
+#     geom_point(aes(size = total_count)) +
+#     labs(title = paste("Cape Shirreff phocid census counts", 
+#                        "Core census locations", i, sep = " - "),
+#          x = "Date", y = "Season") +
+#     theme(axis.text.x = element_text(angle = 90)) +
+#     guides(size = guide_legend(title = "Count")) + 
+#     scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
+#     scale_y_discrete(drop=FALSE)
+#   
+#   i.filename <- str_replace(tolower(i), " ", "_")
+#   if (save.image)
+#     ggsave(here("output", "scatterplot", paste0(i.filename, ".png")), 
+#            g.curr, width = 10, height = 6)
+# }; rm(i, i.toplot, g.curr)
+# 
+# 
+# ### Line charts - Core locations
+# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+#   print(i)
+#   if (i == 'Elephant seal') i <- "Southern elephant seal"
+#   i.toplot <- z.toplot.core %>% filter(species_common == i) 
+#   #, season_name == "2003/04")
+#   
+#   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = total_count)) +
+#     geom_point(aes(color = season_name)) +
+#     geom_line(aes(color = season_name)) + 
+#     labs(title = paste("Cape Shirreff phocid census counts", 
+#                        "Core census locations", i, sep = " - "),
+#          x = "Date", y = "Count") +
+#     theme(axis.text.x = element_text(angle = 90)) +
+#     guides(color = guide_legend(title = "Season")) + 
+#     scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
+#   # print(g.curr)
+#   
+#   i.filename <- str_replace(tolower(i), " ", "_")
+#   if (save.image)
+#     ggsave(here("output", "line_graph", paste0(i.filename, ".png")),
+#            g.curr, width = 10, height = 6)
+# }; rm(i, i.toplot, g.curr)
 
 
 #-------------------------------------------------------------------------------
 # Core census locations + PST; from 2009/10 on
-cspc_sum <- function(x, na.rm = TRUE) {
-  if_else(all(is.na(x)), NA_integer_, sum(x, na.rm = na.rm))
-}
-
-z.toplot.combo <- z %>% 
-  group_by(header_id, species_common) %>% 
-  summarise(location = "Core + PST", 
-            across(ends_with("_count"), cspc_sum),  
-            .groups = "drop") %>% 
-  left_join(header.toplot, by = join_by(header_id)) %>% 
-  filter(census_date_start > ymd("2009-07-01"), 
-         surveyed_san_telmo) %>% 
-  mutate(season_name = as.character(season_name), 
-         season_name = fct(season_name, levels = season.name.levels.amlr))
-
-
-
-### Dot counts - Core + PST locations
-for (i in amlrPinnipeds::pinniped.phocid.sp) {
-  print(i)
-  if (i == 'Elephant seal') i <- "Southern elephant seal"
-  i.toplot <- z.toplot.combo %>% filter(species_common == i)
-  
-  g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = season_name)) +
-    geom_point(aes(size = total_count)) +
-    labs(title = paste("Cape Shirreff phocid census counts", 
-                       "Core+PST locations", i, sep = " - "),
-         x = "Date", y = "Season") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    guides(size = guide_legend(title = "Count")) + 
-    scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
-    scale_y_discrete(drop=FALSE)
-  
-  i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
-  if (save.image)
-    ggsave(here("output", "manuscript", "scatterplot", paste0(i.filename, ".png")), 
-           g.curr, width = 10, height = 6)
-}; rm(i, i.toplot, g.curr)
-
-
-### Line charts - Core + PST locations
-for (i in amlrPinnipeds::pinniped.phocid.sp) {
-  print(i)
-  if (i == 'Elephant seal') i <- "Southern elephant seal"
-  i.toplot <- z.toplot.combo %>% filter(species_common == i)
-  
-  g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = total_count)) +
-    geom_point(aes(color = season_name)) +
-    geom_line(aes(color = season_name)) + 
-    labs(title = paste("Cape Shirreff phocid census counts", 
-                       "Core+PST locations", i, sep = " - "),
-         x = "Date", y = "Count") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    guides(color = guide_legend(title = "Season")) + 
-    scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
-  g.curr
-  
-  i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
-  if (save.image)
-    ggsave(here("output", "manuscript", "line_graph", paste0(i.filename, ".png")), 
-           g.curr, width = 10, height = 6)
-}; rm(i, i.toplot, g.curr)
+# cspc_sum <- function(x, na.rm = TRUE) {
+#   if_else(all(is.na(x)), NA_integer_, sum(x, na.rm = na.rm))
+# }
+# 
+# z.toplot.combo <- z %>% 
+#   group_by(header_id, species_common) %>% 
+#   summarise(location = "Core + PST", 
+#             across(ends_with("_count"), cspc_sum),  
+#             .groups = "drop") %>% 
+#   left_join(header.toplot, by = join_by(header_id)) %>% 
+#   filter(census_date_start > ymd("2009-07-01"), 
+#          surveyed_san_telmo) %>% 
+#   mutate(season_name = as.character(season_name), 
+#          season_name = fct(season_name, levels = season.name.levels.amlr))
+# 
+# 
+# 
+# ### Dot counts - Core + PST locations
+# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+#   print(i)
+#   if (i == 'Elephant seal') i <- "Southern elephant seal"
+#   i.toplot <- z.toplot.combo %>% filter(species_common == i)
+#   
+#   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = season_name)) +
+#     geom_point(aes(size = total_count)) +
+#     labs(title = paste("Cape Shirreff phocid census counts", 
+#                        "Core+PST locations", i, sep = " - "),
+#          x = "Date", y = "Season") +
+#     theme(axis.text.x = element_text(angle = 90)) +
+#     guides(size = guide_legend(title = "Count")) + 
+#     scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
+#     scale_y_discrete(drop=FALSE)
+#   
+#   i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
+#   if (save.image)
+#     ggsave(here("output", "scatterplot", paste0(i.filename, ".png")), 
+#            g.curr, width = 10, height = 6)
+# }; rm(i, i.toplot, g.curr)
+# 
+# 
+# ### Line charts - Core + PST locations
+# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+#   print(i)
+#   if (i == 'Elephant seal') i <- "Southern elephant seal"
+#   i.toplot <- z.toplot.combo %>% filter(species_common == i)
+#   
+#   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = total_count)) +
+#     geom_point(aes(color = season_name)) +
+#     geom_line(aes(color = season_name)) + 
+#     labs(title = paste("Cape Shirreff phocid census counts", 
+#                        "Core+PST locations", i, sep = " - "),
+#          x = "Date", y = "Count") +
+#     theme(axis.text.x = element_text(angle = 90)) +
+#     guides(color = guide_legend(title = "Season")) + 
+#     scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
+#   g.curr
+#   
+#   i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
+#   if (save.image)
+#     ggsave(here("output", "line_graph", paste0(i.filename, ".png")), 
+#            g.curr, width = 10, height = 6)
+# }; rm(i, i.toplot, g.curr)
 
 
 #-------------------------------------------------------------------------------
@@ -342,7 +360,8 @@ g.grp <- x.grp %>%
   theme(axis.text.x = element_text(angle = 90), 
         strip.text = element_text(face = "italic")) +
   guides(color = guide_legend(title = "Season group", order = 1), 
-         size = guide_legend(title = "Count sd")) 
+         size = guide_legend(title = "Count sd")) +
+  scale_color_csphoc()
 # scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
 
 
@@ -381,7 +400,8 @@ g.month.clw <- y.month %>%
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90)) +
   guides(color = guide_legend(title = "Species", 
-                              label.theme = legend.italic)) 
+                              label.theme = legend.italic)) +
+  scale_color_csphoc()
 
 # # Plot with log scale
 # y.month %>% 
@@ -476,7 +496,8 @@ g.month.ses <- y.long %>%
   guides(linetype = guide_legend(title = "Species", order = 1, 
                                  label.theme = legend.italic),
          color = guide_legend(title = "Age class + sex", order = 2), 
-         size = guide_legend(title = "Count sd", order = 3))
+         size = guide_legend(title = "Count sd", order = 3)) +
+  scale_color_csphoc()
 
 
 
@@ -487,6 +508,6 @@ grid.count <- plot_grid(
 )
 
 if (save.image)
-  ggsave(here("output", "manuscript", "Fig4_census_counts.png"), 
+  ggsave(here("manuscript", "figures+tables", "Fig4_census_counts.png"), 
          grid.count, width = 20, height = 12)
 

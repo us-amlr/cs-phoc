@@ -1,5 +1,5 @@
 # Combine raw USAMLR and INACH data, after some processing
-# NOTE: this file has been superceded by 'phocid_census_manuscript' for
+# NOTE: this file has been superseded by 'manuscript_data.R' for
 #   the purpose of preparing data for the data paper
 
 

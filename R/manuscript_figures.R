@@ -1,13 +1,197 @@
-# Make plots!
+# Figures for CS-PHOC data paper
 
-library(tidyverse)
-library(stringr)
+# library(tidyverse)
+library(ggplot2)
+library(ggspatial)
+library(cowplot)
+library(dplyr)
+library(sf)
+library(rnaturalearth)
+# library(rnaturalearthdata)
+library(rnaturalearthhires)
 library(here)
+library(viridis)
+library(stringr)
+# library(here)
 library(amlrPinnipeds)
 library(glue)
-library(cowplot)
-library(viridis)
-library(ggsci)
+# library(cowplot)
+# library(viridis)
+# library(ggsci)
+
+
+###############################################################################
+###############################################################################
+# Code to create CS map (Figure 1)
+
+#-------------------------------------------------------------------------------
+# Make two medium res maps
+
+### Get object from rnaturalearthhires, and set common variables
+world <- ne_countries(scale = "large", returnclass = "sf")
+class(world)
+
+g.map <- ggplot(data = world) +
+  geom_sf() +
+  theme_bw()
+
+# g.map
+# crs.laea <- "+proj=laea +lat_0=-75 +lon_0=-15 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
+crs.laea <- "+proj=laea +lat_0=-90 +lon_0=-15 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
+
+# Define limits
+xlim.ssi <- c(-65.0, -53.5)
+ylim.ssi <- c(-65.35, -60.5)
+xlim.cs <- c(-60.9, -60.6)
+ylim.cs <- c(-62.56, -62.45)
+
+ssi.sfc.4326 <- st_as_sfc(st_bbox(c(xmin = xlim.ssi[1], xmax = xlim.ssi[2], 
+                                    ymax = ylim.ssi[2], ymin = ylim.ssi[1]), 
+                                  crs = st_crs(4326)))
+ssi.sfc.laea <- st_transform(ssi.sfc.4326, crs.laea)
+
+plot(st_geometry(st_transform(world, crs.laea)), axes = TRUE)
+
+
+### Map of whole region
+g.region <- g.map +
+  coord_sf(crs = crs.laea, expand = FALSE, 
+           xlim = c(-4070000, 4070000), ylim = c(-4000000, 4000000)) + 
+  geom_rect(xmin = min(st_coordinates(ssi.sfc.laea)[, "X"]), 
+            xmax = max(st_coordinates(ssi.sfc.laea)[, "X"]), 
+            ymin = min(st_coordinates(ssi.sfc.laea)[, "Y"]), 
+            ymax = max(st_coordinates(ssi.sfc.laea)[, "Y"]), 
+            fill = NA, colour = "black", linewidth = 1) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(), 
+        # panel.border = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+
+### Map of SSI
+g.ssi <- g.map + 
+  coord_sf(xlim = xlim.ssi, ylim = ylim.ssi, 
+           crs = st_crs(4326), expand = FALSE) + 
+  geom_rect(xmin = min(xlim.cs), xmax = max(xlim.cs), 
+            ymin = min(ylim.cs), ymax = max(ylim.cs), 
+            fill = NA, colour = "black", linewidth = 0.5) + 
+  annotation_scale(location = "tl", width_hint = 0.5) +
+  annotate(geom = "text", x = -60, y = -64.2, label = "Antarctic Peninsula", 
+           fontface = "italic", color = "black", size = 4, angle = 38) + 
+  annotate(geom = "text", x = -58, y = -61.5, label = "South Shetland Islands", 
+           fontface = "italic", color = "black", size = 4, angle = 0) + 
+  annotate(geom = "text", x = -61.8, y = -62.3, label = "Cape Shirreff",
+           fontface = "italic", color = "black", size = 3, angle = 0) +
+  xlab(NULL) +
+  ylab(NULL)
+
+
+
+### Map of Cape Shirreff
+
+# # Initial attempt using a marked up PNG file to indicate locations
+# # Deprecated in favor of code-driven plot below
+# cs.image <- grid::rasterGrob(
+#   png::readPNG("C:/SMW/Pinnipeds/CS-PHOC/manuscript-scidata/CS map - shaded.png"),
+#   width=ggplot2::unit(1,"npc"),
+#   height=ggplot2::unit(1,"npc")
+# )
+# g.cs <- ggplot() + 
+#   annotation_custom(cs.image, -Inf, Inf, -Inf, Inf) +
+#   geom_text()
+
+# Code-driven plot of CS and locations
+cs.poly <- st_read("../CS Polygon and fur seal beaches_Adahood/Inach_Shirreff_poly.shp")
+cs.line <- st_cast(st_geometry(cs.poly), "LINESTRING")
+pst.sf <- st_linestring(matrix(c(c(613900, 613700, 613000, 612980), 
+                                 c(3070200, 3070000, 3070000, 3069900)), 
+                               ncol = 2)) %>% 
+  st_sfc(crs = st_crs(cs.lin)) %>% 
+  st_sf(data.frame(type = "Punta San Telmo")) %>% 
+  st_set_geometry("geometry")
+
+# Create polygons with which to intersect linestrings to draw beaches as a layer
+minmax_to_sfc <- function(x1, x2, y1, y2, crs) {
+  x.df <- data.frame(lon = c(x1, x2, x2, x1, x1), lat = c(y1, y1, y2, y2, y1))
+  st_sfc(
+    st_polygon(list(matrix(c(x.df$lon, x.df$lat), ncol = 2))), 
+    crs = crs
+  )
+}
+
+y1.min <- 3069990
+cs.corepolys.sfc <- c(
+  st_sfc(
+    st_polygon(list(matrix(c(c(615000, 614775, 614200, 615000, 615000), 
+                             c(y1.min, y1.min, 3070300, 3070300, y1.min)), 
+                           ncol = 2))), 
+    crs = st_crs(cs.line)
+  ), 
+  minmax_to_sfc(614400, 615300, 3070300, 3071680, st_crs(cs.line)), 
+  minmax_to_sfc(614400, 615300, 3071810, 3072000, st_crs(cs.line)), 
+  minmax_to_sfc(614000, 614400, 3071810, 3071980, st_crs(cs.line)),
+  
+  
+  minmax_to_sfc(614000, 614210, 3072020, 3072400, st_crs(cs.lin)), 
+  minmax_to_sfc(613400, 614210, 3072400, 3072750, st_crs(cs.line)), 
+  minmax_to_sfc(612800, 613400, 3072000, 3072260, st_crs(cs.line)),
+  minmax_to_sfc(612800, 614100, 3070220, 3071900, st_crs(cs.line))
+)
+# plot(st_geometry(cs.line), axes = TRUE); plot(cs.corepolys.sfc, add = TRUE)
+
+cs.core <- st_intersection(cs.corepolys.sfc, cs.line) %>% 
+  st_sf(data.frame(type = "Core census locations")) %>% 
+  st_set_geometry("geometry")
+
+sf.locations <- bind_rows(cs.core, pst.sf)
+# loc.levels <- c("Core census locations", "Punta San Telmo", 
+#                 "CS mainland")
+# sf.locations <- ad.cs %>%
+#   mutate(type = "CS mainland") %>%
+#   bind_rows(cs.core, pst.sf) %>%
+#   mutate(type = factor(type, levels = loc.levels), 
+#          lwd = if_else(type == "CS mainland", 0.5, 2))
+
+g.cs <- ggplot() +
+  geom_sf(data = cs.poly) +
+  geom_sf(data = sf.locations, aes(col = type, fill = type), lwd = 3) + 
+  # scale_colour_grey() + scale_fill_grey() +
+  # scale_fill_manual(values = gray.colors(3)[c(1, 2)]) +
+  # scale_colour_manual(values = gray.colors(3)[c(1, 2)]) +
+  scale_color_manual(values = viridis(3)[1:2]) +
+  scale_fill_manual(values = viridis(3)[1:2]) +
+  # scale_fill_brewer(palette = "Set2") +
+  # scale_color_brewer(palette = "Set2") +
+  # scale_fill_viridis(option = "H", discrete = TRUE) + 
+  # scale_color_viridis(option = "H", discrete = TRUE) + 
+  coord_sf(crs = st_crs(4326)) +
+  guides(fill = guide_legend(title = NULL), 
+         color = guide_legend(title = NULL)) +
+  theme_bw() + 
+  theme(legend.position = "bottom") +
+  annotation_scale(location = "br", width_hint = 0.5) +
+  annotation_north_arrow(location = "tr", which_north = "true",
+                         pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                         height = unit(2, "cm"), width = unit(2, "cm"),
+                         style = north_arrow_fancy_orienteering)
+
+
+# Grid
+grid.map <- plot_grid(
+  plot_grid(g.region, g.ssi, nrow = 2, align = "v", axis = "lr"), 
+  g.cs, ncol = 2, rel_widths = c(1, 1.3)
+)
+
+ggsave(here("figures", "Fig1_cs_map.png"), 
+       grid.map, width = 9, height = 6, bg = "white")
+
+
+
+###############################################################################
+###############################################################################
+# General code for data-dependent figures
+
 
 con <- amlr_dbConnect(Database = "***REMOVED***")
 save.image <- TRUE
@@ -511,3 +695,5 @@ if (save.image)
   ggsave(here("manuscript", "figures+tables", "Fig4_census_counts.png"), 
          grid.count, width = 20, height = 12)
 
+################################################################################
+################################################################################

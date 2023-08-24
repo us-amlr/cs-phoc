@@ -1,14 +1,16 @@
 # Cape Shirreff Combined Phocid Census Data
 
-This document details the creation of the combined Cape Shirreff phocid census dataset ([phocids_cs_combined.csv](cs_combined_data/phocids_cs_combined.csv)) using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded during the 2007/08, 2008/09, and 2020/21 seasons.
+NOTE: This document was written during an early stage of development of the [CS-PHOC](https://github.com/us-amlr/cs-phoc) project. It has been updated, but may contain some old references. It has been kept because the details in it are still relevant to the structure of the pre INACH data and US AMLR ***REMOVED*** database.
 
-The INACH data were extracted from historical INACH records by Renato Borras, and concatenated together using the [phocid_census_inach.R](R/phocid_census_inach.R) script. The combined data files were generated from the INACH files and US AMLR Pinnipeds database using the [phocid_census_combine.R](R/phocid_census_combine.R) script. 
+This document provides details relevant to creating a combined Cape Shirreff phocid census dataset using data from the [INACH](https://www.inach.cl/inach/) and [US AMLR](https://www.fisheries.noaa.gov/about/antarctic-ecosystem-research-division-southwest-fisheries-science-center) programs. The INACH data span 1997/98 - 2006/07, and the US AMLR data span 2009/10 - present. Phocid census surveys for Cape Shirreff were not recorded/conducted during the 2007/08, 2008/09, and 2020/21 seasons.
+
+The INACH data were extracted from historical INACH records by Renato Borras, and were concatenated together and imported into the ***REMOVED*** database using the import_inach.R script.
 
 ## Data Structure
 
 The phocid census data is split into two tables: a 'census header' table and a 'census data' table'. Having the header table allows us to explicitly group census records from the same phocid census that occurred on multiple days, e.g., if the census effort was split across a Thursday and a Friday. Each record in the data table has a header record ID, which allows each data record to be joined with its corresponding header record.
 
-[phocids_cs_combined_header.csv](data/cs_combined_data/phocids_cs_combined_header.csv) contains only the phocid census header data, without the census count records. The combined data is provided in two forms: wide (one record per date/location/species; [phocids_cs_combined_wide.csv](data/cs_combined_data/phocids_cs_combined_wide.csv)) and long (one record per count; [phocids_cs_combined_long.csv](data/cs_combined_data/phocids_cs_combined_long.csv)). Note that all of the NA counts have been removed in the long data.
+The header file contains only the phocid census header data, without the census count records. The combined data is provided in a wide form (one record per date/location/species).
 
 ### Data Columns
 
@@ -43,12 +45,12 @@ Column descriptions for combined Cape Shirreff phocid census header info and dat
 * **juv_male_count**: count of juvenile males
 * **juv_unk_count**: count of juveniles of unknown sex
 * **pup_live_count**: count of live pups
-* **pup_dead_count**: count dead pups
+* **pup_dead_count**: count dead pups. (SMW NOTE: removed July 2023)
 * **unk_female_count**: count of females of unknown age class. This count is usually used when an inexperienced observer isn't able to decide between a large juvenile or small adult
 * **unk_male_count**: count of males of unknown age class. This count is usually used when an inexperienced observer isn't able to decide between a large juvenile or small adult
 * **unk_unk_count**: count of seals where sex and age class is unknown. This count is usually used for elephant seals where the observer can't see if it is an adult female or juvenile male
 * **total_count**: a calculated value; the sum of all of the count columns (ad_female_count to unk_unk_count)
-* **total_count_nodead**: a calculated value; the sum of all of the count columns (ad_female_count to unk_unk_count) except for pup_dead_count
+* **total_count_nodead**: a calculated value; the sum of all of the count columns (ad_female_count to unk_unk_count) except for pup_dead_count (SMW NOTE: removed July 2023)
 
 ##### Data table, long:
 
@@ -63,9 +65,9 @@ INACH observers recorded data for the following counts: **ad_female_count**, **a
 In the US AMLR data, the following columns were used in all seasons (2009/10 to present): **ad_female_count**, **ad_male_count**, **ad_unk_count**, **juv_female_count**, **juv_male_count**, **juv_unk_count**, and **pup_live_count**
 
 Other counts were only recorded in certain seasons:
-* **pup_dead_count**: used from 2012/13 to present
+* **pup_dead_count**: used from 2012/13 to present (SMW NOTE: removed July 2023)
 * **unk_female_count** and **unk_male_count**: used from 2017/18 to present
-* **unk_unk_count**: used from 2014/15 to present
+* **unk_unk_count**: used for all years for SES, and from 2014/15 to present for all other species
 
 ## INACH Data Decisions and Notes
 

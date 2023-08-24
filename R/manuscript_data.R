@@ -18,9 +18,10 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   collect() %>% 
   group_by(season_name) %>% 
   mutate(season_idx = seq_along(census_date_start), 
-         header_id = paste(season_name, 
-                           str_pad(season_idx, width = 2, pad = "0"), 
-                           sep = "-")) %>% 
+         # header_id = paste(season_name, 
+         #                   str_pad(season_idx, width = 2, pad = "0"), 
+         #                   sep = "-"), 
+         header_id = census_phocid_header_id) %>% 
   ungroup() %>% 
   select(header_id, census_phocid_header_id, season_name, 
          census_date_start, census_date_end, census_days, 
@@ -35,9 +36,10 @@ stopifnot(
 
 cs.wide <- tbl(con, "vCensus_Phocid") %>% 
   arrange(census_date, species, location_group) %>% 
+  rename(header_id = census_phocid_header_id) %>% 
   collect() %>% 
-  left_join(select(cs.header.orig, header_id, census_phocid_header_id), 
-            by = "census_phocid_header_id") %>% 
+  # left_join(select(cs.header.orig, header_id, census_phocid_header_id), 
+  #           by = "census_phocid_header_id") %>% 
   select(header_id, observer, census_date, location_group, species, 
          ends_with("_count")) %>% 
   select(-pup_dead_count) %>% 

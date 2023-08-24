@@ -1,6 +1,5 @@
-# Sam's CSPHOC census data explorations
+# Sam's CSPHOC census data qc and explorations
 
-# library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(DBI)

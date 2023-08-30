@@ -1,23 +1,40 @@
 # CS-PHOC
 
-This repository is an R project that contains the data, code, and documentation for generating the Cape Shirreff PHOcid Census (CS-PHOC) dataset. It also contains all code, figures, and other files relevant to the CS-PHOC data paper: [Woodman_etal_CS-PHOC.docx](Woodman_etal_CS-PHOC.docx). 
+This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo strucutre is described below.
 
 Specific versions of the [manuscript](Woodman_etal_CS-PHOC.docx), such as those shared with co-authors or sent out for review, can be found in [releases](https://github.com/us-amlr/cs-phoc/releases). 
 
-Note that this R project uses [renv](https://github.com/rstudio/renv/) to document the project environment. Anyone using this project and wishing to use the same project environment can simply clone this repo and run `renv::restore()`, as described in the [renv documentation](https://rstudio.github.io/renv/). This is not required, but could be helpful if you are running into errors when attempting to reproduce any part of the project.
+This project uses [renv](https://github.com/rstudio/renv/) to manage the project environment. Users can clone this repo and run `renv::restore()` as described in the renv docs.
 
-Note: README-data.md is outdated and needs to be updated.
+## Data
 
-## Directories
+Interested parties can access the CS-PHOC dataset in two ways:
 
-* data: Data relevant to the CS-PHOC project
-  * antabif: Data files to be published via https://ipt.biodiversity.aq/
-  * manuscript: CSV files referenced in the CS-PHOC data paper publication. Created from data in the ***REMOVED*** database.
-  * pre: historical INACH and AMLR data stored in Excel files. These data were imported into the ***REMOVED*** database via import_inach.R and import_amlr.R. 
-  * Raw data stored in the ***REMOVED*** database can be requested through the authors.
+- Access Darwin Core compliant event and occurrence tables through SCAR Antarctic Biodiversity Portal (recommended; www.biodiversity.aq): in progress
 
-* figures: Figures (and table) for the CS-PHOC data paper. Also contains exploratory plots (in 'other')
+- Download the header and count CSV files included in this repo: [cs-phoc-headers.csv](data/manuscript/cs-phoc-headers.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-hcounts.csv)
 
-* R: The R code for this project
-  * import_*.R files: Code for importing INACH and US AMLR data to the ***REMOVED*** database
-  * manuscript_*.R files: Code for the CS-PHOC data paper. This includes preparing the final CS-PHOC dataset (manuscript_data.R), preparing figures for the CS-PHOC data paper (manuscript_figures.R), and example code referenced in the manuscript (manuscript_examples.R).
+As described in the manuscript, raw data stored in the ***REMOVED*** database can be requested through the authors.
+
+If using the data, please cite as TODO
+
+## Manuscript
+
+The CS-PHOC data paper is currently in prep. Manuscript access and citation details will be added here.
+
+## Repo structure
+
+```
+├── R                     
+    ├── import_*.R      : code for importing files from 'data/pre' into the database
+    ├── examples.R      : example code for using the CS-PHOC dataset
+    ├── manuscript_*.R  : code for generating CS-PHOC dataset and manuscript figures
+├── data                  
+    ├── antabif         : Darwin Core compliant tables
+    ├── manuscript      : CSV files; presented in the manuscript
+    ├── pre             : historical data files; now imported into the database
+├── figures             : figures and table; included in the manuscript
+    ├── other           : exploratory plots
+├── renv                : renv files for dependencies
+├── Woodman_etal_CS-PHOC.docx : manuscript (data paper)
+```

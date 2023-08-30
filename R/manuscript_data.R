@@ -174,34 +174,3 @@ write_csv(cs.core.pst, here("manuscript", "cs-phoc-counts.csv"), na = "")
 #      cs.core.complete %>% 
 #      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
 # )
-
-
-#-------------------------------------------------------------------------------
-### Create table with column descriptors
-tbl1.ref <- read_csv(here("manuscript", "cs-phoc-counts.csv"), 
-                     col_types = "cccciiiiiiiiiii") %>% 
-  as.data.frame()
-
-tbl1 <- data.frame(
-  Column = names(tbl1.ref), 
-  Data_Type = vapply(tbl1.ref, class, as.character(1))
-) %>% 
-  mutate(Description = case_when(
-    Column == "header_id"~         "A unique identifier with which to join data records with survey-level information",
-    Column == "location" ~         "The location for the corresponding count data",
-    Column == "species" ~          "The scientific name of the phocid species", 
-    Column == "species_common" ~   "The common name of the phocid species",
-    Column == "total_count" ~      "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
-    Column == "ad_female_count" ~  "Aggregate count of adult females for the corresponding census/location/species", 
-    Column == "ad_male_count" ~    "Aggregate count of adult males",
-    Column == "ad_unk_count" ~     "Aggregate count of adults of unknown sex",
-    Column == "juv_female_count" ~ "Aggregate count of juvenile females",
-    Column == "juv_male_count" ~   "Aggregate count of juvenile males",
-    Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
-    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of all sexes",
-    Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
-    Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
-    Column == "unk_unk_count" ~    "Aggregate count of animals of unknown age class and unknown sex"
-  ))
-
-write_csv(tbl1, file = here("manuscript", "figures+tables", "Table1.csv"), na = "")

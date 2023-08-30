@@ -30,7 +30,7 @@ The CS-PHOC data paper is currently in prep. Manuscript access and citation deta
     ├── examples.R      : example code for using the CS-PHOC dataset
     ├── manuscript_*.R  : code for generating CS-PHOC dataset and manuscript figures
 ├── data                  
-    ├── antabif         : Darwin Core compliant tables
+    ├── dwc             : Darwin Core compliant tables
     ├── manuscript      : CSV files; presented in the manuscript
     ├── pre             : historical data files; now imported into the database
 ├── figures             : figures and table; included in the manuscript

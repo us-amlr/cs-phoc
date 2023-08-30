@@ -2,10 +2,10 @@
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-library(tidyverse)
+library(dplyr)
+library(readr)
 library(here)
 library(amlrPinnipeds)
-library(waldo)
 
 
 #-------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ cs.pst.complete <- cs.wide %>%
   select(-research_program)
 
 
-### Bind core and pst records together
+### Bind core and pst records together. Create count ID
 cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
   amlrPinnipeds::total_count() %>%
   arrange(header_id, location, species) %>%
@@ -112,21 +112,33 @@ cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
                                   "Southern elephant seal", species), 
          species = case_when(
            species_common == "Crabeater seal" ~ "Lobodon carcinophagus", 
-           species_common == "Southern elephant seal" ~ "Mirounga leonina",
            species_common == "Leopard seal" ~ "Hydrurga leptonyx",
-           species_common == "Weddell seal" ~ "Leptonychotes weddellii")) %>% 
+           species_common == "Southern elephant seal" ~ "Mirounga leonina",
+           species_common == "Weddell seal" ~ "Leptonychotes weddellii"), 
+         species_id = case_when(
+           species_common == "Crabeater seal" ~ 1, 
+           species_common == "Leopard seal" ~ 2,
+           species_common == "Southern elephant seal" ~ 3,
+           species_common == "Weddell seal" ~ 4), 
+         location_id = case_when(
+           location == loc.core ~ 1, 
+           location == loc.pst ~ 2
+         ), 
+         count_id = paste(header_id, location_id, species_id, sep = "-")) %>% 
+  select(-c(species_id, location_id)) %>% 
   relocate(species_common, .after = species) %>% 
   rename(pup_count = pup_live_count)
 
 
 #-------------------------------------------------------------------------------
 ### Save data
-write_csv(cs.header, file = here("manuscript", "cs-phoc-headers.csv"), na = "")
-write_csv(cs.core.pst, here("manuscript", "cs-phoc-counts.csv"), na = "")
+write_csv(cs.header, file = here("data", "manuscript", "cs-phoc-headers.csv"), na = "")
+write_csv(cs.core.pst, here("data", "manuscript", "cs-phoc-counts.csv"), na = "")
 
 
 #-------------------------------------------------------------------------------
 # # Sanity checks
+# library(waldo)
 # stopifnot(
 #   sum(is.na(cs.core.pst$header_id)) == 0,
 #   sum(is.na(cs.core.pst$species)) == 0,

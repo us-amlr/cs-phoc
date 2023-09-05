@@ -105,10 +105,10 @@ g.ssi <- g.map +
 # Code-driven plot of CS and locations
 cs.poly <- st_read("../CS Polygon and fur seal beaches_Adahood/Inach_Shirreff_poly.shp")
 cs.line <- st_cast(st_geometry(cs.poly), "LINESTRING")
-pst.sf <- st_linestring(matrix(c(c(613900, 613700, 613000, 612980), 
-                                 c(3070200, 3070000, 3070000, 3069900)), 
+pst.sf <- st_linestring(matrix(c(c(613900, 613500, 612800, 612780), 
+                                 c(3070200, 3069940, 3070000, 3069850)), 
                                ncol = 2)) %>% 
-  st_sfc(crs = st_crs(cs.lin)) %>% 
+  st_sfc(crs = st_crs(cs.line)) %>% 
   st_sf(data.frame(type = "Punta San Telmo")) %>% 
   st_set_geometry("geometry")
 
@@ -134,7 +134,7 @@ cs.corepolys.sfc <- c(
   minmax_to_sfc(614000, 614400, 3071810, 3071980, st_crs(cs.line)),
   
   
-  minmax_to_sfc(614000, 614210, 3072020, 3072400, st_crs(cs.lin)), 
+  minmax_to_sfc(614000, 614210, 3072020, 3072400, st_crs(cs.line)), 
   minmax_to_sfc(613400, 614210, 3072400, 3072750, st_crs(cs.line)), 
   minmax_to_sfc(612800, 613400, 3072000, 3072260, st_crs(cs.line)),
   minmax_to_sfc(612800, 614100, 3070220, 3071900, st_crs(cs.line))

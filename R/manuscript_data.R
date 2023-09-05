@@ -6,6 +6,7 @@ library(dplyr)
 library(readr)
 library(here)
 library(amlrPinnipeds)
+library(worrms)
 
 
 #-------------------------------------------------------------------------------
@@ -18,9 +19,6 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   collect() %>% 
   group_by(season_name) %>% 
   mutate(season_idx = seq_along(census_date_start), 
-         # header_id = paste(season_name, 
-         #                   str_pad(season_idx, width = 2, pad = "0"), 
-         #                   sep = "-"), 
          header_id = census_phocid_header_id) %>% 
   ungroup() %>% 
   select(header_id, census_phocid_header_id, season_name, 
@@ -38,8 +36,6 @@ cs.wide <- tbl(con, "vCensus_Phocid") %>%
   arrange(census_date, species, location_group) %>% 
   rename(header_id = census_phocid_header_id) %>% 
   collect() %>% 
-  # left_join(select(cs.header.orig, header_id, census_phocid_header_id), 
-  #           by = "census_phocid_header_id") %>% 
   select(header_id, observer, census_date, location_group, species, 
          ends_with("_count")) %>% 
   select(-pup_dead_count) %>% 
@@ -103,30 +99,36 @@ cs.pst.complete <- cs.wide %>%
 
 
 ### Bind core and pst records together. Create count ID
+lookup.species <- tbl(con, "lookup_pinniped_species") %>% 
+  filter(phocid_census == 1) %>% 
+  collect() %>% 
+  select(species_common = display_name, 
+         species = scientific_name)
+
+matched_taxa_tibbles <- wm_records_names(unique(lookup.species$species))
+matched_taxa <- bind_rows(matched_taxa_tibbles) %>% 
+  rename(scientificName = "scientificname") %>%
+  select(species = scientificName, valid_AphiaID)
+stopifnot(nrow(matched_taxa) == 4)
+
 cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
   amlrPinnipeds::total_count() %>%
   arrange(header_id, location, species) %>%
   relocate(location, .after = header_id) %>%
   relocate(total_count, .before = ad_female_count) %>% 
-  mutate(species_common = if_else(species == "Elephant seal", 
-                                  "Southern elephant seal", species), 
-         species = case_when(
-           species_common == "Crabeater seal" ~ "Lobodon carcinophagus", 
-           species_common == "Leopard seal" ~ "Hydrurga leptonyx",
-           species_common == "Southern elephant seal" ~ "Mirounga leonina",
-           species_common == "Weddell seal" ~ "Leptonychotes weddellii"), 
-         species_id = case_when(
-           species_common == "Crabeater seal" ~ 1, 
-           species_common == "Leopard seal" ~ 2,
-           species_common == "Southern elephant seal" ~ 3,
-           species_common == "Weddell seal" ~ 4), 
+  rename(species_common = species) %>% 
+  left_join(lookup.species, by = join_by(species_common)) %>% 
+  left_join(matched_taxa, by = join_by(species)) %>% 
+  mutate(species_common = if_else(species_common == "Elephant seal", 
+                                  "Southern elephant seal", species_common), 
          location_id = case_when(
            location == loc.core ~ 1, 
            location == loc.pst ~ 2
          ), 
-         count_id = paste(header_id, location_id, species_id, sep = "-")) %>% 
-  select(-c(species_id, location_id)) %>% 
-  relocate(species_common, .after = species) %>% 
+         count_id = paste(header_id, location_id, valid_AphiaID, sep = "-")) %>% 
+  select(-c(valid_AphiaID, location_id)) %>% 
+  relocate(species, species_common, .after = location) %>% 
+  relocate(count_id, .before = header_id) %>% 
   rename(pup_count = pup_live_count)
 
 

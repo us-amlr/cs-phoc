@@ -34,12 +34,11 @@ event <- x.header %>%
       research_program, ifelse(surveyed_san_telmo, "true", "false")
     ),
     # add recommended Darwin Core terms: https://dwc.tdwg.org/terms/#event
-    decimalLongitude = "-60.77",  # mandatory
-    decimalLatitude = "-62.47",  # mandatory
-    # coordinatePrecision = "",  # coordinateUncertaintyInMeters is more important, you can skip this if you don't have it
-    coordinateUncertaintyInMeters = "",  # strongly recommended
+    decimalLongitude = "-60.77",
+    decimalLatitude = "-62.47",
+    coordinateUncertaintyInMeters = "2650",
     locality = "Cape Shirreff, Livingston Island",  
-    higherGeography = "South Shetland Islands",
+    higherGeography = "Antarctica | South Shetland Islands | Cape Shirreff, Livingston Island",
     higherGeographyID = "https://data.aad.gov.au/aadc/gaz/scar/display_name.cfm?gaz_id=131551", 
     countryCode = "AQ",
     sampleSizeValue = census_days,
@@ -51,6 +50,11 @@ event <- x.header %>%
   # fields that cannot be mapped to Darwin Core
   select(-c(season_name, census_days, census_date_start, census_date_end, 
             surveyed_san_telmo, research_program))
+
+stopifnot(
+  !any(is.na(event)), 
+  sum(duplicated(event$eventID)) == 0
+)
 
 # write to file
 write_tsv(event, here("data", "dwc", "event.txt"), na = "")
@@ -74,7 +78,7 @@ occ <- x.count %>%
     identificationReferences = "https://doi.org/10.1016/C2012-0-06919-0"
   )
 
-# create the long table which collapses sex and lifeStage to generate the Occurrence table for Darwin Core Archive: https://rs.gbif.org/core/dwc_occurrence_2022-02-02.xml 
+# create the long table
 occ.long <- occ %>%
   select(-total_count) %>% 
   rename(pup_unk_count = pup_count) %>% 
@@ -83,32 +87,45 @@ occ.long <- occ %>%
                values_to = "individualCount") %>%
   select(-extra_count) %>% 
   filter(!is.na(individualCount)) %>% 
-  mutate(lifeStage = case_when(
-    lifeStage == "ad" ~ "adult",
-    lifeStage == "juv" ~ "juvenile",
-    lifeStage == "pup" ~ "pup",
-    lifeStage == "unk" ~ "unknown",
-  ),
-  sex = case_when(
-    grepl("female", sex) ~ "female",
-    grepl("male", sex) ~ "male",
-    grepl("unk", sex) ~ "unknown"
-  )) %>%
-  mutate(occurrenceStatus = if_else(individualCount == 0, "absent", "present")
-         # occurrenceStatus = case_when(
-         #   individualCount == 0 ~ "absent",
-         #   # is.na(individualCount) ~ NA_character_, # to confirm with Ming
-         #   .default =  ~ "present"),
-  ) %>%
+  mutate(occurrenceStatus = if_else(individualCount == 0, "absent", "present"), 
+         lifeStage_id = case_when(
+           lifeStage == "ad" ~ 1,
+           lifeStage == "juv" ~ 2,
+           lifeStage == "pup" ~ 3,
+           lifeStage == "unk" ~ 4,
+         ),
+         lifeStage = case_when(
+           lifeStage == "ad" ~ "adult",
+           lifeStage == "juv" ~ "juvenile",
+           lifeStage == "pup" ~ "pup",
+           lifeStage == "unk" ~ "unknown",
+         ),
+         sex_id = case_when(
+           grepl("female", sex) ~ 1,
+           grepl("male", sex) ~ 2,
+           grepl("unk", sex) ~ 3
+         ),
+         sex = case_when(
+           grepl("female", sex) ~ "female",
+           grepl("male", sex) ~ "male",
+           grepl("unk", sex) ~ "unknown"
+         ), 
+         occurrenceID = paste(occurrenceID, lifeStage_id, sex_id, sep = "-")) %>%
   left_join(select(event, eventID, dateIdentified = eventDate), 
-            by = "eventID")
+            by = "eventID") %>% 
+  select(-c(lifeStage_id, sex_id)) %>% 
+  relocate(occurrenceID, .before = eventID)
 
 # # Sanity checks
-# occ.long %>% 
-#   select(-c(eventID, occurrenceID, individualCount, dateIdentified)) %>% 
+# occ.long %>%
+#   select(-c(eventID, occurrenceID, individualCount, dateIdentified)) %>%
 #   lapply(table, useNA = "ifany")
 # table(occ.long$individualCount, occ.long$occurrenceStatus, useNA = "ifany")
 
+stopifnot(
+  !any(is.na(occ.long)), 
+  sum(duplicated(occ.long$occurrenceID)) == 0
+)
 
 # write to file
 write_tsv(occ.long, here("data", "dwc", "occurrence.txt"), na = "")

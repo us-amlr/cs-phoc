@@ -44,7 +44,7 @@ event <- x.header %>%
     sampleSizeValue = census_days,
     sampleSizeUnit = ifelse(census_days <= 1, "day", "days"),
     geodeticDatum = "EPSG:4326",
-    samplingProtocol = "TODO: paper DOI upon publication"
+    samplingProtocol = "TODO: add paper DOI upon publication"
   ) %>%
   rename(eventID = header_id) %>%
   # fields that cannot be mapped to Darwin Core

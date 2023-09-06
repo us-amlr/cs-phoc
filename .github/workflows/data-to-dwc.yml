@@ -8,7 +8,7 @@ on:
 
 jobs:
   generate-data:
-    runs-on: ubuntu-20.04
+    runs-on: windows-latest
     steps:
       # - name: Install Ubuntu package
       #   run: |

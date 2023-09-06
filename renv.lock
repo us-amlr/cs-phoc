@@ -1599,13 +1599,18 @@
     "rnaturalearthhires": {
       "Package": "rnaturalearthhires",
       "Version": "0.2.1",
-      "Source": "Repository",
-      "Repository": "https://ropensci.r-universe.dev",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "rnaturalearthhires",
+      "RemoteUsername": "ropensci",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "c3785a8c44738de6ae8f797080c0a337ebed929d",
       "Requirements": [
         "R",
         "sp"
       ],
-      "Hash": "39390d437457f31c4231c4126cb868bb"
+      "Hash": "5aec5e55d213b1534ad7c90305ab9a50"
     },
     "rosm": {
       "Package": "rosm",

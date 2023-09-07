@@ -40,6 +40,7 @@ event <- x.header %>%
     locality = "Cape Shirreff, Livingston Island",  
     higherGeography = "Antarctica | South Shetland Islands | Cape Shirreff, Livingston Island",
     higherGeographyID = "https://data.aad.gov.au/aadc/gaz/scar/display_name.cfm?gaz_id=131551", 
+    continent = "Antarctica",
     countryCode = "AQ",
     sampleSizeValue = census_days,
     sampleSizeUnit = ifelse(census_days <= 1, "day", "days"),

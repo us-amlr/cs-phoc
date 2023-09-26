@@ -20,7 +20,7 @@ season.info <- tbl(con, "season_info") %>% collect()
 ### Read in census data, one species to sheet
 x.info.names <- c("season_name", "week", "census_date", "location")
 x.info.types <- c("text", "numeric", "date", "text")
-inach.data <- here("data", "inach_data")
+inach.data <- here("data", "pre", "inach_data")
 
 phocid.file.name <- here(
   # inach.data, "phocids Cape shirreff 97-2007 VERSION july22.xlsx"

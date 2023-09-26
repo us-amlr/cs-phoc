@@ -31,7 +31,7 @@ event <- x.header %>%
     # whatever that cannot be mapped to Darwin Core terms goes to dynamicProperties
     dynamicProperties = sprintf(
       '{"research_program": "%s", "surveyed_san_telmo": %s}', 
-      research_program, ifelse(surveyed_san_telmo, "true", "false")
+      research_program, if_else(surveyed_san_telmo, "true", "false")
     ),
     # add recommended Darwin Core terms: https://dwc.tdwg.org/terms/#event
     decimalLongitude = "-60.77",

@@ -32,7 +32,7 @@ beaches <- tbl(con, "beaches") %>% collect()
 
 
 ### Read original Excel files
-path.amlrdata <- here("data", "amlr_data")
+path.amlrdata <- here("data", "pre", "amlr_data")
 col.types <- c(
   "numeric", "date", rep("text", 13), rep("numeric", 33), rep("numeric", 2), 
   "date", rep("numeric", 4)

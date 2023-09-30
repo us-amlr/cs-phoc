@@ -39,19 +39,19 @@ cs.wide <- tbl(con, "vCensus_Phocid") %>%
   select(header_id, observer, census_date, location_group, species, 
          ends_with("_count")) %>% 
   select(-pup_dead_count) %>% 
-  group_by(header_id, location = location_group, species) %>% 
+  group_by(header_id, location_group, species) %>% 
   summarise(across(c(census_date), unique), 
             across(ends_with("_count"), sum), 
             .groups = "drop") %>% 
   relocate(census_date, .after = header_id) %>% 
-  arrange(census_date, species, tolower(location))
+  arrange(census_date, species, tolower(location_group))
 
 # # Sanity checks
 # lapply(cs.wide, function(i) {
 #   tableNA(amlr_season_from_date(cs.wide$census_date), is.na(i))
 # })
 # all(cs.wide$header_id %in% cs.header$header_id)
-# tableNA(cs.wide$location)
+# tableNA(cs.wide$location_group)
 
 
 #-------------------------------------------------------------------------------
@@ -66,23 +66,24 @@ amlr.header <- cs.header %>% filter(research_program == "USAMLR")
 
 cs.core.agg <- cs.wide %>% 
   # Filter for core locations, sum by header_id/species
-  filter(location %in% c(csphoc.core.location.groups)) %>% 
+  filter(location_group %in% c(amlrPinnipeds::csphoc.core.location.groups)) %>% 
+  select(-location_group) %>% 
   group_by(header_id, location = loc.core, species) %>% 
   summarise(across(ends_with("_count"), sum_count),  
-            # orig_record = TRUE, 
             .groups = "drop") %>% 
-  left_join(select(cs.header, header_id, research_program), 
+  left_join(select(cs.header, header_id, census_date_start, research_program), 
             by = join_by(header_id))
 
 # Complete the AMLR data, and bind all back together
 amlr.complete <- cs.core.agg %>% 
   filter(research_program == "USAMLR") %>% 
-  csphoc_complete_aggregated(amlr.header, fill.location = loc.core)
+  complete_csphoc() %>% 
+  select(-census_date_start)
 
 cs.core.complete <- cs.core.agg %>% 
   filter(research_program == "INACH") %>% 
   bind_rows(amlr.complete) %>% 
-  select(-research_program)
+  select(-c(census_date_start, research_program))
 
 
 
@@ -90,12 +91,13 @@ cs.core.complete <- cs.core.agg %>%
 pst.header <- cs.header %>% filter(surveyed_san_telmo)
 
 cs.pst.complete <- cs.wide %>% 
-  filter(location %in% c(loc.pst)) %>% 
+  filter(location_group %in% c(loc.pst)) %>% 
+  rename(location = location_group) %>% 
   select(-c(census_date)) %>% 
-  left_join(select(pst.header, header_id, research_program), 
+  left_join(select(pst.header, header_id, census_date_start, research_program), 
             by = join_by(header_id)) %>% 
-  csphoc_complete_aggregated(pst.header, fill.location = loc.pst) %>% 
-  select(-research_program)
+  complete_csphoc() %>% 
+  select(-c(census_date_start, research_program))
 
 
 ### Bind core and pst records together. Create count ID

@@ -672,7 +672,7 @@ if (save.image)
 ###############################################################################
 ## Create table with column descriptors (table 1)
 tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
-                     col_types = "cccciiiiiiiiiii") %>% 
+                     col_types = "ccccciiiiiiiiiii") %>% 
   as.data.frame()
 
 tbl1 <- data.frame(
@@ -697,7 +697,7 @@ tbl1 <- data.frame(
     Column == "unk_unk_count" ~    "Aggregate count of animals of unknown age class and unknown sex"
   ))
 
-write_csv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.csv"), na = "")
+write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")
 
 ################################################################################
 ################################################################################

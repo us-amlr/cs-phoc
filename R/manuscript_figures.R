@@ -1,23 +1,28 @@
 # Figures for CS-PHOC data paper
 
-# library(tidyverse)
 library(ggplot2)
 library(ggspatial)
 library(cowplot)
 library(dplyr)
 library(sf)
 library(rnaturalearth)
-# library(rnaturalearthdata)
 library(rnaturalearthhires)
 library(here)
 library(viridis)
 library(stringr)
-# library(here)
 library(amlrPinnipeds)
 library(glue)
-# library(cowplot)
-# library(viridis)
-# library(ggsci)
+library(readr)
+library(lubridate)
+library(tidyr)
+
+
+save.image <- TRUE
+
+viridis.twocolor <- viridis(3)[1:2]
+here.csv <- here("data", "manuscript")
+here.fig.tbl <- here("figures")
+here.fig.other <- here("figures", "other")
 
 
 
@@ -51,7 +56,7 @@ ssi.sfc.4326 <- st_as_sfc(st_bbox(c(xmin = xlim.ssi[1], xmax = xlim.ssi[2],
                                   crs = st_crs(4326)))
 ssi.sfc.laea <- st_transform(ssi.sfc.4326, crs.laea)
 
-plot(st_geometry(st_transform(world, crs.laea)), axes = TRUE)
+# plot(st_geometry(st_transform(world, crs.laea)), axes = TRUE)
 
 
 ### Map of whole region
@@ -160,8 +165,8 @@ g.cs <- ggplot() +
   # scale_colour_grey() + scale_fill_grey() +
   # scale_fill_manual(values = gray.colors(3)[c(1, 2)]) +
   # scale_colour_manual(values = gray.colors(3)[c(1, 2)]) +
-  scale_color_manual(values = viridis(3)[1:2]) +
-  scale_fill_manual(values = viridis(3)[1:2]) +
+  scale_color_manual(values = viridis.twocolor) +
+  scale_fill_manual(values = viridis.twocolor) +
   # scale_fill_brewer(palette = "Set2") +
   # scale_color_brewer(palette = "Set2") +
   # scale_fill_viridis(option = "H", discrete = TRUE) + 
@@ -184,18 +189,15 @@ grid.map <- plot_grid(
   g.cs, ncol = 2, rel_widths = c(1, 1.3)
 )
 
-ggsave(here("figures", "Fig1_cs_map.png"), 
-       grid.map, width = 9, height = 6, bg = "white")
+if (save.image)
+  ggsave(here("figures", "Fig1_csphoc_map.png"), 
+         grid.map, width = 9, height = 6, bg = "white")
 
 
 
 ###############################################################################
 ###############################################################################
 # General code for data-dependent figures
-
-
-con <- amlr_dbConnect(Database = "***REMOVED***")
-save.image <- TRUE
 
 scale_color_csphoc <- function() {
   # scale_color_npg()
@@ -211,13 +213,14 @@ scale_fill_csphoc <- function() {
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# Read in data, and do some prep
-z.header <- read_csv(here("manuscript", "cs-phoc-headers.csv"), 
+# Read in data, and do some prep for plotting
+z.header <- read_csv(here(here.csv, "cs-phoc-headers.csv"), 
                      col_types = "ccDDilc")
 nrow(z.header)
 
-z <- read_csv(here("manuscript", "cs-phoc-counts.csv"), 
-              col_types = "cccciiiiiiiiiii")
+z.count <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
+                    col_types = "ccccciiiiiiiiiii")
+
 
 yr.pad.all <- str_pad(c(98, 99, 00, 1:23), width = 2, pad = "0")
 # season.name.levels <- paste(1997:2022, yr.pad.all, sep = "/")
@@ -226,7 +229,7 @@ season.name.levels.amlr <- paste(2009:2022, yr.pad.all[13:26], sep = "/")
 season.name.levels <- c(season.name.levels.inach, season.name.levels.amlr)
 
 header.toplot <- z.header %>% 
-  mutate(season_name = fct(season_name, levels = season.name.levels), 
+  mutate(season_name = factor(season_name, levels = season.name.levels), 
          # season_int = as.numeric(substr(season_name, 1, 4)), 
          research_program = as.factor(research_program), 
          census_date_start = as.Date(census_date_start), 
@@ -235,34 +238,32 @@ header.toplot <- z.header %>%
          plot_date_start = mdy(format(census_date_start, 
                                       glue("%m-%d-{plot_year}"))))
 
+count.toplot <- left_join(z.count, header.toplot, by = join_by(header_id))
+count.toplot.core <- count.toplot %>% 
+  filter(location == "Core census locations")
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 ### Make a visualization of census dates by year from the header data
 g1 <- ggplot(header.toplot, aes(x = plot_date_start, y = season_name)) +
-  geom_point(aes(col = research_program,
-                 # shape = surveyed_san_telmo, 
-                 size = census_days)) +
-  labs(title = "CS-PHOC surveys, by season", 
+  geom_point(aes(col = research_program, size = census_days)) +
+  labs(title = "CS-PHOC survey windows, by season", 
        x = "Date", y = "Season") +
   theme(axis.text.x = element_text(angle = 90),
         legend.position = "bottom") +
   guides(color = guide_legend(title = "Research program", order = 1),
-         # shape = guide_legend(title = "PST", order = 3), 
          size = guide_legend(title = "Days", order = 2)) + 
   scale_x_date(date_breaks = "1 week", date_labels = "%b %d") + 
   scale_y_discrete(drop = FALSE) + 
   scale_size(breaks = 1:3) +
-  # scale_color_csphoc()
-  # scale_color_brewer(palette = "Set2")
-  scale_color_manual(values = viridis(3)[1:2])
+  scale_color_manual(values = viridis.twocolor)
 # g1
 
 g2 <- ggplot(header.toplot, aes(x = season_name)) + 
   geom_histogram(stat = "count") + 
   scale_x_discrete(drop = FALSE) + 
-  # labs(y = "# of surveys") + 
-  labs(y = "Number of surveys") + 
+  labs(y = "Number of censuses") + 
   coord_flip() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
@@ -273,7 +274,7 @@ g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1.5), align = "h", axis = "tb")
 # g.grid
 
 if (save.image)
-  ggsave(here("manuscript", "figures+tables", "Fig2_census_surveys.png"), 
+  ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses.png"), 
          g.grid, width = 10, height = 6)
 
 rm(g.grid, g1, g2)
@@ -281,6 +282,8 @@ rm(g.grid, g1, g2)
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+con <- amlr_dbConnect(Database = "***REMOVED***")
+
 # Census timing - start and end times
 csphoc.times <- tbl(con, "vCensus_Phocid") %>% 
   filter(!is.na(time_start), !is.na(time_end)) %>% 
@@ -311,9 +314,9 @@ gg.st.end <- csphoc.times %>%
          dt_hours = as.numeric(format(dt, format="%H"))) %>% 
   ggplot(aes(x=dt_hours, fill=type)) +
   geom_bar(alpha=0.6, position = 'identity') + 
-  guides(fill = guide_legend(title = "Time type")) + 
+  guides(fill = guide_legend(title = "Time")) + 
   # scale_fill_discrete(limits = c("start", "end")) + 
-  ggtitle("Census record start and end times") + 
+  ggtitle("Start and end times") + 
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
   scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL) +
@@ -321,14 +324,14 @@ gg.st.end <- csphoc.times %>%
 
 gg.mid <- ggplot(csphoc.times, aes(census_dt_midpoint_24h)) + 
   geom_bar() + 
-  ggtitle("Midpoint time of census records") + 
+  ggtitle("Midpoint times") + 
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
   scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL)
 
 gg.hours <- ggplot(csphoc.times, aes(census_hours_bar)) + 
   geom_bar() + 
-  ggtitle("Length time of census records") + 
+  ggtitle("Durations") + 
   xlab("Hours") + 
   ylab("Number of records") + 
   scale_x_continuous(breaks = 0:10)
@@ -337,7 +340,7 @@ g.timing <- plot_grid(gg.st.end, gg.mid, gg.hours, ncol = 1)
 # g.timing
 
 if (save.image)
-  ggsave(here("manuscript", "figures+tables", "Fig3_census_record_times.png"), 
+  ggsave(here(here.fig.tbl, "Fig3_csphoc_survey_times.png"), 
          g.timing, width = 5, height = 10)
 rm(csphoc.times, g.timing, gg.st.end, gg.mid, gg.hours)
 
@@ -362,12 +365,6 @@ date.test %>%
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-z.toplot <- left_join(z, header.toplot, by = join_by(header_id))
-z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
-
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
 # These line and dot plots are intended for exploration only
 
 
@@ -378,7 +375,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 # for (i in amlrPinnipeds::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
-#   i.toplot <- z.toplot.core %>% filter(species_common == i)
+#   i.toplot <- count.toplot.core %>% filter(species_common == i)
 #   
 #   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = season_name)) +
 #     geom_point(aes(size = total_count)) +
@@ -392,7 +389,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 #   
 #   i.filename <- str_replace(tolower(i), " ", "_")
 #   if (save.image)
-#     ggsave(here("output", "scatterplot", paste0(i.filename, ".png")), 
+#     ggsave(here(here.fig.other, "scatterplot", paste0(i.filename, ".png")), 
 #            g.curr, width = 10, height = 6)
 # }; rm(i, i.toplot, g.curr)
 # 
@@ -401,7 +398,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 # for (i in amlrPinnipeds::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
-#   i.toplot <- z.toplot.core %>% filter(species_common == i) 
+#   i.toplot <- count.toplot.core %>% filter(species_common == i) 
 #   #, season_name == "2003/04")
 #   
 #   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = total_count)) +
@@ -417,7 +414,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 #   
 #   i.filename <- str_replace(tolower(i), " ", "_")
 #   if (save.image)
-#     ggsave(here("output", "line_graph", paste0(i.filename, ".png")),
+#     ggsave(here.fig.other, "line_graph", paste0(i.filename, ".png")),
 #            g.curr, width = 10, height = 6)
 # }; rm(i, i.toplot, g.curr)
 
@@ -428,7 +425,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 #   if_else(all(is.na(x)), NA_integer_, sum(x, na.rm = na.rm))
 # }
 # 
-# z.toplot.combo <- z %>% 
+# count.toplot.combo <- z.count %>% 
 #   group_by(header_id, species_common) %>% 
 #   summarise(location = "Core + PST", 
 #             across(ends_with("_count"), cspc_sum),  
@@ -437,7 +434,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 #   filter(census_date_start > ymd("2009-07-01"), 
 #          surveyed_san_telmo) %>% 
 #   mutate(season_name = as.character(season_name), 
-#          season_name = fct(season_name, levels = season.name.levels.amlr))
+#          season_name = factor(season_name, levels = season.name.levels.amlr))
 # 
 # 
 # 
@@ -445,7 +442,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 # for (i in amlrPinnipeds::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
-#   i.toplot <- z.toplot.combo %>% filter(species_common == i)
+#   i.toplot <- count.toplot.combo %>% filter(species_common == i)
 #   
 #   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = season_name)) +
 #     geom_point(aes(size = total_count)) +
@@ -459,7 +456,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 #   
 #   i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
 #   if (save.image)
-#     ggsave(here("output", "scatterplot", paste0(i.filename, ".png")), 
+#     ggsave(here(here.fig.other, "scatterplot", paste0(i.filename, ".png")), 
 #            g.curr, width = 10, height = 6)
 # }; rm(i, i.toplot, g.curr)
 # 
@@ -468,7 +465,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 # for (i in amlrPinnipeds::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
-#   i.toplot <- z.toplot.combo %>% filter(species_common == i)
+#   i.toplot <- count.toplot.combo %>% filter(species_common == i)
 #   
 #   g.curr <- ggplot(i.toplot, aes(x = plot_date_start, y = total_count)) +
 #     geom_point(aes(color = season_name)) +
@@ -483,7 +480,7 @@ z.toplot.core <- z.toplot %>% filter(location == "Core census locations")
 #   
 #   i.filename <- paste0("core+pst_", str_replace(tolower(i), " ", "_"))
 #   if (save.image)
-#     ggsave(here("output", "line_graph", paste0(i.filename, ".png")), 
+#     ggsave(here(here.fig.other, "line_graph", paste0(i.filename, ".png")), 
 #            g.curr, width = 10, height = 6)
 # }; rm(i, i.toplot, g.curr)
 
@@ -499,27 +496,16 @@ season.groups <- function(i) {
     i %in% c("2013/14", "2014/15", "2015/16", "2016/17") ~ "2013-2017", 
     i %in% c("2017/18", "2018/19", "2019/20", "2021/22", "2022/23") ~ "2017-2023"
   )
-  # case_when(
-  #   i %in% c("1997/98", "1998/99", "1999/00") ~ "1997-2000", 
-  #   i %in% c("2000/01", "2001/02", "2002/03") ~ "2000-2003", 
-  #   i %in% c("2003/04", "2004/05", "2005/06", "2006/07") ~ "2003-2007", 
-  #   i %in% c("2009/10", "2010/11", "2011/12") ~ "2009-2012", 
-  #   i %in% c("2012/13", "2013/14", "2014/15") ~ "2012-2015", 
-  #   i %in% c("2015/16", "2016/17", "2017/18") ~ "2015-2018", 
-  #   i %in% c("2018/19", "2019/20") ~ "2018-2020", 
-  #   i %in% c("2021/22", "2022/23") ~ "2021-2023"
-  # )
 }
 
 
-x <- z.toplot.core %>% 
+x <- count.toplot.core %>% 
   mutate(census_month = month(census_date_start), 
          census_week = week(census_date_start), 
          season_group = season.groups(season_name))
 
 x.grp <- x %>% 
-  group_by(location, species, species_common, season_group, 
-           census_month) %>% 
+  group_by(location, species, species_common, season_group, census_month) %>% 
   summarise(total_count_mean = mean(total_count , na.rm = TRUE), 
             total_count_sd = sd(total_count), 
             .groups = "drop") %>% 
@@ -554,7 +540,7 @@ g.grp <- x.grp %>%
 #------------------------------------------------
 # Plot: season on x axis, count on y, color-coded by species
 months.curr <- c(11, 12, 1, 2)
-y.month <- z.toplot.core %>% 
+y.month <- count.toplot.core %>% 
   mutate(census_month = month(census_date_start)) %>% 
   filter(census_month %in% months.curr) %>% 
   mutate(census_month = factor(census_month, levels = months.curr, 
@@ -625,7 +611,7 @@ g.month.clw <- y.month %>%
 
 #------------------------------------------------
 # Plot elephant seals, with age/sex class
-y.long <- z.toplot.core %>% 
+y.long <- count.toplot.core %>% 
   filter(species_common == "Southern elephant seal") %>% 
   mutate(census_month = month(census_date_start)) %>% 
   filter(census_month %in% months.curr) %>% 
@@ -647,22 +633,6 @@ y.long <- z.toplot.core %>%
             .groups = "drop") %>%
   mutate(count_sd = replace_na(count_sd, 0)) %>% 
   filter(!(age_sex %in% c("unk_female_count", "unk_male_count", "ad_unk_count")))
-
-# y.long2 <- z.toplot.core %>% 
-#   filter(species_common == "Southern elephant seal") %>% 
-#   mutate(census_month = month(census_date_start)) %>% 
-#   filter(census_month %in% months.curr) %>% 
-#   mutate(census_month = factor(census_month, levels = months.curr, 
-#                                labels = month.name[months.curr])) %>% 
-#   select(-total_count) %>% 
-#   pivot_longer(ends_with("_count"), names_to = "age_sex", values_to = "count") %>% 
-#   filter(!is.na(count), 
-#          !(age_sex %in% c("unk_female_count", "unk_male_count", "ad_unk_count"))) %>% 
-#   mutate(age_sex = if_else(str_detect(age_sex, "juv"), "juv_count", age_sex)) %>% 
-#   group_by(location, species, species_common, season_name, census_month, age_sex) %>%
-#   summarise(count_mean = mean(count , na.rm = TRUE),
-#             count_sd = sd(count), .groups = "drop") %>% 
-#   mutate(count_sd = replace_na(count_sd, 0)) 
 
 g.month.ses <- y.long %>% 
   ggplot(aes(season_name, count_mean, 
@@ -693,7 +663,7 @@ grid.count <- plot_grid(
 )
 
 if (save.image)
-  ggsave(here("manuscript", "figures+tables", "Fig4_census_counts.png"), 
+  ggsave(here(here.fig.tbl, "Fig4_csphoc_counts.png"), 
          grid.count, width = 20, height = 12)
 
 
@@ -701,7 +671,7 @@ if (save.image)
 ###############################################################################
 ###############################################################################
 ## Create table with column descriptors (table 1)
-tbl1.ref <- read_csv(here("manuscript", "cs-phoc-counts.csv"), 
+tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
                      col_types = "cccciiiiiiiiiii") %>% 
   as.data.frame()
 
@@ -727,7 +697,7 @@ tbl1 <- data.frame(
     Column == "unk_unk_count" ~    "Aggregate count of animals of unknown age class and unknown sex"
   ))
 
-write_csv(tbl1, file = here("manuscript", "figures+tables", "Table1.csv"), na = "")
+write_csv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.csv"), na = "")
 
 ################################################################################
 ################################################################################

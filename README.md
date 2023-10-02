@@ -1,5 +1,7 @@
 # CS-PHOC
 
+[![DOI](https://zenodo.org/badge/514008683.svg)](https://zenodo.org/badge/latestdoi/514008683)
+
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo strucutre is described below.
 
 Specific versions of the [manuscript](Woodman_etal_CS-PHOC.docx), such as those shared with co-authors or sent out for review, can be found in [releases](https://github.com/us-amlr/cs-phoc/releases). 
@@ -8,7 +10,7 @@ This project uses [renv](https://github.com/rstudio/renv/) to manage the project
 
 ## Data
 
-Interested parties can access the CS-PHOC dataset in two ways:
+If using the data, please cite as TODO. Interested parties can access the CS-PHOC dataset in two ways:
 
 - Access Darwin Core compliant event and occurrence tables through SCAR Antarctic Biodiversity Portal (recommended; www.biodiversity.aq): in progress
 
@@ -16,11 +18,14 @@ Interested parties can access the CS-PHOC dataset in two ways:
 
 As described in the manuscript, raw data stored in the ***REMOVED*** database can be requested through the authors.
 
-If using the data, please cite as TODO
+The manuscript describing this data is in review. We ask that you do not publish with this data until the manuscript has been published. If you are interested in this project or this data before this time, please contact [sam.woodman@noaa.gov](mailto:sam.woodman@noaa.gov).
+
 
 ## Manuscript
 
-The CS-PHOC data paper is currently in prep. Manuscript access and citation details will be added here.
+The CS-PHOC data paper has been submitted, and is currently in review. 
+
+Manuscript access and citation details will be updated here as they become available.
 
 ## Repo structure
 

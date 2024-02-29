@@ -1,6 +1,12 @@
 # CS-PHOC
 
-[![DOI](https://zenodo.org/badge/514008683.svg)](https://zenodo.org/badge/latestdoi/514008683)
+<!-- badges: start -->
+
+<!-- [![DOI](https://zenodo.org/badge/514008683.svg)](https://zenodo.org/badge/latestdoi/514008683) -->
+[![Dataset DOI](https://img.shields.io/badge/DOI-10.15468/d79fbe-blue)](https://doi.org/10.15468/d79fbe)
+
+<!-- badges: end -->
+
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
 

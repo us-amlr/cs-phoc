@@ -1,4 +1,4 @@
-header_id,season_name,census_date_start,census_date_end,census_days,surveyed_san_telmo,research_program
+header_id,season_name,census_date_start,census_date_end,census_days,surveyed_pst,research_program
 185,1997/98,1997-12-10,1997-12-10,1,FALSE,INACH
 186,1997/98,1997-12-18,1997-12-18,1,FALSE,INACH
 187,1997/98,1997-12-24,1997-12-24,1,FALSE,INACH

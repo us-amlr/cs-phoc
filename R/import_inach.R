@@ -5,7 +5,7 @@
 library(tidyverse)
 library(readxl)
 library(lubridate)
-library(amlrPinnipeds)
+library(tamatoamlr)
 library(here)
 
 con <- amlr_dbConnect(Database = "***REMOVED***")

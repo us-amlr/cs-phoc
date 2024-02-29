@@ -104,7 +104,33 @@ cs.pst.complete <- cs.wide %>%
   select(-c(census_date)) %>% 
   left_join(select(pst.header, header_id, census_date_start, research_program), 
             by = join_by(header_id)) %>% 
-  complete_csphoc() %>% 
+  # Insert dummy data for two surveys where PST was surveyed, but no phocids
+  # were recorded
+  add_row(census_date_start = as.Date("2009-11-01"), 
+          research_program = "USAMLR", 
+          header_id = pst.header %>% 
+            filter(census_date_start == as.Date("2009-11-01")) %>% 
+            pull(header_id), 
+          location = loc.pst, 
+          species = pinniped.phocid.sp[4], 
+          ad_female_count = 0L, ad_male_count = 0L, ad_unk_count = 0L, 
+          juv_female_count = 0L, juv_male_count = 0L, juv_unk_count = 0L, 
+          pup_live_count = 0L, 
+          unk_female_count = NA_integer_, unk_male_count = NA_integer_, 
+          unk_unk_count = NA_integer_) %>% 
+  add_row(census_date_start = as.Date("2009-11-08"), 
+          research_program = "USAMLR", 
+          header_id = pst.header %>% 
+            filter(census_date_start == as.Date("2009-11-08")) %>% 
+            pull(header_id), 
+          location = loc.pst, 
+          species = pinniped.phocid.sp[4], 
+          ad_female_count = 0L, ad_male_count = 0L, ad_unk_count = 0L, 
+          juv_female_count = 0L, juv_male_count = 0L, juv_unk_count = 0L, 
+          pup_live_count = 0L, 
+          unk_female_count = NA_integer_, unk_male_count = NA_integer_, 
+          unk_unk_count = NA_integer_) %>% 
+  complete_csphoc() %>%
   select(-c(census_date_start, research_program))
 
 
@@ -143,58 +169,66 @@ cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
 
 
 #-------------------------------------------------------------------------------
-### Save data
-write_csv(cs.header, file = here("data", "manuscript", "cs-phoc-headers.csv"), na = "")
-write_csv(cs.core.pst, here("data", "manuscript", "cs-phoc-counts.csv"), na = "")
+# Rename header to event to make consistent with DwC-A files
+# Done here so as to not introduce errors in previously written code
+cs.events <- cs.header %>% rename(event_id = header_id)
+cs.counts <- cs.core.pst %>% rename(event_id = header_id)
+
+#-------------------------------------------------------------------------------
+# Save data
+write_csv(cs.events, file = here("data", "manuscript", "cs-phoc-events.csv"), na = "")
+write_csv(cs.counts, here("data", "manuscript", "cs-phoc-counts.csv"), na = "")
+
 
 
 #-------------------------------------------------------------------------------
-# # Sanity checks
-# library(waldo)
-# stopifnot(
-#   sum(is.na(cs.core.pst$header_id)) == 0,
-#   sum(is.na(cs.core.pst$species)) == 0,
-#   all(cs.header$header_id %in% cs.core.pst$header_id),
-#   all(cs.core.pst$header_id %in% cs.header$header_id),
-#   (nrow(cs.core.pst)) ==
-#     (4 * nrow(cs.header) + 4 * sum(cs.header$surveyed_pst))
-# )
+# Sanity checks
+library(waldo)
+stopifnot(
+  sum(is.na(cs.core.pst$header_id)) == 0,
+  sum(is.na(cs.core.pst$species)) == 0,
+  all(cs.header$header_id %in% cs.core.pst$header_id),
+  all(cs.core.pst$header_id %in% cs.header$header_id),
+  (nrow(cs.core.pst)) ==
+    (4 * nrow(cs.header) + 4 * sum(cs.header$surveyed_pst))
+)
 
+# # To explore an unexpected difference in row counts
+# d1 <- cs.core.pst %>% group_by(header_id) %>% summarise(n = n())
+# d2 <- cs.header %>% 
+#   mutate(n = 4L + 4L*as.integer(surveyed_pst)) %>% 
+#   select(header_id, n) %>% 
+#   arrange(header_id)
+# waldo::compare(d1, d2)
 
-# cs.wide %>%
-#   filter(!(location %in% csphoc.core.location.groups)) %>%
-#   select(location) %>% tableNA()
+cs.wide %>%
+  filter(!(location_group %in% csphoc.core.location.groups)) %>%
+  select(location_group) %>%
+  tableNA()
 
-# opportunistic <- cs.wide %>%
-#   filter(!(location %in% c(csphoc.core.location.groups, loc.pst)))
-# # opportunistic %>%
-# #   summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>%
-# #   glimpse()
-# # cs.pst.complete %>%
-# #   summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>%
-# #   glimpse()
-# # cs.core.complete %>%
-# #   summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>%
-# #   glimpse()
-# # cs.wide %>%
-# #   summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>%
-# #   glimpse()
-# # 
-# # (opportunistic %>%
-# #     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
-# #     cs.pst.complete %>%
-# #     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
-# #     cs.core.complete %>%
-# #     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) %>%
-# #   glimpse()
-# waldo::compare(
-#   cs.wide %>% 
-#     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>% 
-#     as.data.frame(), 
-#   (opportunistic %>% 
-#      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
-#      cs.pst.complete %>% 
-#      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
-#      cs.core.complete %>% 
-#      summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
-# )
+opportunistic <- cs.wide %>% 
+  filter(!(location_group %in% c(csphoc.core.location.groups, loc.pst)))
+
+waldo::compare(
+  cs.wide %>%
+    summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))),
+  (opportunistic %>%
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
+     cs.pst.complete %>%
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
+     cs.core.complete %>%
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE)))) %>%
+    as_tibble()
+)
+
+waldo::compare(
+  cs.wide %>%
+    summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) %>%
+    as.data.frame(),
+  (opportunistic %>%
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
+     cs.pst.complete %>%
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))) +
+     cs.core.complete %>%
+     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))))
+)

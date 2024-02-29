@@ -1,4 +1,5 @@
 # Figures for CS-PHOC data paper
+# NOTE: 'header' and 'event' may be used interchangeably in this script
 
 library(ggplot2)
 library(ggspatial)
@@ -17,7 +18,7 @@ library(lubridate)
 library(tidyr)
 
 
-save.image <- TRUE
+save.image <- FALSE
 
 viridis.twocolor <- viridis(3)[1:2]
 here.csv <- here("data", "manuscript")
@@ -215,7 +216,7 @@ scale_fill_csphoc <- function() {
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in data, and do some prep for plotting
-z.header <- read_csv(here(here.csv, "cs-phoc-headers.csv"), 
+z.header <- read_csv(here(here.csv, "cs-phoc-events.csv"), 
                      col_types = "ccDDilc")
 nrow(z.header)
 
@@ -239,7 +240,7 @@ header.toplot <- z.header %>%
          plot_date_start = mdy(format(census_date_start, 
                                       glue("%m-%d-{plot_year}"))))
 
-count.toplot <- left_join(z.count, header.toplot, by = join_by(header_id))
+count.toplot <- left_join(z.count, header.toplot, by = join_by(event_id))
 count.toplot.core <- count.toplot %>% 
   filter(location == "Core census locations")
 
@@ -434,11 +435,11 @@ date.test %>%
 # }
 # 
 # count.toplot.combo <- z.count %>% 
-#   group_by(header_id, species_common) %>% 
+#   group_by(event_id, species_common) %>% 
 #   summarise(location = "Core + PST", 
 #             across(ends_with("_count"), cspc_sum),  
 #             .groups = "drop") %>% 
-#   left_join(header.toplot, by = join_by(header_id)) %>% 
+#   left_join(header.toplot, by = join_by(event_id)) %>% 
 #   filter(census_date_start > ymd("2009-07-01"), 
 #          surveyed_san_telmo) %>% 
 #   mutate(season_name = as.character(season_name), 
@@ -647,12 +648,7 @@ g.month.ses <- y.long %>%
              color = age_sex, group = age_sex)) +
   geom_point(aes(size = count_sd)) +
   geom_line(aes(linetype = species)) + 
-  # geom_errorbar(aes(ymin = count_mean-count_sd,
-  #                   ymax = count_mean+count_sd),
-  #               width = 0.3) +
-  # facet_wrap(vars(age_sex, census_month), nrow = 5) + 
   facet_wrap(vars(census_month), nrow = 1) + 
-  # ggtitle("CSPHOC") + 
   xlab("Season") + ylab("Count") + 
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90)) +
@@ -690,8 +686,9 @@ tbl1 <- data.frame(
   Data_Type = vapply(tbl1.ref, class, as.character(1))
 ) %>% 
   mutate(Description = case_when(
-    Column == "header_id"~         "A unique identifier with which to join data records with survey-level information",
-    Column == "location" ~         "The location for the corresponding count data",
+    Column == "count_id"~          "A unique identifier for each count record",
+    Column == "event_id"~          "A unique identifier with which to join event records, i.e. data records with survey-level information",
+    Column == "location" ~         "The Cape Shirreff location",
     Column == "species" ~          "The scientific name of the phocid species", 
     Column == "species_common" ~   "The common name of the phocid species",
     Column == "total_count" ~      "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
@@ -701,10 +698,10 @@ tbl1 <- data.frame(
     Column == "juv_female_count" ~ "Aggregate count of juvenile females",
     Column == "juv_male_count" ~   "Aggregate count of juvenile males",
     Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
-    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of all sexes",
+    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of any sex",
     Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
     Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
-    Column == "unk_unk_count" ~    "Aggregate count of animals of unknown age class and unknown sex"
+    Column == "unk_unk_count" ~    "Aggregate count of phocids of unknown age class and unknown sex"
   ))
 
 if (save.image) {

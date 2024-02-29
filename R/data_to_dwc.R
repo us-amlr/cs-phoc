@@ -8,13 +8,13 @@ library(here)
 
 
 # Read CSV data-----------------------------------------------------------------
-x.header <- read.csv(here("data", "manuscript", "cs-phoc-headers.csv"))
-x.count <- read.csv(here("data", "manuscript", "cs-phoc-counts.csv"))
+x.events <- read.csv(here("data", "manuscript", "cs-phoc-events.csv"))
+x.counts <- read.csv(here("data", "manuscript", "cs-phoc-counts.csv"))
 
 
 # Prep WORRMS names-------------------------------------------------------------
 # match taxa using the list of unique scientific names
-matched_taxa_tibbles <- wm_records_names(unique(x.count$species))
+matched_taxa_tibbles <- wm_records_names(unique(x.counts$species))
 
 # bind the list of tibbles returned into 1 tibble, and prep to join
 matched_taxa <- bind_rows(matched_taxa_tibbles) %>% 
@@ -23,7 +23,7 @@ matched_taxa <- bind_rows(matched_taxa_tibbles) %>%
 
 
 ## Create Event table-----------------------------------------------------------
-event <- x.header %>%
+event <- x.events %>%
   mutate(
     # eventDate is mandatory
     eventDate = if_else(census_date_start == census_date_end, census_date_start, 
@@ -47,7 +47,7 @@ event <- x.header %>%
     geodeticDatum = "EPSG:4326",
     samplingProtocol = "CS-PHOC project"
   ) %>%
-  rename(eventID = header_id) %>%
+  rename(eventID = event_id) %>%
   # fields that cannot be mapped to Darwin Core
   select(-c(season_name, census_days, census_date_start, census_date_end, 
             surveyed_pst, research_program))
@@ -58,16 +58,16 @@ stopifnot(
 )
 
 # write to file
-write_tsv(event, here("data", "dwc", "event.txt"), na = "")
+write_tsv(event, here("data", "dwca", "event.txt"), na = "")
 
 
 ## Create Occurrence table------------------------------------------------------
-occ <- x.count %>% 
+occ <- x.counts %>% 
   rename(scientificName = species) %>% 
   left_join(matched_taxa, by = "scientificName") %>%
   # rename columns to Darwin Core terms
   rename(
-    eventID = header_id,
+    eventID = event_id,
     occurrenceID = count_id, 
     vernacularName = species_common,
     scientificNameID = lsid,
@@ -117,7 +117,7 @@ occ.long <- occ %>%
   select(-c(lifeStage_id, sex_id)) %>% 
   relocate(occurrenceID, .before = eventID)
 
-# # Sanity checks
+# # Visual sanity checks
 # occ.long %>%
 #   select(-c(eventID, occurrenceID, individualCount, dateIdentified)) %>%
 #   lapply(table, useNA = "ifany")
@@ -129,4 +129,4 @@ stopifnot(
 )
 
 # write to file
-write_tsv(occ.long, here("data", "dwc", "occurrence.txt"), na = "")
+write_tsv(occ.long, here("data", "dwca", "occurrence.txt"), na = "")

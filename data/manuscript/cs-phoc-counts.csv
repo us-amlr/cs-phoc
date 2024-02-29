@@ -1,4 +1,4 @@
-count_id,header_id,location,species,species_common,total_count,ad_female_count,ad_male_count,ad_unk_count,juv_female_count,juv_male_count,juv_unk_count,pup_count,unk_female_count,unk_male_count,unk_unk_count
+count_id,event_id,location,species,species_common,total_count,ad_female_count,ad_male_count,ad_unk_count,juv_female_count,juv_male_count,juv_unk_count,pup_count,unk_female_count,unk_male_count,unk_unk_count
 1-1-344008,1,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,0,0,0,0,0,1,,,
 1-1-231413,1,Core census locations,Mirounga leonina,Southern elephant seal,123,2,10,0,2,20,16,73,,,0
 1-1-231417,1,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,0,,,
@@ -1179,10 +1179,18 @@ count_id,header_id,location,species,species_common,total_count,ad_female_count,a
 150-1-231413,150,Core census locations,Mirounga leonina,Southern elephant seal,41,15,7,0,0,0,0,19,,,0
 150-1-231417,150,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,0,,,
 150-1-195932,150,Core census locations,Leptonychotes weddellii,Weddell seal,19,10,2,3,1,0,0,3,,,
+150-2-344008,150,Punta San Telmo,Lobodon carcinophagus,Crabeater seal,0,0,0,0,0,0,0,0,,,
+150-2-231413,150,Punta San Telmo,Mirounga leonina,Southern elephant seal,0,0,0,0,0,0,0,0,,,0
+150-2-231417,150,Punta San Telmo,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,0,,,
+150-2-195932,150,Punta San Telmo,Leptonychotes weddellii,Weddell seal,0,0,0,0,0,0,0,0,,,
 151-1-344008,151,Core census locations,Lobodon carcinophagus,Crabeater seal,0,0,0,0,0,0,0,0,,,
 151-1-231413,151,Core census locations,Mirounga leonina,Southern elephant seal,33,7,7,0,0,1,0,18,,,0
 151-1-231417,151,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,0,,,
 151-1-195932,151,Core census locations,Leptonychotes weddellii,Weddell seal,10,6,2,0,0,1,0,1,,,
+151-2-344008,151,Punta San Telmo,Lobodon carcinophagus,Crabeater seal,0,0,0,0,0,0,0,0,,,
+151-2-231413,151,Punta San Telmo,Mirounga leonina,Southern elephant seal,0,0,0,0,0,0,0,0,,,0
+151-2-231417,151,Punta San Telmo,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,0,,,
+151-2-195932,151,Punta San Telmo,Leptonychotes weddellii,Weddell seal,0,0,0,0,0,0,0,0,,,
 152-1-344008,152,Core census locations,Lobodon carcinophagus,Crabeater seal,1,0,0,0,0,0,0,1,,,
 152-1-231413,152,Core census locations,Mirounga leonina,Southern elephant seal,52,5,7,0,1,13,9,16,,,1
 152-1-231417,152,Core census locations,Hydrurga leptonyx,Leopard seal,0,0,0,0,0,0,0,0,,,

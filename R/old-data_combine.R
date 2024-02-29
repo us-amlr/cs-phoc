@@ -7,7 +7,7 @@
 #-------------------------------------------------------------------------------
 library(tidyverse)
 library(here)
-library(amlrPinnipeds)
+library(tamatoamlr)
 library(waldo)
 
 # Get sums of each count for two data frames, to confirm numbers are consistent

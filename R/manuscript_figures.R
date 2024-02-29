@@ -10,7 +10,7 @@ library(rnaturalearthhires)
 library(here)
 library(viridis)
 library(stringr)
-library(amlrPinnipeds)
+library(tamatoamlr)
 library(glue)
 library(readr)
 library(lubridate)
@@ -372,7 +372,7 @@ date.test %>%
 # Core census locations
 
 # ### Dot charts - Core locations
-# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+# for (i in tamatoamlr::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
 #   i.toplot <- count.toplot.core %>% filter(species_common == i)
@@ -395,7 +395,7 @@ date.test %>%
 # 
 # 
 # ### Line charts - Core locations
-# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+# for (i in tamatoamlr::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
 #   i.toplot <- count.toplot.core %>% filter(species_common == i) 
@@ -439,7 +439,7 @@ date.test %>%
 # 
 # 
 # ### Dot counts - Core + PST locations
-# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+# for (i in tamatoamlr::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
 #   i.toplot <- count.toplot.combo %>% filter(species_common == i)
@@ -462,7 +462,7 @@ date.test %>%
 # 
 # 
 # ### Line charts - Core + PST locations
-# for (i in amlrPinnipeds::pinniped.phocid.sp) {
+# for (i in tamatoamlr::pinniped.phocid.sp) {
 #   print(i)
 #   if (i == 'Elephant seal') i <- "Southern elephant seal"
 #   i.toplot <- count.toplot.combo %>% filter(species_common == i)

@@ -5,7 +5,7 @@
 library(dplyr)
 library(readr)
 library(here)
-library(amlrPinnipeds)
+library(tamatoamlr)
 library(worrms)
 
 
@@ -23,18 +23,26 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   ungroup() %>% 
   select(header_id, census_phocid_header_id, season_name, 
          census_date_start, census_date_end, census_days, 
-         surveyed_san_telmo, research_program)
+         # TODO: temporary until column name can be updated in database
+         surveyed_pst = surveyed_san_telmo, 
+         research_program) %>% 
+  # TODO: temporary to avoid including half of 2023/24 data
+  filter(census_date_start < as.Date("2023-07-01"))
 
 cs.header <- cs.header.orig %>% select(-census_phocid_header_id)
 
 stopifnot(
-  nrow(cs.header) == nrow(collect(tbl(con, "census_phocid_header")))
+  nrow(cs.header) == nrow(collect(tbl(con, "census_phocid_header")) %>% 
+                            # TODO: temporary to avoid including half of 2023/24 data
+                            filter(census_date_start < as.Date("2023-07-01")))
 )
 
 
 cs.wide <- tbl(con, "vCensus_Phocid") %>% 
   arrange(census_date, species, location_group) %>% 
   rename(header_id = census_phocid_header_id) %>% 
+  # TODO: temporary to avoid including half of 2023/24 data
+  filter(census_date < as.Date("2023-07-01")) %>% 
   collect() %>% 
   select(header_id, observer, census_date, location_group, species, 
          ends_with("_count")) %>% 
@@ -66,7 +74,7 @@ amlr.header <- cs.header %>% filter(research_program == "USAMLR")
 
 cs.core.agg <- cs.wide %>% 
   # Filter for core locations, sum by header_id/species
-  filter(location_group %in% c(amlrPinnipeds::csphoc.core.location.groups)) %>% 
+  filter(location_group %in% c(tamatoamlr::csphoc.core.location.groups)) %>% 
   select(-location_group) %>% 
   group_by(header_id, location = loc.core, species) %>% 
   summarise(across(ends_with("_count"), sum_count),  
@@ -88,7 +96,7 @@ cs.core.complete <- cs.core.agg %>%
 
 
 ### Filter for san telmo locations, group/summarise, and complete
-pst.header <- cs.header %>% filter(surveyed_san_telmo)
+pst.header <- cs.header %>% filter(surveyed_pst)
 
 cs.pst.complete <- cs.wide %>% 
   filter(location_group %in% c(loc.pst)) %>% 
@@ -114,7 +122,7 @@ matched_taxa <- bind_rows(matched_taxa_tibbles) %>%
 stopifnot(nrow(matched_taxa) == 4)
 
 cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
-  amlrPinnipeds::total_count() %>%
+  tamatoamlr::total_count() %>%
   arrange(header_id, location, species) %>%
   relocate(location, .after = header_id) %>%
   relocate(total_count, .before = ad_female_count) %>% 
@@ -149,7 +157,7 @@ write_csv(cs.core.pst, here("data", "manuscript", "cs-phoc-counts.csv"), na = ""
 #   all(cs.header$header_id %in% cs.core.pst$header_id),
 #   all(cs.core.pst$header_id %in% cs.header$header_id),
 #   (nrow(cs.core.pst)) ==
-#     (4 * nrow(cs.header) + 4 * sum(cs.header$surveyed_san_telmo))
+#     (4 * nrow(cs.header) + 4 * sum(cs.header$surveyed_pst))
 # )
 
 

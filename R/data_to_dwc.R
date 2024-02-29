@@ -1,4 +1,4 @@
-# Convert CS-PHOC dataset to Darwin Core-compliant tables
+# Convert CS-PHOC dataset to Darwin Core compliant records
 
 library(dplyr)
 library(readr)
@@ -7,7 +7,7 @@ library(worrms)
 library(here)
 
 
-# Read data---------------------------------------------------------------------
+# Read CSV data-----------------------------------------------------------------
 x.header <- read.csv(here("data", "manuscript", "cs-phoc-headers.csv"))
 x.count <- read.csv(here("data", "manuscript", "cs-phoc-counts.csv"))
 
@@ -30,8 +30,8 @@ event <- x.header %>%
                         paste(census_date_start, census_date_end, sep = "/")),  
     # whatever that cannot be mapped to Darwin Core terms goes to dynamicProperties
     dynamicProperties = sprintf(
-      '{"research_program": "%s", "surveyed_san_telmo": %s}', 
-      research_program, if_else(surveyed_san_telmo, "true", "false")
+      '{"research_program": "%s", "surveyed_pst": %s}', 
+      research_program, if_else(surveyed_pst, "true", "false")
     ),
     # add recommended Darwin Core terms: https://dwc.tdwg.org/terms/#event
     decimalLongitude = "-60.77",
@@ -50,7 +50,7 @@ event <- x.header %>%
   rename(eventID = header_id) %>%
   # fields that cannot be mapped to Darwin Core
   select(-c(season_name, census_days, census_date_start, census_date_end, 
-            surveyed_san_telmo, research_program))
+            surveyed_pst, research_program))
 
 stopifnot(
   !any(is.na(event)), 

@@ -6,7 +6,7 @@ library(DBI)
 library(lubridate)
 library(ggplot2)
 library(googlesheets4)
-library(amlrPinnipeds)
+library(tamatoamlr)
 
 #-------------------------------------------------------------------------------
 ### Code to check if all species have records for all header records

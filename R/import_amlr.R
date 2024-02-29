@@ -15,7 +15,7 @@ library(readxl)
 library(odbc)
 library(here)
 library(hms)
-library(amlrPinnipeds)
+library(tamatoamlr)
 
 
 ### Connect to database and read in relevant tables

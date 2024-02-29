@@ -5,10 +5,10 @@
 library(dplyr)
 library(here)
 
-x.headers <- read.csv(here("output", "cs-phoc-headers.csv"))
-x.counts <- read.csv(here("output", "cs-phoc-counts.csv"))
+x.events <- read.csv(here("data", "manuscript", "cs-phoc-events.csv"))
+x.counts <- read.csv(here("data", "manuscript", "cs-phoc-counts.csv"))
 
-x <- left_join(x.headers, x.counts, by = join_by(header_id))
+x <- left_join(x.events, x.counts, by = join_by(event_id))
 glimpse(x)
 
 
@@ -20,9 +20,9 @@ library(purrr)
 library(stringr)
 library(tidyr)
 
-x.wide <- read.csv(here("output", "cs-phoc-counts.csv"))
+x.counts.wide <- read.csv(here("data", "manuscript", "cs-phoc-counts.csv"))
 
-x.long <- x.wide %>% 
+x.counts.long <- x.counts.wide %>% 
   select(-total_count) %>% 
   pivot_longer(ends_with("count"), 
                names_to = "age_class_sex", values_to = "count") %>% 
@@ -44,3 +44,4 @@ x.long <- x.wide %>%
          )) %>%
   relocate(age_class, sex, count, .after = "species_common") %>% 
   select(-c(age_class_sex, acs_split, age_class_pre))
+glimpse(x.counts.long)

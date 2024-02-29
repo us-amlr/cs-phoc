@@ -4,14 +4,14 @@ header_id	character	A unique identifier with which to join data records with sur
 location	character	The location for the corresponding count data
 species	character	The scientific name of the phocid species
 species_common	character	The common name of the phocid species
-total_count	integer	"The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species"
+total_count	integer	The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species
 ad_female_count	integer	Aggregate count of adult females for the corresponding census/location/species
 ad_male_count	integer	Aggregate count of adult males
 ad_unk_count	integer	Aggregate count of adults of unknown sex
 juv_female_count	integer	Aggregate count of juvenile females
 juv_male_count	integer	Aggregate count of juvenile males
 juv_unk_count	integer	Aggregate count of juveniles of unknown sex
-pup_count	integer	"Aggregate count of pups (young of the year, less than one year old) of all sexes"
+pup_count	integer	Aggregate count of pups (young of the year, less than one year old) of all sexes
 unk_female_count	integer	Aggregate count of unknown age class females
 unk_male_count	integer	Aggregate count of unknown age class males
 unk_unk_count	integer	Aggregate count of animals of unknown age class and unknown sex

@@ -56,8 +56,6 @@ ssi.sfc.4326 <- st_as_sfc(st_bbox(c(xmin = xlim.ssi[1], xmax = xlim.ssi[2],
                                   crs = st_crs(4326)))
 ssi.sfc.laea <- st_transform(ssi.sfc.4326, crs.laea)
 
-# plot(st_geometry(st_transform(world, crs.laea)), axes = TRUE)
-
 
 ### Map of whole region
 g.region <- g.map +
@@ -189,9 +187,12 @@ grid.map <- plot_grid(
   g.cs, ncol = 2, rel_widths = c(1, 1.3)
 )
 
-if (save.image)
+if (save.image) {
   ggsave(here("figures", "Fig1_csphoc_map.png"), 
-         grid.map, width = 9, height = 6, bg = "white")
+         grid.map, width = 9, height = 6, bg = "white") 
+} else {
+  print(grid.map)
+}
 
 
 
@@ -273,9 +274,12 @@ g2 <- ggplot(header.toplot, aes(x = season_name)) +
 g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1.5), align = "h", axis = "tb")
 # g.grid
 
-if (save.image)
+if (save.image) {
   ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses.png"), 
          g.grid, width = 10, height = 6)
+} else {
+  print(g.grid)
+}
 
 rm(g.grid, g1, g2)
 
@@ -339,9 +343,13 @@ gg.hours <- ggplot(csphoc.times, aes(census_hours_bar)) +
 g.timing <- plot_grid(gg.st.end, gg.mid, gg.hours, ncol = 1)
 # g.timing
 
-if (save.image)
+if (save.image) {
   ggsave(here(here.fig.tbl, "Fig3_csphoc_survey_times.png"), 
          g.timing, width = 5, height = 10)
+} else {
+  print(g.timing)
+}
+
 rm(csphoc.times, g.timing, gg.st.end, gg.mid, gg.hours)
 
 #------------------------------------------------
@@ -662,10 +670,12 @@ grid.count <- plot_grid(
   labels = c('A', 'B', 'C'), label_size = 15
 )
 
-if (save.image)
+if (save.image) {
   ggsave(here(here.fig.tbl, "Fig4_csphoc_counts.png"), 
          grid.count, width = 20, height = 12)
-
+} else {
+  print(grid.count)
+}
 
 
 ###############################################################################
@@ -697,7 +707,11 @@ tbl1 <- data.frame(
     Column == "unk_unk_count" ~    "Aggregate count of animals of unknown age class and unknown sex"
   ))
 
-write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")
+if (save.image) {
+  write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")
+} else {
+  tbl1 %>% glimpse()
+}
 
 ################################################################################
 ################################################################################

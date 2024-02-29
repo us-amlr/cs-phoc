@@ -46,5 +46,6 @@ Code to generate figures from the manuscript can be found [here](R/manuscript_fi
 ├── figures             : figures and table; included in the manuscript
     ├── other           : exploratory plots
 ├── renv                : renv files for dependencies
-├── Woodman_etal_CS-PHOC.docx : manuscript (data paper)
+├── Woodman_etal_CS-PHOC.docx : manuscript (data paper), without EndNote field codes
+├── Woodman_etal_CS-PHOC_endnote.docx : manuscript (data paper), with EndNote formatting
 ```

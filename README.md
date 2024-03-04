@@ -32,18 +32,18 @@ Code to generate figures from the manuscript can be found in [R/manuscript_figur
 
 Specific versions of the [manuscript](Woodman_etal_CS-PHOC.docx) can be found in [releases](https://github.com/us-amlr/cs-phoc/releases). 
 
-## Repo structure
+## CS-PHOC repo structure
 
 ```
-├── R                   : CS-PHOC R code 
+├── R                   : R code
     ├── data_to_dwca.R  : generating DwCA tables for publication at biodiversity.aq
     ├── import_*.R      : importing files from 'data/pre' into the AMLR Pinnipeds database
     ├── examples.R      : example code for using the CS-PHOC dataset
-    ├── manuscript_*.R  : generating CS-PHOC dataset and manuscript figures
+    ├── manuscript_*.R  : generating CS-PHOC dataset, and manuscript figures
     ├── smw_qc.R        : early and ad-hoc CS-PHOC census data qc and explorations
 ├── data                  
-    ├── dwca            : Darwin Core Archive tables
-    ├── manuscript      : CSV files; presented in the manuscript
+    ├── dwca            : Darwin Core Archive tables; presented in the manuscript
+    ├── manuscript      : standardized CSV files; presented in the manuscript
     ├── pre             : historical data files; now imported into the database
 ├── figures             : figures and table; included in the manuscript
     ├── other           : exploratory plots

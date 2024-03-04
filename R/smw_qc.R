@@ -1,4 +1,4 @@
-# Sam's CSPHOC census data qc and explorations
+# Sam's early and ad-hoc CS-PHOC census data qc and explorations
 
 library(dplyr)
 library(tidyr)

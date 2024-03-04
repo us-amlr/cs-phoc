@@ -1,4 +1,4 @@
-# Convert CS-PHOC dataset to Darwin Core compliant records
+# Convert CS-PHOC data set to Darwin Core Archive records
 
 library(dplyr)
 library(readr)

@@ -1,10 +1,16 @@
-name: Convert CSV files to Darwin Core compliant event and occurrence files
+name: Generate CS-PHOC Darwin Core Archive (DwCA) files from standardized CSV files
 
 on:
   push:
     branches: [main]
+    paths:
+      - R/data_to_dwca.R
+      - data/manuscript
   pull_request:
     branches: [main]
+    paths:
+      - R/data_to_dwca.R
+      - data/manuscript/**
 
 jobs:
   generate-data:
@@ -18,7 +24,7 @@ jobs:
       - uses: r-lib/actions/setup-renv@v2
 
       - name: Generate data # Run the script
-        run: source("R/data_to_dwc.R")
+        run: source("R/data_to_dwca.R")
         shell: Rscript {0}
       
       - name: Commit files # Commit changes

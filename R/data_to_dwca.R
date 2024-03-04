@@ -23,12 +23,16 @@ matched_taxa <- bind_rows(matched_taxa_tibbles) %>%
 
 
 ## Create Event table-----------------------------------------------------------
+# Long values, pulled out for readability
+geo <- "Antarctica | South Shetland Islands | Cape Shirreff, Livingston Island"
+geo.id <- "https://data.aad.gov.au/aadc/gaz/scar/display_name.cfm?gaz_id=131551"
+
 event <- x.events %>%
   mutate(
     # eventDate is mandatory
     eventDate = if_else(census_date_start == census_date_end, census_date_start, 
                         paste(census_date_start, census_date_end, sep = "/")),  
-    # whatever that cannot be mapped to Darwin Core terms goes to dynamicProperties
+    # whatever cannot be mapped to Darwin Core terms goes to dynamicProperties
     dynamicProperties = sprintf(
       '{"research_program": "%s", "surveyed_pst": %s}', 
       research_program, if_else(surveyed_pst, "true", "false")
@@ -38,14 +42,17 @@ event <- x.events %>%
     decimalLatitude = "-62.47",
     coordinateUncertaintyInMeters = "2650",
     locality = "Cape Shirreff, Livingston Island",  
-    higherGeography = "Antarctica | South Shetland Islands | Cape Shirreff, Livingston Island",
-    higherGeographyID = "https://data.aad.gov.au/aadc/gaz/scar/display_name.cfm?gaz_id=131551", 
+    higherGeography = geo, 
+    higherGeographyID = geo.id, 
     continent = "Antarctica",
     countryCode = "AQ",
     sampleSizeValue = census_days,
     sampleSizeUnit = ifelse(census_days <= 1, "day", "days"),
     geodeticDatum = "EPSG:4326",
-    samplingProtocol = "CS-PHOC project"
+    samplingProtocol = paste(
+      "The count of a given species, age class, and sex", 
+      "at the given location(s), made by a trained observer ", 
+      "using binoculars during the specified sampling event.")
   ) %>%
   rename(eventID = event_id) %>%
   # fields that cannot be mapped to Darwin Core
@@ -65,10 +72,9 @@ write_tsv(event, here("data", "dwca", "event.txt"), na = "")
 occ <- x.counts %>% 
   rename(scientificName = species) %>% 
   left_join(matched_taxa, by = "scientificName") %>%
-  # rename columns to Darwin Core terms
+  # rename finished columns to Darwin Core terms
   rename(
     eventID = event_id,
-    occurrenceID = count_id, 
     vernacularName = species_common,
     scientificNameID = lsid,
     taxonRank = rank
@@ -111,10 +117,10 @@ occ.long <- occ %>%
            grepl("male", sex) ~ "male",
            grepl("unk", sex) ~ "unknown"
          ), 
-         occurrenceID = paste(occurrenceID, lifeStage_id, sex_id, sep = "-")) %>%
+         occurrenceID = paste(count_id, lifeStage_id, sex_id, sep = "-")) %>%
   left_join(select(event, eventID, dateIdentified = eventDate), 
             by = "eventID") %>% 
-  select(-c(lifeStage_id, sex_id)) %>% 
+  select(-c(count_id, lifeStage_id, sex_id)) %>% 
   relocate(occurrenceID, .before = eventID)
 
 # # Visual sanity checks

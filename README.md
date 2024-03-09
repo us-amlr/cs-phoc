@@ -48,6 +48,6 @@ Specific versions of the [manuscript](Woodman_etal_CS-PHOC.docx) can be found in
 ├── figures             : figures and table; included in the manuscript
     ├── other           : exploratory plots
 ├── renv                : renv files for dependencies
-├── Woodman_etal_CS-PHOC.docx         : manuscript (data paper), submitted to SciData without EndNote field codes
+├── Woodman_etal_CS-PHOC.docx         : manuscript (data paper), submitted to SciData
 ├── Woodman_etal_CS-PHOC_endnote.docx : manuscript (data paper), with EndNote formatting
 ```

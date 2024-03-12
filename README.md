@@ -18,7 +18,7 @@ The manuscript describing this data is in review. We ask that you do not publish
 
 If using the data, please cite the [dataset](https://doi.org/10.15468/d79fbe), and/or the manuscript (in review, citation todo) as appropriate. Interested parties can access the CS-PHOC dataset in two ways:
 
-- (Recommended) Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](http://biodiversity.aq/) at https://doi.org/10.15468/d79fbe
+- Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at https://doi.org/10.15468/d79fbe
 
 - Download the events and counts CSV files included in this repo and described in the manuscript: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv)
 

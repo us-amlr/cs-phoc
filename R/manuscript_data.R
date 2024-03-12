@@ -8,12 +8,12 @@ library(here)
 library(tamatoamlr)
 library(worrms)
 
+con <- amlr_dbConnect(Database = "***REMOVED***")
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Read in census header and record data from AMLR_PINNIEPDS database
-con <- amlr_dbConnect(Database = "***REMOVED***")
-
 cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   arrange(census_date_start) %>% 
   collect() %>% 
@@ -23,9 +23,7 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   ungroup() %>% 
   select(header_id, census_phocid_header_id, season_name, 
          census_date_start, census_date_end, census_days, 
-         # TODO: temporary until column name can be updated in database
-         surveyed_pst = surveyed_san_telmo, 
-         research_program) %>% 
+         surveyed_pst, research_program) %>% 
   # TODO: temporary to avoid including half of 2023/24 data
   filter(census_date_start < as.Date("2023-07-01"))
 

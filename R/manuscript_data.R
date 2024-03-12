@@ -24,14 +24,14 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   select(header_id, census_phocid_header_id, season_name, 
          census_date_start, census_date_end, census_days, 
          surveyed_pst, research_program) %>% 
-  # TODO: temporary to avoid including half of 2023/24 data
+  # TODO: temporary to avoid including 2023/24 data
   filter(census_date_start < as.Date("2023-07-01"))
 
 cs.header <- cs.header.orig %>% select(-census_phocid_header_id)
 
 stopifnot(
   nrow(cs.header) == nrow(collect(tbl(con, "census_phocid_header")) %>% 
-                            # TODO: temporary to avoid including half of 2023/24 data
+                            # TODO: temporary to avoid including 2023/24 data
                             filter(census_date_start < as.Date("2023-07-01")))
 )
 
@@ -39,7 +39,7 @@ stopifnot(
 cs.wide <- tbl(con, "vCensus_Phocid") %>% 
   arrange(census_date, species, location_group) %>% 
   rename(header_id = census_phocid_header_id) %>% 
-  # TODO: temporary to avoid including half of 2023/24 data
+  # TODO: temporary to avoid including 2023/24 data
   filter(census_date < as.Date("2023-07-01")) %>% 
   collect() %>% 
   select(header_id, observer, census_date, location_group, species, 
@@ -174,7 +174,7 @@ cs.counts <- cs.core.pst %>% rename(event_id = header_id)
 
 #-------------------------------------------------------------------------------
 # Save data
-write_csv(cs.events, file = here("data", "manuscript", "cs-phoc-events.csv"), na = "")
+write_csv(cs.events, here("data", "manuscript", "cs-phoc-events.csv"), na = "")
 write_csv(cs.counts, here("data", "manuscript", "cs-phoc-counts.csv"), na = "")
 
 

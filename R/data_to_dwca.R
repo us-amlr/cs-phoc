@@ -27,6 +27,8 @@ matched_taxa <- bind_rows(matched_taxa_tibbles) %>%
 event1 <- x.events %>%
   rename(eventID = event_id) %>% 
   mutate(eventID = paste0(eventID, "-1"), 
+         decimalLongitude = "-60.77",
+         decimalLatitude = "-62.47",
          locality = "Cape Shirreff, Livingston Island",
          locationRemarks = "CS-PHOC core census locations, on Cape Shirreff")
 
@@ -34,6 +36,8 @@ event2 <- x.events %>%
   rename(eventID = event_id) %>% 
   filter(surveyed_pst) %>% 
   mutate(eventID = paste0(eventID, "-2"), 
+         decimalLongitude = " -60.808",
+         decimalLatitude = "-62.4835",
          locality = "Punta San Telmo, Cape Shirreff, Livingston Island",
          locationRemarks = "CS-PHOC location Punta San Telmo, on Cape Shirreff")
 
@@ -51,8 +55,6 @@ event <- bind_rows(event1, event2) %>%
            '{"research_program": "%s"}', research_program
          ),
          # add recommended Darwin Core terms: https://dwc.tdwg.org/terms/#event
-         decimalLongitude = "-60.77",
-         decimalLatitude = "-62.47",
          coordinateUncertaintyInMeters = "2650",
          higherGeography = paste("Antarctica | South Shetland Islands |", 
                                  "Cape Shirreff, Livingston Island"),

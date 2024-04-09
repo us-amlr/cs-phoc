@@ -3,7 +3,8 @@
 <!-- badges: start -->
 
 <!-- [![DOI](https://zenodo.org/badge/514008683.svg)](https://zenodo.org/badge/latestdoi/514008683) -->
-[![Dataset DOI](https://img.shields.io/badge/DOI-10.15468/d79fbe-blue)](https://doi.org/10.15468/d79fbe)
+[![Dataset DOI](https://img.shields.io/badge/DOI-10.48361/gklk1u-blue)](https://doi.org/10.48361/gklk1u)
+
 
 <!-- badges: end -->
 
@@ -16,7 +17,7 @@ This project uses [renv](https://github.com/rstudio/renv/) to manage the project
 
 The manuscript describing this data is in review. We ask that you do not publish using this data until the manuscript has been published. If you are interested in this project or this data before this time, please contact [sam.woodman@noaa.gov](mailto:sam.woodman@noaa.gov).
 
-If using the data, please cite the [dataset](https://doi.org/10.15468/d79fbe), and/or the manuscript (in review, citation todo) as appropriate. Interested parties can access the CS-PHOC dataset in two ways:
+If using the data, please cite the [dataset](https://doi.org/10.48361/gklk1u), and/or the manuscript (in review, citation todo) as appropriate. Interested parties can access the CS-PHOC dataset in two ways:
 
 - Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at https://doi.org/10.15468/d79fbe
 

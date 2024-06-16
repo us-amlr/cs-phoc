@@ -36,7 +36,7 @@ event2 <- x.events %>%
   rename(eventID = event_id) %>% 
   filter(surveyed_pst) %>% 
   mutate(eventID = paste0(eventID, "-2"), 
-         decimalLongitude = " -60.808",
+         decimalLongitude = "-60.808",
          decimalLatitude = "-62.4835",
          locality = "Punta San Telmo, Cape Shirreff, Livingston Island",
          locationRemarks = "CS-PHOC location Punta San Telmo, on Cape Shirreff")

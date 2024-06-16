@@ -44,11 +44,12 @@ g.map <- ggplot(data = world) +
 
 # g.map
 # crs.laea <- "+proj=laea +lat_0=-75 +lon_0=-15 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
-crs.laea <- "+proj=laea +lat_0=-90 +lon_0=-15 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
+crs.laea <- paste("+proj=laea +lat_0=-90 +lon_0=-15 +x_0=0 +y_0=0", 
+                  "+ellps=GRS80 +units=m +no_defs")
 
 # Define limits
-xlim.ssi <- c(-65.0, -53.5)
-ylim.ssi <- c(-65.35, -60.5)
+xlim.ssi <- c(-63.0, -57)
+ylim.ssi <- c(-64, -61.5)
 xlim.cs <- c(-60.9, -60.6)
 ylim.cs <- c(-62.56, -62.45)
 
@@ -82,11 +83,11 @@ g.ssi <- g.map +
             ymin = min(ylim.cs), ymax = max(ylim.cs), 
             fill = NA, colour = "black", linewidth = 0.5) + 
   annotation_scale(location = "tl", width_hint = 0.5) +
-  annotate(geom = "text", x = -60, y = -64.2, label = "Antarctic Peninsula", 
-           fontface = "italic", color = "black", size = 4, angle = 38) + 
-  annotate(geom = "text", x = -58, y = -61.5, label = "South Shetland Islands", 
-           fontface = "italic", color = "black", size = 4, angle = 0) + 
-  annotate(geom = "text", x = -61.8, y = -62.3, label = "Cape Shirreff",
+  annotate(geom = "text", x = -58.4, y = -63.25, label = "Antarctic Peninsula", 
+           fontface = "italic", color = "black", size = 4, angle = 31) + 
+  annotate(geom = "text", x = -58.7, y = -62.5, label = "South Shetland Islands", 
+           fontface = "italic", color = "black", size = 4, angle = 31) + 
+  annotate(geom = "text", x = -61.4, y = -62.38, label = "Cape Shirreff",
            fontface = "italic", color = "black", size = 3, angle = 0) +
   xlab(NULL) +
   ylab(NULL)
@@ -107,7 +108,8 @@ g.ssi <- g.map +
 #   geom_text()
 
 # Code-driven plot of CS and locations
-cs.poly <- st_read("../CS Polygon and fur seal beaches_Adahood/Inach_Shirreff_poly.shp")
+cs.poly <- st_read(file.path("../CS Polygon and fur seal beaches_Adahood", 
+                             "Inach_Shirreff_poly.shp"))
 cs.line <- st_cast(st_geometry(cs.poly), "LINESTRING")
 pst.sf <- st_linestring(matrix(c(c(613900, 613500, 612800, 612780), 
                                  c(3070200, 3069940, 3070000, 3069850)), 
@@ -150,26 +152,12 @@ cs.core <- st_intersection(cs.corepolys.sfc, cs.line) %>%
   st_set_geometry("geometry")
 
 sf.locations <- bind_rows(cs.core, pst.sf)
-# loc.levels <- c("Core census locations", "Punta San Telmo", 
-#                 "CS mainland")
-# sf.locations <- ad.cs %>%
-#   mutate(type = "CS mainland") %>%
-#   bind_rows(cs.core, pst.sf) %>%
-#   mutate(type = factor(type, levels = loc.levels), 
-#          lwd = if_else(type == "CS mainland", 0.5, 2))
 
 g.cs <- ggplot() +
   geom_sf(data = cs.poly) +
   geom_sf(data = sf.locations, aes(col = type, fill = type), lwd = 3) + 
-  # scale_colour_grey() + scale_fill_grey() +
-  # scale_fill_manual(values = gray.colors(3)[c(1, 2)]) +
-  # scale_colour_manual(values = gray.colors(3)[c(1, 2)]) +
   scale_color_manual(values = viridis.twocolor) +
   scale_fill_manual(values = viridis.twocolor) +
-  # scale_fill_brewer(palette = "Set2") +
-  # scale_color_brewer(palette = "Set2") +
-  # scale_fill_viridis(option = "H", discrete = TRUE) + 
-  # scale_color_viridis(option = "H", discrete = TRUE) + 
   coord_sf(crs = st_crs(4326)) +
   guides(fill = guide_legend(title = NULL), 
          color = guide_legend(title = NULL)) +
@@ -372,9 +360,187 @@ date.test %>%
             n_end = sum(date_match == "end"))
 
 
+
+
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# These line and dot plots are intended for exploration only
+# Fig 3: Group counts by month and season group, before plotting
+season.groups <- function(i) {
+  case_when(
+    i %in% c("1997/98", "1998/99", "1999/00", "2000/01", "2001/02") ~ "1997-2002", 
+    i %in% c("2002/03", "2003/04", "2004/05", "2005/06", "2006/07") ~ "2002-2007", 
+    i %in% c("2009/10", "2010/11", "2011/12", "2012/13") ~ "2009-2013", 
+    i %in% c("2013/14", "2014/15", "2015/16", "2016/17") ~ "2013-2017", 
+    i %in% c("2017/18", "2018/19", "2019/20", "2021/22", "2022/23") ~ "2017-2023"
+  )
+}
+
+
+x <- count.toplot.core %>% 
+  mutate(census_month = month(census_date_start), 
+         census_week = week(census_date_start), 
+         season_group = season.groups(season_name))
+
+x.grp <- x %>% 
+  group_by(location, species, species_common, season_group, census_month) %>% 
+  summarise(total_count_mean = mean(total_count , na.rm = TRUE), 
+            total_count_sd = sd(total_count), 
+            .groups = "drop") %>% 
+  mutate(total_count_sd = replace_na(total_count_sd, 0), 
+         plot_year = if_else(census_month >= 7, 1999, 2000), 
+         plot_date_start = mdy(glue("{census_month}-01-{plot_year}")))
+
+g.grp <- x.grp %>% 
+  filter(census_month %in% c(11, 12, 1, 2)) %>% 
+  ggplot(aes(x = plot_date_start, y = total_count_mean, 
+             color = season_group, group = season_group)) +
+  # geom_point() +
+  geom_point(aes(size = total_count_sd)) +
+  geom_line() +
+  facet_wrap(vars(species), nrow = 1, scales = "free_y") + 
+  xlab("Month") + ylab("Count") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90), 
+        strip.text = element_text(face = "italic")) +
+  guides(color = guide_legend(title = "Season group", order = 1), 
+         size = guide_legend(title = "Count sd")) +
+  scale_color_csphoc()
+# scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
+
+
+
+#------------------------------------------------
+# Plot: season on x axis, count on y, color-coded by species
+months.curr <- c(11, 12, 1, 2)
+y.month <- count.toplot.core %>% 
+  mutate(census_month = month(census_date_start)) %>% 
+  filter(census_month %in% months.curr) %>% 
+  mutate(census_month = factor(census_month, levels = months.curr, 
+                               labels = month.name[months.curr])) %>% 
+  group_by(location, species, species_common, season_name, census_month) %>% 
+  summarise(total_count_mean = mean(total_count , na.rm = TRUE), 
+            total_count_sd = sd(total_count), 
+            .groups = "drop") %>% 
+  mutate(total_count_sd = replace_na(total_count_sd, 0))
+
+
+legend.italic <- element_text(face = "italic", size = 9)
+
+# Plot without SES for sake of scale
+g.month.clw <- y.month %>% 
+  filter(!(species_common %in% "Southern elephant seal")) %>%
+  ggplot(aes(season_name, total_count_mean, 
+             color = species, group = species)) +
+  geom_point() +
+  geom_line() + 
+  geom_errorbar(aes(ymin = total_count_mean-total_count_sd,
+                    ymax = total_count_mean+total_count_sd),
+                width = 0.3) +
+  facet_wrap(vars(census_month), nrow = 1) + 
+  xlab("Season") + ylab("Count") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  guides(color = guide_legend(title = "Species", 
+                              label.theme = legend.italic)) +
+  scale_color_csphoc()
+
+#------------------------------------------------
+# Plot elephant seals, with age/sex class
+y.long <- count.toplot.core %>% 
+  filter(species_common == "Southern elephant seal") %>% 
+  mutate(census_month = month(census_date_start)) %>% 
+  filter(census_month %in% months.curr) %>% 
+  mutate(census_month = factor(census_month, levels = months.curr, 
+                               labels = month.name[months.curr])) %>% 
+  select(-total_count) %>% 
+  pivot_longer(ends_with("_count"), names_to = "age_sex_orig", 
+               values_to = "count") %>% 
+  mutate(age_sex_orig = age_sex_orig, 
+         age_sex = case_when(
+           str_detect(age_sex_orig , "juv_") ~ "juv_count", 
+           .default = age_sex_orig
+         )) %>% 
+  filter(!is.na(count)) %>% 
+  group_by(location, species, species_common, season_name, census_month, 
+           age_sex) %>%
+  summarise(count_mean = mean(count , na.rm = TRUE),
+            count_sd = sd(count),
+            .groups = "drop") %>%
+  mutate(count_sd = replace_na(count_sd, 0)) %>% 
+  filter(!(age_sex %in% c("unk_female_count", "unk_male_count", "ad_unk_count")))
+
+g.month.ses <- y.long %>% 
+  ggplot(aes(season_name, count_mean, 
+             color = age_sex, group = age_sex)) +
+  geom_point(aes(size = count_sd)) +
+  geom_line(aes(linetype = species)) + 
+  facet_wrap(vars(census_month), nrow = 1) + 
+  xlab("Season") + ylab("Count") + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  guides(linetype = guide_legend(title = "Species", order = 1, 
+                                 label.theme = legend.italic),
+         color = guide_legend(title = "Age class + sex", order = 2), 
+         size = guide_legend(title = "Count sd", order = 3)) +
+  scale_color_csphoc()
+
+
+
+#------------------------------------------------
+grid.count <- plot_grid(
+  g.grp, g.month.clw, g.month.ses, ncol = 1, align = "v", axis = "lr", 
+  labels = c('A', 'B', 'C'), label_size = 15
+)
+
+if (save.image) {
+  ggsave(here(here.fig.tbl, "Fig4_csphoc_counts.png"), 
+         grid.count, width = 20, height = 12)
+} else {
+  print(grid.count)
+}
+
+
+###############################################################################
+###############################################################################
+## Create table with column descriptors (table 1)
+tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
+                     col_types = "ccccciiiiiiiiiii") %>% 
+  as.data.frame()
+
+tbl1 <- data.frame(
+  Column = names(tbl1.ref), 
+  Data_Type = vapply(tbl1.ref, class, as.character(1))
+) %>% 
+  mutate(Description = case_when(
+    Column == "count_id"~          "A unique identifier for each count record",
+    Column == "event_id"~          "The unique identifier for event records, can be used to join count records with event records",
+    Column == "location" ~         "The Cape Shirreff location",
+    Column == "species" ~          "The scientific name of the phocid species", 
+    Column == "species_common" ~   "The common name of the phocid species",
+    Column == "total_count" ~      "The sum of all of the other '_count' columns, i.e., the total count for the corresponding census/location/species", 
+    Column == "ad_female_count" ~  "Aggregate count of adult females for the corresponding census/location/species", 
+    Column == "ad_male_count" ~    "Aggregate count of adult males",
+    Column == "ad_unk_count" ~     "Aggregate count of adults of unknown sex",
+    Column == "juv_female_count" ~ "Aggregate count of juvenile females",
+    Column == "juv_male_count" ~   "Aggregate count of juvenile males",
+    Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
+    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of any sex",
+    Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
+    Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
+    Column == "unk_unk_count" ~    "Aggregate count of phocids of unknown age class and unknown sex"
+  ))
+
+if (save.image) {
+  write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")
+} else {
+  tbl1 %>% glimpse()
+}
+
+
+################################################################################
+################################################################################
+## These line and dot plots are intended for exploration only
 
 
 #-------------------------------------------------------------------------------
@@ -492,223 +658,6 @@ date.test %>%
 #     ggsave(here(here.fig.other, "line_graph", paste0(i.filename, ".png")), 
 #            g.curr, width = 10, height = 6)
 # }; rm(i, i.toplot, g.curr)
-
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-# Fig 3: Group counts by month and season group, before plotting
-season.groups <- function(i) {
-  case_when(
-    i %in% c("1997/98", "1998/99", "1999/00", "2000/01", "2001/02") ~ "1997-2002", 
-    i %in% c("2002/03", "2003/04", "2004/05", "2005/06", "2006/07") ~ "2002-2007", 
-    i %in% c("2009/10", "2010/11", "2011/12", "2012/13") ~ "2009-2013", 
-    i %in% c("2013/14", "2014/15", "2015/16", "2016/17") ~ "2013-2017", 
-    i %in% c("2017/18", "2018/19", "2019/20", "2021/22", "2022/23") ~ "2017-2023"
-  )
-}
-
-
-x <- count.toplot.core %>% 
-  mutate(census_month = month(census_date_start), 
-         census_week = week(census_date_start), 
-         season_group = season.groups(season_name))
-
-x.grp <- x %>% 
-  group_by(location, species, species_common, season_group, census_month) %>% 
-  summarise(total_count_mean = mean(total_count , na.rm = TRUE), 
-            total_count_sd = sd(total_count), 
-            .groups = "drop") %>% 
-  mutate(total_count_sd = replace_na(total_count_sd, 0), 
-         plot_year = if_else(census_month >= 7, 1999, 2000), 
-         plot_date_start = mdy(glue("{census_month}-01-{plot_year}")))
-
-g.grp <- x.grp %>% 
-  filter(census_month %in% c(11, 12, 1, 2)) %>% 
-  ggplot(aes(x = plot_date_start, y = total_count_mean, 
-             color = season_group, group = season_group)) +
-  # geom_point() +
-  geom_point(aes(size = total_count_sd)) +
-  geom_line() +
-  # geom_errorbar(aes(ymin = total_count_mean-total_count_sd, 
-  #                   ymax = total_count_mean+total_count_sd), 
-  #               width = 5) + 
-  facet_wrap(vars(species), nrow = 1, scales = "free_y") + 
-  # ggtitle(paste("Cape Shirreff phocid census counts", 
-  #               "Core locations", "Monthly averages", sep = " - ")) + 
-  xlab("Month") + ylab("Count") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90), 
-        strip.text = element_text(face = "italic")) +
-  guides(color = guide_legend(title = "Season group", order = 1), 
-         size = guide_legend(title = "Count sd")) +
-  scale_color_csphoc()
-# scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
-
-
-
-#------------------------------------------------
-# Plot: season on x axis, count on y, color-coded by species
-months.curr <- c(11, 12, 1, 2)
-y.month <- count.toplot.core %>% 
-  mutate(census_month = month(census_date_start)) %>% 
-  filter(census_month %in% months.curr) %>% 
-  mutate(census_month = factor(census_month, levels = months.curr, 
-                               labels = month.name[months.curr])) %>% 
-  group_by(location, species, species_common, season_name, census_month) %>% 
-  summarise(total_count_mean = mean(total_count , na.rm = TRUE), 
-            total_count_sd = sd(total_count), 
-            .groups = "drop") %>% 
-  mutate(total_count_sd = replace_na(total_count_sd, 0))
-
-
-legend.italic <- element_text(face = "italic", size = 9)
-
-# Plot without SES for sake of scale
-g.month.clw <- y.month %>% 
-  filter(!(species_common %in% "Southern elephant seal")) %>%
-  ggplot(aes(season_name, total_count_mean, 
-             color = species, group = species)) +
-  geom_point() +
-  geom_line() + 
-  geom_errorbar(aes(ymin = total_count_mean-total_count_sd,
-                    ymax = total_count_mean+total_count_sd),
-                width = 0.3) +
-  facet_wrap(vars(census_month), nrow = 1) + 
-  # ggtitle(paste("Cape Shirreff phocid census counts", 
-  #               "Core locations", "Monthly averages", sep = " - ")) + 
-  xlab("Season") + ylab("Count") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90)) +
-  guides(color = guide_legend(title = "Species", 
-                              label.theme = legend.italic)) +
-  scale_color_csphoc()
-
-# # Plot with log scale
-# y.month %>% 
-#   # filter(!(species_common %in% "Southern elephant seal")) %>%
-#   ggplot(aes(season_name, total_count_mean, 
-#              color = species, group = species)) +
-#   geom_point() +
-#   geom_line() + 
-#   # geom_errorbar(aes(ymin = total_count_mean-total_count_sd,
-#   #                   ymax = total_count_mean+total_count_sd),
-#   #               width = 0.3) +
-#   facet_wrap(vars(census_month), nrow = 1) + 
-#   xlab("Season") + ylab("Count") +
-#   scale_y_continuous(trans='log10') + 
-#   theme_bw() +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   guides(color = guide_legend(title = "Species", 
-#                               label.theme = legend.italic)) 
-
-
-# # Plot elephant seals...
-# y.month %>% 
-#   filter((species_common %in% "Southern elephant seal")) %>%
-#   ggplot(aes(season_name, total_count_mean, group = species)) +
-#   geom_point() +
-#   geom_line() + 
-#   geom_errorbar(aes(ymin = total_count_mean-total_count_sd,
-#                     ymax = total_count_mean+total_count_sd),
-#                 width = 0.3) +
-#   facet_wrap(vars(census_month), nrow = 1) + 
-#   ggtitle(paste("Cape Shirreff phocid census counts", 
-#                 "Core locations", "Monthly averages", sep = " - ")) + 
-#   xlab("Season") + ylab("Count") +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   guides(color = guide_legend(title = "Species")) 
-
-#------------------------------------------------
-# Plot elephant seals, with age/sex class
-y.long <- count.toplot.core %>% 
-  filter(species_common == "Southern elephant seal") %>% 
-  mutate(census_month = month(census_date_start)) %>% 
-  filter(census_month %in% months.curr) %>% 
-  mutate(census_month = factor(census_month, levels = months.curr, 
-                               labels = month.name[months.curr])) %>% 
-  select(-total_count) %>% 
-  pivot_longer(ends_with("_count"), names_to = "age_sex_orig", 
-               values_to = "count") %>% 
-  mutate(age_sex_orig = age_sex_orig, 
-         age_sex = case_when(
-           str_detect(age_sex_orig , "juv_") ~ "juv_count", 
-           .default = age_sex_orig
-         )) %>% 
-  filter(!is.na(count)) %>% 
-  group_by(location, species, species_common, season_name, census_month, 
-           age_sex) %>%
-  summarise(count_mean = mean(count , na.rm = TRUE),
-            count_sd = sd(count),
-            .groups = "drop") %>%
-  mutate(count_sd = replace_na(count_sd, 0)) %>% 
-  filter(!(age_sex %in% c("unk_female_count", "unk_male_count", "ad_unk_count")))
-
-g.month.ses <- y.long %>% 
-  ggplot(aes(season_name, count_mean, 
-             color = age_sex, group = age_sex)) +
-  geom_point(aes(size = count_sd)) +
-  geom_line(aes(linetype = species)) + 
-  facet_wrap(vars(census_month), nrow = 1) + 
-  xlab("Season") + ylab("Count") + 
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90)) +
-  guides(linetype = guide_legend(title = "Species", order = 1, 
-                                 label.theme = legend.italic),
-         color = guide_legend(title = "Age class + sex", order = 2), 
-         size = guide_legend(title = "Count sd", order = 3)) +
-  scale_color_csphoc()
-
-
-
-#------------------------------------------------
-grid.count <- plot_grid(
-  g.grp, g.month.clw, g.month.ses, ncol = 1, align = "v", axis = "lr", 
-  labels = c('A', 'B', 'C'), label_size = 15
-)
-
-if (save.image) {
-  ggsave(here(here.fig.tbl, "Fig4_csphoc_counts.png"), 
-         grid.count, width = 20, height = 12)
-} else {
-  print(grid.count)
-}
-
-
-###############################################################################
-###############################################################################
-## Create table with column descriptors (table 1)
-tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
-                     col_types = "ccccciiiiiiiiiii") %>% 
-  as.data.frame()
-
-tbl1 <- data.frame(
-  Column = names(tbl1.ref), 
-  Data_Type = vapply(tbl1.ref, class, as.character(1))
-) %>% 
-  mutate(Description = case_when(
-    Column == "count_id"~          "A unique identifier for each count record",
-    Column == "event_id"~          "A unique identifier with which to join event records, i.e. data records with survey-level information",
-    Column == "location" ~         "The Cape Shirreff location",
-    Column == "species" ~          "The scientific name of the phocid species", 
-    Column == "species_common" ~   "The common name of the phocid species",
-    Column == "total_count" ~      "The sum of all of the other '_count' columns. I.e., the total count for the corresponding census/location/species", 
-    Column == "ad_female_count" ~  "Aggregate count of adult females for the corresponding census/location/species", 
-    Column == "ad_male_count" ~    "Aggregate count of adult males",
-    Column == "ad_unk_count" ~     "Aggregate count of adults of unknown sex",
-    Column == "juv_female_count" ~ "Aggregate count of juvenile females",
-    Column == "juv_male_count" ~   "Aggregate count of juvenile males",
-    Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
-    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of any sex",
-    Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
-    Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
-    Column == "unk_unk_count" ~    "Aggregate count of phocids of unknown age class and unknown sex"
-  ))
-
-if (save.image) {
-  write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")
-} else {
-  tbl1 %>% glimpse()
-}
 
 ################################################################################
 ################################################################################

@@ -3,11 +3,10 @@
 <!-- badges: start -->
 
 <!-- [![DOI](https://zenodo.org/badge/514008683.svg)](https://zenodo.org/badge/latestdoi/514008683) -->
+
 [![Dataset DOI](https://img.shields.io/badge/DOI-10.48361/gklk1u-blue)](https://doi.org/10.48361/gklk1u)
 
-
 <!-- badges: end -->
-
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
 
@@ -15,40 +14,54 @@ This project uses [renv](https://github.com/rstudio/renv/) to manage the project
 
 ## Data
 
-The manuscript describing this data is in review. We ask that you do not publish using this data until the manuscript has been published. If you are interested in this project or this data before this time, please contact [sam.woodman@noaa.gov](mailto:sam.woodman@noaa.gov).
+The manuscript describing this data is in review. We ask that you do not publish using this data until the manuscript has been published. If you are interested in this project or this data before this time, please contact [sam.woodman\@noaa.gov](mailto:sam.woodman@noaa.gov).
 
 If using the data, please cite the [dataset](https://doi.org/10.48361/gklk1u), and/or the manuscript (in review, citation todo) as appropriate. Interested parties can access the CS-PHOC dataset in two ways:
 
-- Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at https://doi.org/10.15468/d79fbe
+-   Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at <https://doi.org/10.15468/d79fbe>
 
-- Download the events and counts CSV files included in this repo and described in the manuscript: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv)
+-   Download the events and counts CSV files included in this repo and described in the manuscript: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv)
 
-Examples of loading and using CS-PHOC data can be found in the [R/examples. R](R/examples.R), as well as the [code](R/manuscript_figures.R) used to generate the figures for the manuscript.
+Examples of loading and using CS-PHOC data can be found in the [R/cs-phoc_examples. R](R/cs-phoc_examples.R), as well as the [code](R/manuscript_figures.R) used to generate the figures for the manuscript.
+
+### DwCA tables
+
+Darwin Core Archive (DwCA) tables have specific data and metadata standards and requirements. Thus, there are several formatting differences for the CS-PHOC dataset presented as DwCA tables through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/), relative to this dataset presented as [CSV files](data/manuscript) in this repo:
+
+-   When using Darwin Core terms, all location information is captured at the [Event](https://dwc.tdwg.org/terms/#event) level. This is in contrast to the CS-PHOC CSV files, where the location information is part of the counts CSV file. To meet DwCA requirements, we created different events for surveys of the Core census locations (CCLs) and Punta San Telmo (PST). Specifically, for the DwCA event table, events for counts for the CCLs have a "-1" suffix, while events for counts for the PST location have a "-2". For instance, for event_id 1 where both locations were surveyed, in the DwCA event table there are two events with unique eventIDs: 1-1 and 1-2. For survey windows where only the CCLs were surveyed, such as event_id 1, there is only one event (with eventID 186-1).
+
+-   For the the Darwin Core standard, count data are referred to and recorded as [occurrence](https://dwc.tdwg.org/terms/#occurrence) records. To be Darwin Core-compliant, occurrence data needs to both be long (i.e., one count per record) and have unique occurrenceID values. The counts CSV file is wide, meaning there are different columns (rather than rows) for counts of different sexes/age classes, and thus needed to be made long. This was done using [pivot_longer](https://tidyr.tidyverse.org/reference/pivot_longer.html). To generate unique occurrenceID values after making the count data long, we appended two "-#" codes to the count_id values: one for age class and one for sex. For the age class code: adult=1, juvenile=2, pup=3, and unknown=4. For the pup code, female=1, male=2, and unknown=3. For example, for the DwCA record for the juvenile female count of 1 from the record with count_id=102-1-195932, the occurrenceID is "102-1-195932-2-1".
+
+Other notes for the DwCA tables:
+
+-   The sex value "Unknown" (or "Indeterminate", see [here](https://registry.gbif.org/vocabulary/Sex/concepts)) does not appear to be picked up when the data is published, and thus in the DwCA data counts the sex for animals recorded as "Unknown" are listed as "NA".
+
+-   The age class (i.e., lifeStage) value "Pup" is not yet recognized by GBIF. See [this issue](https://github.com/gbif/vocabulary/issues/131) for more details, and to track when this information may be included in the DwCA tables. Until this issue is resolved, the value for lifeStage will be "NA"" in the DwCA CS-PHOC tables for records where the lifeStage (i.e., age class) was either "pup" or "Unknown". Users interested in this level of detail will need to refer to the data presented in the [CSV files](data/manuscript).
 
 ## Manuscript
 
 The CS-PHOC data paper has been submitted to Scientific Data, and is currently in review. Manuscript access and citation details will be updated here as they become available.
- 
+
 Code to generate figures from the manuscript can be found in [R/manuscript_figures.R](R/manuscript_figures.R).
 
-Specific versions of the [manuscript](Woodman_etal_CS-PHOC.docx) can be found in [releases](https://github.com/us-amlr/cs-phoc/releases). 
+Specific versions of the [manuscript](Woodman_etal_CS-PHOC.docx) can be found in [releases](https://github.com/us-amlr/cs-phoc/releases).
 
 ## CS-PHOC repo structure
 
-```
-├── R                   : R code
-    ├── data_to_dwca.R  : generating DwCA tables for publication at biodiversity.aq
-    ├── import_*.R      : importing files from 'data/pre' into the AMLR Pinnipeds database
-    ├── examples.R      : example code for using the CS-PHOC dataset
-    ├── manuscript_*.R  : generating CS-PHOC dataset, and manuscript figures
-    ├── smw_qc.R        : early and ad-hoc CS-PHOC census data qc and explorations
-├── data                  
-    ├── dwca            : Darwin Core Archive tables; presented in the manuscript
-    ├── manuscript      : standardized CSV files; presented in the manuscript
-    ├── pre             : historical data files; now imported into the database
-├── figures             : figures and table; included in the manuscript
-    ├── other           : exploratory plots
-├── renv                : renv files for dependencies
-├── Woodman_etal_CS-PHOC.docx         : manuscript (data paper), submitted to SciData
-├── Woodman_etal_CS-PHOC_endnote.docx : manuscript (data paper), with EndNote formatting
+```         
+├── R
+    ├── data_to_dwca.R    : generating DwCA tables for publication at biodiversity.aq
+    ├── import_*.R        : importing files from 'data/pre' into the AMLR Pinnipeds database
+    ├── cs-phoc_examples.R: example code for using the CS-PHOC dataset
+    ├── manuscript_*.R    : generating CS-PHOC dataset, and manuscript figures
+    ├── smw_qc.R          : early and ad-hoc CS-PHOC census data qc and explorations
+├── data
+    ├── dwca      : Darwin Core Archive tables; presented in the manuscript
+    ├── manuscript: standardized CSV files; presented in the manuscript
+    ├── pre       : historical data files; now imported into the database
+├── figures       : figures and table; included in the manuscript
+    ├── other     : exploratory plots
+├── renv          : renv files, for managing renv environment
+├── Woodman_etal_CS-PHOC.docx        : manuscript (data paper), submitted to SciData
+├── Woodman_etal_CS-PHOC_endnote.docx: manuscript (data paper), with EndNote formatting
 ```

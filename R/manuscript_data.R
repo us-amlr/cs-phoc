@@ -89,11 +89,14 @@ amlr.complete <- cs.core.agg %>%
 cs.core.complete <- cs.core.agg %>% 
   filter(research_program == "INACH") %>% 
   bind_rows(amlr.complete) %>% 
+  # mutate(location_lat = -62.47, 
+  #        location_lon = -60.77,
+  #        .after = location) %>% 
   select(-c(census_date_start, research_program))
 
 
 
-### Filter for san telmo locations, group/summarise, and complete
+### Filter for PST locations, group/summarise, and complete
 pst.header <- cs.header %>% filter(surveyed_pst)
 
 cs.pst.complete <- cs.wide %>% 
@@ -102,15 +105,15 @@ cs.pst.complete <- cs.wide %>%
   select(-c(census_date)) %>% 
   left_join(select(pst.header, header_id, census_date_start, research_program), 
             by = join_by(header_id)) %>% 
-  # Insert dummy data for two surveys where PST was surveyed, but no phocids
-  # were recorded
+  # Insert dummy data for two surveys where PST was surveyed, 
+  #   but no phocids were recorded
   add_row(census_date_start = as.Date("2009-11-01"), 
           research_program = "USAMLR", 
           header_id = pst.header %>% 
             filter(census_date_start == as.Date("2009-11-01")) %>% 
             pull(header_id), 
           location = loc.pst, 
-          species = pinniped.phocid.sp[4], 
+          species = unname(pinniped.phocid.sp[4]), 
           ad_female_count = 0L, ad_male_count = 0L, ad_unk_count = 0L, 
           juv_female_count = 0L, juv_male_count = 0L, juv_unk_count = 0L, 
           pup_live_count = 0L, 
@@ -122,13 +125,16 @@ cs.pst.complete <- cs.wide %>%
             filter(census_date_start == as.Date("2009-11-08")) %>% 
             pull(header_id), 
           location = loc.pst, 
-          species = pinniped.phocid.sp[4], 
+          species = unname(pinniped.phocid.sp[4]), 
           ad_female_count = 0L, ad_male_count = 0L, ad_unk_count = 0L, 
           juv_female_count = 0L, juv_male_count = 0L, juv_unk_count = 0L, 
           pup_live_count = 0L, 
           unk_female_count = NA_integer_, unk_male_count = NA_integer_, 
           unk_unk_count = NA_integer_) %>% 
   complete_csphoc() %>%
+  # mutate(location_lat = -62.4835, 
+  #        location_lon =  -60.808,
+  #        .after = location) %>% 
   select(-c(census_date_start, research_program))
 
 
@@ -161,7 +167,7 @@ cs.core.pst <- bind_rows(cs.core.complete, cs.pst.complete)%>%
          ), 
          count_id = paste(header_id, location_id, valid_AphiaID, sep = "-")) %>% 
   select(-c(valid_AphiaID, location_id)) %>% 
-  relocate(species, species_common, .after = location) %>% 
+  relocate(species, species_common, .before = total_count) %>% 
   relocate(count_id, .before = header_id) %>% 
   rename(pup_count = pup_live_count)
 

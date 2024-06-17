@@ -146,7 +146,7 @@ occ.long <- occ %>%
 #   select(-c(eventID, occurrenceID, individualCount, dateIdentified)) %>%
 #   lapply(table, useNA = "ifany")
 
-## Sanity checks
+# Other Sanity checks
 stopifnot(
   !any(is.na(occ.long)), 
   sum(duplicated(occ.long$occurrenceID)) == 0, 

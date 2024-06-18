@@ -1,4 +1,4 @@
-Column	Data_Type	Description
+Column	Data type	Description
 count_id	character	A unique identifier for each count record
 event_id	character	The unique identifier for event records, can be used to join count records with event records
 location	character	The Cape Shirreff location

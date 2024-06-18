@@ -189,6 +189,7 @@ if (save.image) {
 ###############################################################################
 # General code for data-dependent figures
 
+### Functions for plot colors
 scale_color_csphoc <- function() {
   # scale_color_npg()
   # scale_color_brewer(palette = "Set2")
@@ -201,9 +202,7 @@ scale_fill_csphoc <- function() {
 }
 
 
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-# Read in data, and do some prep for plotting
+### Read in data
 z.header <- read_csv(here(here.csv, "cs-phoc-events.csv"), 
                      col_types = "ccDDilc")
 nrow(z.header)
@@ -212,10 +211,16 @@ z.count <- read_csv(here(here.csv, "cs-phoc-counts.csv"),
                     col_types = "ccccciiiiiiiiiii")
 
 
-yr.pad.all <- str_pad(c(98, 99, 00, 1:23), width = 2, pad = "0")
-# season.name.levels <- paste(1997:2022, yr.pad.all, sep = "/")
-season.name.levels.inach <- paste(1997:2008, yr.pad.all[1:12], sep = "/")
-season.name.levels.amlr <- paste(2009:2022, yr.pad.all[13:26], sep = "/")
+### Make general data frames and plotting variables
+programs.seasons <- z.header %>% 
+  select(season_name, research_program) %>% 
+  distinct()
+season.name.levels.inach <- programs.seasons %>% 
+  filter(research_program == "INACH") %>% 
+  pull(season_name)
+season.name.levels.amlr <- programs.seasons %>% 
+  filter(research_program == "USAMLR") %>% 
+  pull(season_name)
 season.name.levels <- c(season.name.levels.inach, season.name.levels.amlr)
 
 header.toplot <- z.header %>% 
@@ -235,7 +240,7 @@ count.toplot.core <- count.toplot %>%
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-### Make a visualization of census dates by year from the header data
+# Fig 2: Make a visualization of census dates by year from the header data
 g1 <- ggplot(header.toplot, aes(x = plot_date_start, y = season_name)) +
   geom_point(aes(col = research_program, size = census_days)) +
   labs(title = "CS-PHOC survey windows, by season", 
@@ -275,9 +280,9 @@ rm(g.grid, g1, g2)
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-con <- amlr_dbConnect(Database = "***REMOVED***")
+# Fig 3: Census timing - start and end times
 
-# Census timing - start and end times
+con <- amlr_dbConnect(Database = "***REMOVED***")
 csphoc.times <- tbl(con, "vCensus_Phocid") %>% 
   filter(!is.na(time_start), !is.na(time_end)) %>% 
   collect() %>% 
@@ -339,19 +344,21 @@ if (save.image) {
   print(g.timing)
 }
 
-rm(csphoc.times, g.timing, gg.st.end, gg.mid, gg.hours)
+rm(con, csphoc.times, g.timing, gg.st.end, gg.mid, gg.hours)
 
-#------------------------------------------------
-# For multi-day records, should we use the start or end date?
-# Answer: based on quantity we should use the start date
+#-------------------------------------------------------------------------------
+# For multi-day records, should we use the start or end date? Answer below
+con <- amlr_dbConnect(Database = "***REMOVED***")
 date.test <- tbl(con, "vCensus_Phocid") %>% 
   filter(census_days > 1) %>% 
   collect() %>% 
   mutate(date_match = case_when((census_date_start == census_date) ~ "start", 
                                 (census_date_end == census_date) ~ "end", 
-                                .default = "nomatch")) 
+                                .default = "nomatch")) #due to 3-day census
 
-tableNA(date.test$date_match)
+# Answer: based on quantity, we should use the start date
+tableNA(date.test$date_match) 
+
 date.test %>% 
   group_by(census_date_start) %>% 
   summarise(census_days = unique(census_days), 
@@ -359,13 +366,15 @@ date.test %>%
             n_nomatch = sum(date_match == "nomatch"), 
             n_end = sum(date_match == "end"))
 
+rm(con, date.test)
+
 
 
 
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-# Fig 3: Group counts by month and season group, before plotting
+# Fig 4: Group counts by month and season group, before plotting
 season.groups <- function(i) {
   case_when(
     i %in% c("1997/98", "1998/99", "1999/00", "2000/01", "2001/02") ~ "1997-2002", 
@@ -510,7 +519,7 @@ tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"),
 
 tbl1 <- data.frame(
   Column = names(tbl1.ref), 
-  Data_Type = vapply(tbl1.ref, class, as.character(1))
+  data_type = vapply(tbl1.ref, class, as.character(1))
 ) %>% 
   mutate(Description = case_when(
     Column == "count_id"~          "A unique identifier for each count record",
@@ -529,7 +538,8 @@ tbl1 <- data.frame(
     Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
     Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
     Column == "unk_unk_count" ~    "Aggregate count of phocids of unknown age class and unknown sex"
-  ))
+  )) %>% 
+  rename(`Data type` = data_type)
 
 if (save.image) {
   write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")

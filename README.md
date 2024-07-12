@@ -2,9 +2,8 @@
 
 <!-- badges: start -->
 
-<!-- [![DOI](https://zenodo.org/badge/514008683.svg)](https://zenodo.org/badge/latestdoi/514008683) -->
-
 [![Dataset DOI](https://img.shields.io/badge/Dataset_DOI-10.48361/gklk1u-blue)](https://doi.org/10.48361/gklk1u)
+[![Repo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249) 
 
 <!-- badges: end -->
 

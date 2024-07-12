@@ -18,7 +18,7 @@ library(lubridate)
 library(tidyr)
 library(odbc)
 
-save.image <- TRUE
+save.image <- FALSE
 
 viridis.twocolor <- viridis(3)[1:2]
 csphoc.labels.size = 15
@@ -43,9 +43,8 @@ class(world)
 g.map <- ggplot(data = world) +
   geom_sf() +
   theme_bw()
-
 # g.map
-# crs.laea <- "+proj=laea +lat_0=-75 +lon_0=-15 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
+
 crs.laea <- paste("+proj=laea +lat_0=-90 +lon_0=-15 +x_0=0 +y_0=0", 
                   "+ellps=GRS80 +units=m +no_defs")
 
@@ -101,7 +100,7 @@ g.ssi <- g.map +
 # # Initial attempt using a marked up PNG file to indicate locations
 # # Deprecated in favor of code-driven plot below
 # cs.image <- grid::rasterGrob(
-#   png::readPNG("C:/SMW/Pinnipeds/CS-PHOC/manuscript-scidata/CS map - shaded.png"),
+#   png::readPNG(here("../manuscript-scidata/CS map - shaded.png")),
 #   width=ggplot2::unit(1,"npc"),
 #   height=ggplot2::unit(1,"npc")
 # )
@@ -229,7 +228,6 @@ season.name.levels <- c(season.name.levels.inach, season.name.levels.amlr)
 
 header.toplot <- z.header %>% 
   mutate(season_name = factor(season_name, levels = season.name.levels), 
-         # season_int = as.numeric(substr(season_name, 1, 4)), 
          research_program = as.factor(research_program), 
          census_date_start = as.Date(census_date_start), 
          census_date_end = as.Date(census_date_end), 
@@ -257,7 +255,6 @@ g1 <- ggplot(header.toplot, aes(x = plot_date_start, y = season_name)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90),
         legend.position = "bottom")
-# g1
 
 g2 <- ggplot(header.toplot, aes(x = season_name)) + 
   geom_histogram(stat = "count") + 
@@ -268,10 +265,8 @@ g2 <- ggplot(header.toplot, aes(x = season_name)) +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
-# g2
 
 g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1.5), align = "h", axis = "tb")
-# g.grid
 
 if (save.image) {
   ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses2.pdf"), 
@@ -318,7 +313,6 @@ gg.st.end <- csphoc.times %>%
   ggplot(aes(x=dt_hours, fill=type)) +
   geom_bar(alpha=0.6, position = 'identity') + 
   guides(fill = guide_legend(title = "Time")) + 
-  # scale_fill_discrete(limits = c("start", "end")) + 
   ggtitle("Start and end times") + 
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
@@ -347,7 +341,6 @@ g.timing <- plot_grid(
   gg.st.end, gg.mid, gg.hours, ncol = 1, 
   labels = c("a", "b", "c"), label_size = csphoc.labels.size
 )
-# g.timing
 
 if (save.image) {
   ggsave(here(here.fig.tbl, "Fig3_csphoc_survey_times.pdf"), 
@@ -417,7 +410,6 @@ g.grp <- x.grp %>%
   filter(census_month %in% c(11, 12, 1, 2)) %>% 
   ggplot(aes(x = plot_date_start, y = total_count_mean, 
              color = season_group, group = season_group)) +
-  # geom_point() +
   geom_point(aes(size = total_count_sd)) +
   geom_line() +
   facet_wrap(vars(species), nrow = 1, scales = "free_y") + 
@@ -428,7 +420,6 @@ g.grp <- x.grp %>%
   guides(color = guide_legend(title = "Season group", order = 1), 
          size = guide_legend(title = "Count sd")) +
   scale_color_csphoc()
-# scale_x_date(date_breaks = "1 week", date_labels = "%b %d")
 
 
 

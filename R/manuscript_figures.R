@@ -16,11 +16,13 @@ library(glue)
 library(readr)
 library(lubridate)
 library(tidyr)
+library(odbc)
 
-
-save.image <- FALSE
+save.image <- TRUE
 
 viridis.twocolor <- viridis(3)[1:2]
+csphoc.labels.size = 15
+
 here.csv <- here("data", "manuscript")
 here.fig.tbl <- here("figures")
 here.fig.other <- here("figures", "other")
@@ -172,12 +174,14 @@ g.cs <- ggplot() +
 
 # Grid
 grid.map <- plot_grid(
-  plot_grid(g.region, g.ssi, nrow = 2, align = "v", axis = "lr"), 
-  g.cs, ncol = 2, rel_widths = c(1, 1.3)
+  plot_grid(g.region, g.ssi, nrow = 2, align = "v", axis = "lr", 
+            labels = c("a", "b"), label_size = csphoc.labels.size), 
+  g.cs, ncol = 2, rel_widths = c(1, 1.3), 
+  labels = c(NA, "c"), label_size = csphoc.labels.size
 )
 
 if (save.image) {
-  ggsave(here("figures", "Fig1_csphoc_map.png"), 
+  ggsave(here("figures", "Fig1_csphoc_map.pdf"), 
          grid.map, width = 9, height = 6, bg = "white") 
 } else {
   print(grid.map)
@@ -243,23 +247,24 @@ count.toplot.core <- count.toplot %>%
 # Fig 2: Make a visualization of census dates by year from the header data
 g1 <- ggplot(header.toplot, aes(x = plot_date_start, y = season_name)) +
   geom_point(aes(col = research_program, size = census_days)) +
-  labs(title = "CS-PHOC survey windows, by season", 
-       x = "Date", y = "Season") +
-  theme(axis.text.x = element_text(angle = 90),
-        legend.position = "bottom") +
-  guides(color = guide_legend(title = "Research program", order = 1),
-         size = guide_legend(title = "Days", order = 2)) + 
-  scale_x_date(date_breaks = "1 week", date_labels = "%b %d") + 
+  labs(x = "Date", y = "Season") + 
   scale_y_discrete(drop = FALSE) + 
   scale_size(breaks = 1:3) +
-  scale_color_manual(values = viridis.twocolor)
+  scale_color_manual(values = viridis.twocolor) +
+  guides(color = guide_legend(title = "Research program", order = 1),
+         size = guide_legend(title = "Survey window (days)", order = 2)) +  
+  scale_x_date(date_breaks = "1 week", date_labels = "%b %d") + 
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90),
+        legend.position = "bottom")
 # g1
 
 g2 <- ggplot(header.toplot, aes(x = season_name)) + 
   geom_histogram(stat = "count") + 
   scale_x_discrete(drop = FALSE) + 
   labs(y = "Number of censuses") + 
-  coord_flip() +
+  coord_flip() + 
+  theme_minimal() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
@@ -269,7 +274,7 @@ g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1.5), align = "h", axis = "tb")
 # g.grid
 
 if (save.image) {
-  ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses.png"), 
+  ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses2.pdf"), 
          g.grid, width = 10, height = 6)
 } else {
   print(g.grid)
@@ -281,8 +286,8 @@ rm(g.grid, g1, g2)
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Fig 3: Census timing - start and end times
+con <- dbConnect(odbc(), filedsn = here("dsn", "amlr-pinniped-db-prod.dsn"))
 
-con <- amlr_dbConnect(Database = "***REMOVED***")
 csphoc.times <- tbl(con, "vCensus_Phocid") %>% 
   filter(!is.na(time_start), !is.na(time_end)) %>% 
   collect() %>% 
@@ -318,27 +323,34 @@ gg.st.end <- csphoc.times %>%
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
   scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL) +
-  scale_fill_csphoc()
+  scale_fill_csphoc() +
+  theme_bw()
+
 
 gg.mid <- ggplot(csphoc.times, aes(census_dt_midpoint_24h)) + 
   geom_bar() + 
   ggtitle("Midpoint times") + 
   xlab("Hour (24h)") + 
   ylab("Number of records") + 
-  scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL)
+  scale_x_continuous(limits = c(6, 22), breaks = 0:24, minor_breaks = NULL) +
+  theme_bw()
 
 gg.hours <- ggplot(csphoc.times, aes(census_hours_bar)) + 
   geom_bar() + 
   ggtitle("Durations") + 
   xlab("Hours") + 
   ylab("Number of records") + 
-  scale_x_continuous(breaks = 0:10)
+  scale_x_continuous(breaks = 0:10) +
+  theme_bw()
 
-g.timing <- plot_grid(gg.st.end, gg.mid, gg.hours, ncol = 1)
+g.timing <- plot_grid(
+  gg.st.end, gg.mid, gg.hours, ncol = 1, 
+  labels = c("a", "b", "c"), label_size = csphoc.labels.size
+)
 # g.timing
 
 if (save.image) {
-  ggsave(here(here.fig.tbl, "Fig3_csphoc_survey_times.png"), 
+  ggsave(here(here.fig.tbl, "Fig3_csphoc_survey_times.pdf"), 
          g.timing, width = 5, height = 10)
 } else {
   print(g.timing)
@@ -348,7 +360,8 @@ rm(con, csphoc.times, g.timing, gg.st.end, gg.mid, gg.hours)
 
 #-------------------------------------------------------------------------------
 # For multi-day records, should we use the start or end date? Answer below
-con <- amlr_dbConnect(Database = "***REMOVED***")
+con <- dbConnect(odbc(), filedsn = here("dsn", "amlr-pinniped-db-prod.dsn"))
+
 date.test <- tbl(con, "vCensus_Phocid") %>% 
   filter(census_days > 1) %>% 
   collect() %>% 
@@ -499,11 +512,11 @@ g.month.ses <- y.long %>%
 #------------------------------------------------
 grid.count <- plot_grid(
   g.grp, g.month.clw, g.month.ses, ncol = 1, align = "v", axis = "lr", 
-  labels = c('A', 'B', 'C'), label_size = 15
+  labels = c("a", "b", "c"), label_size = csphoc.labels.size
 )
 
 if (save.image) {
-  ggsave(here(here.fig.tbl, "Fig4_csphoc_counts.png"), 
+  ggsave(here(here.fig.tbl, "Fig4_csphoc_counts.pdf"), 
          grid.count, width = 20, height = 12)
 } else {
   print(grid.count)

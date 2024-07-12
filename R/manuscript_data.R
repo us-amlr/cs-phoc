@@ -4,11 +4,12 @@
 #-------------------------------------------------------------------------------
 library(dplyr)
 library(readr)
+library(odbc)
 library(here)
 library(tamatoamlr)
 library(worrms)
 
-con <- amlr_dbConnect(Database = "***REMOVED***")
+con <- dbConnect(odbc(), filedsn = here("dsn", "amlr-pinniped-db-prod.dsn"))
 
 
 #-------------------------------------------------------------------------------
@@ -24,15 +25,16 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   select(header_id, census_phocid_header_id, season_name, 
          census_date_start, census_date_end, census_days, 
          surveyed_pst, research_program) %>% 
-  # TODO: temporary to avoid including 2023/24 data
+  # TODO: temporary to avoid including 2023/24 data for manuscript
   filter(census_date_start < as.Date("2023-07-01"))
 
 cs.header <- cs.header.orig %>% select(-census_phocid_header_id)
 
 stopifnot(
-  nrow(cs.header) == nrow(collect(tbl(con, "census_phocid_header")) %>% 
-                            # TODO: temporary to avoid including 2023/24 data
-                            filter(census_date_start < as.Date("2023-07-01")))
+  nrow(cs.header) == 
+    nrow(collect(tbl(con, "census_phocid_header")) %>% 
+           # TODO: temporary to avoid including 2023/24 data for manuscript
+           filter(census_date_start < as.Date("2023-07-01")))
 )
 
 
@@ -89,9 +91,6 @@ amlr.complete <- cs.core.agg %>%
 cs.core.complete <- cs.core.agg %>% 
   filter(research_program == "INACH") %>% 
   bind_rows(amlr.complete) %>% 
-  # mutate(location_lat = -62.47, 
-  #        location_lon = -60.77,
-  #        .after = location) %>% 
   select(-c(census_date_start, research_program))
 
 
@@ -105,8 +104,8 @@ cs.pst.complete <- cs.wide %>%
   select(-c(census_date)) %>% 
   left_join(select(pst.header, header_id, census_date_start, research_program), 
             by = join_by(header_id)) %>% 
-  # Insert dummy data for two surveys where PST was surveyed, 
-  #   but no phocids were recorded
+  # Insert dummy zeros data for two surveys where PST was surveyed, 
+  #   but no phocids were recorded so there are no survey records
   add_row(census_date_start = as.Date("2009-11-01"), 
           research_program = "USAMLR", 
           header_id = pst.header %>% 
@@ -132,9 +131,6 @@ cs.pst.complete <- cs.wide %>%
           unk_female_count = NA_integer_, unk_male_count = NA_integer_, 
           unk_unk_count = NA_integer_) %>% 
   complete_csphoc() %>%
-  # mutate(location_lat = -62.4835, 
-  #        location_lon =  -60.808,
-  #        .after = location) %>% 
   select(-c(census_date_start, research_program))
 
 

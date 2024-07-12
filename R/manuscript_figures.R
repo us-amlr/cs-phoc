@@ -555,7 +555,7 @@ tbl1 <- data.frame(
   rename(`Data type` = data_type)
 
 if (save.image) {
-  write_tsv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.tsv"), na = "")
+  write_csv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.csv"), na = "")
 } else {
   tbl1 %>% glimpse()
 }

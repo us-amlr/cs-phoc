@@ -11,15 +11,23 @@ This repository is an R project that contains the data, code, figures, and docum
 
 This project uses [renv](https://github.com/rstudio/renv/) to manage the project environment. Users can clone this repo and run `renv::restore()` as described in the [renv docs](https://rstudio.github.io/renv/).
 
+## Manuscript
+
+The CS-PHOC data paper has been submitted to Scientific Data, and is currently in review. Manuscript access and citation details will be updated here as they become available.
+
+Code to generate figures from the manuscript can be found in [R/manuscript_figures.R](R/manuscript_figures.R).
+
+Draft versions of the manuscript can be found in [releases](https://github.com/us-amlr/cs-phoc/releases).
+
 ## Data
 
 The manuscript describing this data is in review. We ask that you do not publish using this data until the manuscript has been published. If you are interested in this project or this data before this time, please contact [sam.woodman\@noaa.gov](mailto:sam.woodman@noaa.gov).
 
 If using the data, please cite the dataset (<https://doi.org/10.15468/d79fbe>) and the manuscript (in review, citation todo) as appropriate. Interested parties can access the CS-PHOC dataset in two ways:
 
--   Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at <https://doi.org/10.15468/d79fbe>
+-   Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at <https://ipt-obis.gbif.us/resource?r=usamlr_cs-phoc> (recommended)
 
--   Download the events and counts CSV files included in this repo and described in the manuscript: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv)
+-   Download the events and counts CSV files included in this repo: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv). If using these files, be sure to read the CSV file [readme] (link TODO).
 
 Examples of loading and using CS-PHOC data can be found in the [R/cs-phoc_examples. R](R/cs-phoc_examples.R), as well as the [code](R/manuscript_figures.R) used to generate the figures for the manuscript.
 
@@ -36,14 +44,6 @@ Other notes for the DwCA tables:
 -   As of writing, the sex value "Unknown" (or "Indeterminate", see [here](https://registry.gbif.org/vocabulary/Sex/concepts)) is not picked up when the data is published. Thus, in the DwCA data counts the sex for animals recorded as "Unknown" are listed as "NA".
 
 -   As of writing, the age class (i.e., lifeStage) value "Pup" is not yet recognized by GBIF. See [this issue](https://github.com/gbif/vocabulary/issues/131) for more details, and to track when this information may be included in the DwCA tables. Until this issue is resolved, the value for lifeStage will be "NA"" in the DwCA CS-PHOC tables for records where the lifeStage (i.e., age class) was either "pup" or "Unknown". Users interested in this level of detail will need to refer to the data presented in the [CSV files](data/manuscript).
-
-## Manuscript
-
-The CS-PHOC data paper has been submitted to Scientific Data, and is currently in review. Manuscript access and citation details will be updated here as they become available.
-
-Code to generate figures from the manuscript can be found in [R/manuscript_figures.R](R/manuscript_figures.R).
-
-Draft versions of the manuscript can be found in [releases](https://github.com/us-amlr/cs-phoc/releases).
 
 ## CS-PHOC repo structure
 

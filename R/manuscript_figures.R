@@ -269,7 +269,7 @@ g2 <- ggplot(header.toplot, aes(x = season_name)) +
 g.grid <- plot_grid(g1, g2, rel_widths = c(8, 1.5), align = "h", axis = "tb")
 
 if (save.image) {
-  ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses2.pdf"), 
+  ggsave(here(here.fig.tbl, "Fig2_csphoc_censuses.pdf"), 
          g.grid, width = 10, height = 6)
 } else {
   print(g.grid)
@@ -514,42 +514,42 @@ if (save.image) {
 }
 
 
-###############################################################################
-###############################################################################
-## Create table with column descriptors (table 1)
-tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
-                     col_types = "ccccciiiiiiiiiii") %>% 
-  as.data.frame()
-
-tbl1 <- data.frame(
-  Column = names(tbl1.ref), 
-  data_type = vapply(tbl1.ref, class, as.character(1))
-) %>% 
-  mutate(Description = case_when(
-    Column == "count_id"~          "A unique identifier for each count record",
-    Column == "event_id"~          "The unique identifier for event records, can be used to join count records with event records",
-    Column == "location" ~         "The Cape Shirreff location",
-    Column == "species" ~          "The scientific name of the phocid species", 
-    Column == "species_common" ~   "The common name of the phocid species",
-    Column == "total_count" ~      "The sum of all of the other '_count' columns, i.e., the total count for the corresponding census/location/species", 
-    Column == "ad_female_count" ~  "Aggregate count of adult females for the corresponding census/location/species", 
-    Column == "ad_male_count" ~    "Aggregate count of adult males",
-    Column == "ad_unk_count" ~     "Aggregate count of adults of unknown sex",
-    Column == "juv_female_count" ~ "Aggregate count of juvenile females",
-    Column == "juv_male_count" ~   "Aggregate count of juvenile males",
-    Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
-    Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of any sex",
-    Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
-    Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
-    Column == "unk_unk_count" ~    "Aggregate count of phocids of unknown age class and unknown sex"
-  )) %>% 
-  rename(`Data type` = data_type)
-
-if (save.image) {
-  write_csv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.csv"), na = "")
-} else {
-  tbl1 %>% glimpse()
-}
+# ###############################################################################
+# ###############################################################################
+# ## Create table with column descriptors (table 1)
+# tbl1.ref <- read_csv(here(here.csv, "cs-phoc-counts.csv"), 
+#                      col_types = "ccccciiiiiiiiiii") %>% 
+#   as.data.frame()
+# 
+# tbl1 <- data.frame(
+#   Column = names(tbl1.ref), 
+#   data_type = vapply(tbl1.ref, class, as.character(1))
+# ) %>% 
+#   mutate(Description = case_when(
+#     Column == "count_id"~          "A unique identifier for each count record",
+#     Column == "event_id"~          "The unique identifier for event records, can be used to join count records with event records",
+#     Column == "location" ~         "The Cape Shirreff location",
+#     Column == "species" ~          "The scientific name of the phocid species", 
+#     Column == "species_common" ~   "The common name of the phocid species",
+#     Column == "total_count" ~      "The sum of all of the other '_count' columns, i.e., the total count for the corresponding census/location/species", 
+#     Column == "ad_female_count" ~  "Aggregate count of adult females for the corresponding census/location/species", 
+#     Column == "ad_male_count" ~    "Aggregate count of adult males",
+#     Column == "ad_unk_count" ~     "Aggregate count of adults of unknown sex",
+#     Column == "juv_female_count" ~ "Aggregate count of juvenile females",
+#     Column == "juv_male_count" ~   "Aggregate count of juvenile males",
+#     Column == "juv_unk_count" ~    "Aggregate count of juveniles of unknown sex",
+#     Column == "pup_count" ~        "Aggregate count of pups (young of the year, less than one year old) of any sex",
+#     Column == "unk_female_count" ~ "Aggregate count of unknown age class females",
+#     Column == "unk_male_count" ~   "Aggregate count of unknown age class males",
+#     Column == "unk_unk_count" ~    "Aggregate count of phocids of unknown age class and unknown sex"
+#   )) %>% 
+#   rename(`Data type` = data_type)
+# 
+# if (save.image) {
+#   write_csv(tbl1, file = here(here.fig.tbl, "Table1_csphoc.csv"), na = "")
+# } else {
+#   tbl1 %>% glimpse()
+# }
 
 
 ################################################################################

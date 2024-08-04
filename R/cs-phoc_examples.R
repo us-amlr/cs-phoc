@@ -104,7 +104,12 @@ x.long.dwca <- x.long %>%
 #   if only interested in census counts from 2009/10 and on
 library(dplyr)
 library(here)
-library(tamatoamlr)
+
+sum_count <- function(x, na.rm = TRUE) {
+  # From https://github.com/us-amlr/tamatoamlr/blob/main/R/census-counts.R
+  stopifnot(is.integer(x))
+  if_else(all(is.na(x)), NA_integer_, sum(x, na.rm = na.rm))
+}
 
 x.events <- read.csv(here("data", "manuscript", "cs-phoc-events.csv"))
 x.counts <- read.csv(here("data", "manuscript", "cs-phoc-counts.csv"))
@@ -117,7 +122,7 @@ x.counts.pst <- x.counts %>%
 x.counts.pst.grouped <- x.counts.pst %>% 
   group_by(event_id, species, species_common) %>% 
   summarise(location = "Core census locations + Punta San Telmo", 
-            across(ends_with("_count"), ~ tamatoamlr::sum_count(.x, na.rm = TRUE)), 
+            across(ends_with("_count"), ~ sum_count(.x, na.rm = TRUE)), 
             .groups = "drop")
 
 # # Sanity check - counts are the same for events where PST was surveyed
@@ -159,7 +164,9 @@ y <- y.orig %>%
          species, sex, lifeStage, individualCount, occurrenceStatus) %>%
   bind_cols(y.program)
 
+
 # # Sanity checks showing the differences in sex/age class values for data
 # #   from the CSV files vs the DwCA tables; see the readme for more details
-# tamatoamlr::tableNA(x.long$sex); tamatoamlr::tableNA(y$sex)
-# tamatoamlr::tableNA(x.long$age_class); tamatoamlr::tableNA(y$lifeStage)
+# #   x.long is from code blocks above
+# table(x.long$sex, useNA = "ifany"); table(y$sex, useNA = "ifany")
+# table(x.long$age_class, useNA = "ifany"); table(y$lifeStage, useNA = "ifany")

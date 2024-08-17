@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![Static Badge](https://img.shields.io/badge/Manuscript-s41597–024–03744–9-green)](https://doi.org/10.1038/s41597-024-03744-9)
-[![Dataset](https://img.shields.io/badge/Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
+[![Dataset](https://img.shields.io/badge/DwC–A%20Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
 [![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249) 
 <!-- badges: end -->
 

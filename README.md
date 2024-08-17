@@ -1,11 +1,10 @@
 # CS-PHOC
 
 <!-- badges: start -->
-https://doi.org/10.1038/s41597-024-03744-9
-[![Manuscript DOI](https://img.shields.io/badge/s41597-024-03744-9?logoColor=blue&label=Manuscript%20DOI)](https://doi.org/10.1038/s41597-024-03744-9)
-[![Dataset DOI](https://img.shields.io/badge/Dataset_DOI-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
+[![Static Badge](https://img.shields.io/badge/build%2Dstatus-success-green)](https://doi.org/10.1038/s41597-024-03744-9)
+[![Static Badge](https://img.shields.io/badge/sam-test%2Dtest-violet)](https://doi.org/10.1038/s41597-024-03744-9)
+[![Dataset](https://img.shields.io/badge/Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
 [![Repo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249) 
-
 <!-- badges: end -->
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
@@ -14,7 +13,9 @@ This project uses [renv](https://github.com/rstudio/renv/) to manage the project
 
 ## Manuscript
 
-The CS-PHOC data paper has been submitted to Scientific Data, and is currently in review. Manuscript access and citation details will be updated here as they become available.
+The paper describing the CS-PHOC dataset can be obtained [here](https://doi.org/10.1038/s41597-024-03744-9), and is cited as (preferred):
+
+Woodman, S.M., Borras-Chavez, R., Goebel, M.E., Torres, D., Aguayo, A., Krause, D.J. CS-PHOC: weekly census counts of Southern Ocean phocids at Cape Shirreff, Livingston Island. *Sci Data* 11, 895 (2024). https://doi.org/10.1038/s41597-024-03744-9
 
 Code to generate figures from the manuscript can be found in [R/manuscript_figures.R](R/manuscript_figures.R).
 

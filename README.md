@@ -1,10 +1,9 @@
 # CS-PHOC
 
 <!-- badges: start -->
-[![Static Badge](https://img.shields.io/badge/build%2Dstatus-success-green)](https://doi.org/10.1038/s41597-024-03744-9)
-[![Static Badge](https://img.shields.io/badge/sam-test%2Dtest-violet)](https://doi.org/10.1038/s41597-024-03744-9)
+[![Static Badge](https://img.shields.io/badge/Manuscript-s41597–024–03744–9-green)](https://doi.org/10.1038/s41597-024-03744-9)
 [![Dataset](https://img.shields.io/badge/Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
-[![Repo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249) 
+[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249) 
 <!-- badges: end -->
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
@@ -19,19 +18,16 @@ Woodman, S.M., Borras-Chavez, R., Goebel, M.E., Torres, D., Aguayo, A., Krause, 
 
 Code to generate figures from the manuscript can be found in [R/manuscript_figures.R](R/manuscript_figures.R).
 
-Draft versions of the manuscript can be found in [releases](https://github.com/us-amlr/cs-phoc/releases).
-
 ## Data
 
-The manuscript describing this data is in review. We ask that you do not publish using this data until the manuscript has been published. If you are interested in this project or this data before this time, please contact [sam.woodman\@noaa.gov](mailto:sam.woodman@noaa.gov).
-
-If using the data, please cite the dataset (<https://doi.org/10.15468/d79fbe>) and the manuscript (in review, citation todo) as appropriate. Interested parties can access the CS-PHOC dataset in two ways:
+If using the data, please cite the dataset (<https://doi.org/10.48361/gklk1u>) and the manuscript (<https://doi.org/10.1038/s41597-024-03744-9>) as appropriate. The [Zenodo link](https://doi.org/10.5281/zenodo.12735249) is the version of this repo that was part of the manuscript peer review. Interested parties can access the CS-PHOC dataset in two ways:
 
 -   Access Darwin Core Archive event and occurrence tables published through the [SCAR Antarctic Biodiversity Portal](https://www.biodiversity.aq/) at <https://ipt-obis.gbif.us/resource?r=usamlr_cs-phoc> (recommended)
 
--   Download the events and counts CSV files included in this repo: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv). If using these files, be sure to read the CSV file [readme] (link TODO).
+-   Download the events and counts CSV files included in this repo: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv). If using these files, be sure to read the CSV file [readme](data/manuscript/README.md).
 
-Examples of loading and using CS-PHOC data can be found in the [R/cs-phoc_examples. R](R/cs-phoc_examples.R), as well as the [code](R/manuscript_figures.R) used to generate the figures for the manuscript.
+Examples of loading and using CS-PHOC data can be found in the [R/cs-phoc_examples. R](R/cs-phoc_examples.R), as well as the [code](R/manuscript_figures.R) used to generate the figures for the manuscript. For any questions, please contact [sam.woodman\@noaa.gov](mailto:sam.woodman@noaa.gov).
+
 
 ### DwCA tables
 

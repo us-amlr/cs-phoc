@@ -63,10 +63,7 @@ event <- bind_rows(event1, event2) %>%
          continent = "Antarctica",
          countryCode = "AQ",
          geodeticDatum = "EPSG:4326",
-         samplingProtocol = paste(
-           "The count of a given species, age class, and sex", 
-           "made at the given locality by a trained observer ", 
-           "using binoculars during the specified sampling event.")
+         samplingProtocol = "https://doi.org/10.1038/s41597-024-03744-9"
   ) %>% 
   arrange(eventDate, eventID) %>%
   # fields that cannot be mapped to Darwin Core

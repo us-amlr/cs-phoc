@@ -54,7 +54,7 @@ Other notes for the DwCA tables:
     ├── smw_qc.R          : early and ad-hoc CS-PHOC census data qc and explorations
 ├── data
     ├── dwca      : Darwin Core Archive tables; presented in the manuscript
-    ├── manuscript: standardized CSV files; presented in the manuscript
+    ├── manuscript: standardized CSV files; referenced in the manuscript
     ├── pre       : historical data files; now imported into the database
 ├── figures       : figures and table; included in the manuscript
     ├── other     : exploratory plots

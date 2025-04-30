@@ -1,9 +1,9 @@
 # CS-PHOC
 
 <!-- badges: start -->
-[![Static Badge](https://img.shields.io/badge/Manuscript-s41597–024–03744–9-green)](https://doi.org/10.1038/s41597-024-03744-9)
-[![Dataset](https://img.shields.io/badge/DwC–A%20Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
-[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249) 
+
+[![Static Badge](https://img.shields.io/badge/Manuscript-s41597–024–03744–9-green)](https://doi.org/10.1038/s41597-024-03744-9) [![Dataset](https://img.shields.io/badge/DwC–A%20Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u) [![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249)
+
 <!-- badges: end -->
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
@@ -14,7 +14,7 @@ This project uses [renv](https://github.com/rstudio/renv/) to manage the project
 
 The paper describing the CS-PHOC dataset can be obtained [here](https://doi.org/10.1038/s41597-024-03744-9), and is cited as (preferred):
 
-Woodman, S.M., Borras-Chavez, R., Goebel, M.E., Torres, D., Aguayo, A., Krause, D.J. CS-PHOC: weekly census counts of Southern Ocean phocids at Cape Shirreff, Livingston Island. *Sci Data* 11, 895 (2024). https://doi.org/10.1038/s41597-024-03744-9
+Woodman, S.M., Borras-Chavez, R., Goebel, M.E., Torres, D., Aguayo, A., Krause, D.J. CS-PHOC: weekly census counts of Southern Ocean phocids at Cape Shirreff, Livingston Island. *Sci Data* 11, 895 (2024). <https://doi.org/10.1038/s41597-024-03744-9>
 
 Code to generate figures from the manuscript can be found in [R/manuscript_figures.R](R/manuscript_figures.R).
 
@@ -27,7 +27,6 @@ If using the data, please cite the dataset (<https://doi.org/10.48361/gklk1u>) a
 -   Download the events and counts CSV files included in this repo: [cs-phoc-events.csv](data/manuscript/cs-phoc-events.csv) and [cs-phoc-counts.csv](data/manuscript/cs-phoc-counts.csv). If using these files, be sure to read the CSV file [readme](data/manuscript/README.md).
 
 Examples of loading and using CS-PHOC data can be found in the [R/cs-phoc_examples. R](R/cs-phoc_examples.R), as well as the [code](R/manuscript_figures.R) used to generate the figures for the manuscript. For any questions, please contact [sam.woodman\@noaa.gov](mailto:sam.woodman@noaa.gov).
-
 
 ### DwCA tables
 
@@ -42,6 +41,18 @@ Other notes for the DwCA tables:
 -   As of writing, the sex value "Unknown" (or "Indeterminate", see [here](https://registry.gbif.org/vocabulary/Sex/concepts)) is not picked up when the data is published. Thus, in the DwCA data counts the sex for animals recorded as "Unknown" are listed as "NA".
 
 -   As of writing, the age class (i.e., lifeStage) value "Pup" is not yet recognized by GBIF. See [this issue](https://github.com/gbif/vocabulary/issues/131) for more details, and to track when this information may be included in the DwCA tables. Until this issue is resolved, the value for lifeStage will be "NA"" in the DwCA CS-PHOC tables for records where the lifeStage (i.e., age class) was either "pup" or "Unknown". Users interested in this level of detail will need to refer to the data presented in the [CSV files](data/manuscript).
+
+### Updating
+
+This section contains notes for U.S. AMLR staff using this repository to update and publish the CS-PHOC tables, e.g. after a field season.
+
+1) Run the 'R/manuscript_data.R' script. This writes new CSV files to the 'data/manuscript' folder
+
+2) Restart R. Run the 'R/data_to_dwca.R' script. This writes new Darwin Core Archive tables to the 'data/dwca' folder
+
+3) Push changes to GitHub
+
+4) Email the SCAR Biodiversity Portal folks to scrape and publish updated files from <https://github.com/us-amlr/cs-phoc/tree/main/data/dwca>
 
 ## CS-PHOC repo structure
 

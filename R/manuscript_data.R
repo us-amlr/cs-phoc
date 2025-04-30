@@ -22,8 +22,6 @@ cs.header.orig <- tbl(con, "vCensus_Phocid_Header") %>%
   mutate(season_idx = seq_along(census_date_start), 
          header_id = census_phocid_header_id) %>% 
   ungroup() %>% 
-  # # TODO: temporary to avoid including 2023/24 data for manuscript
-  # filter(census_date_start < as.Date("2023-07-01"))
   select(header_id, census_phocid_header_id, season_name, 
          census_date_start, census_date_end, census_days, 
          surveyed_pst, research_program)
@@ -33,16 +31,12 @@ cs.header <- cs.header.orig %>% select(-census_phocid_header_id)
 stopifnot(
   nrow(cs.header) == 
     nrow(collect(tbl(con, "census_phocid_header")))
-  # # TODO: temporary to avoid including 2023/24 data for manuscript
-  # filter(census_date_start < as.Date("2023-07-01")))
 )
 
 
 cs.wide <- tbl(con, "vCensus_Phocid") %>% 
   arrange(census_date, species, location_group) %>% 
   rename(header_id = census_phocid_header_id) %>% 
-  # # TODO: temporary to avoid including 2023/24 data
-  # filter(census_date < as.Date("2023-07-01")) %>% 
   collect() %>% 
   select(header_id, observer, census_date, location_group, species, 
          ends_with("_count")) %>% 

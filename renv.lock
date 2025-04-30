@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.4.1",
+    "Version": "4.4.3",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -132,7 +132,7 @@
       "RemoteUsername": "us-amlr",
       "RemoteRepo": "amlrDatabases",
       "RemoteRef": "main",
-      "RemoteSha": "8dbb69269eaa5d4f6c033fee4568355a3b88f7cd",
+      "RemoteSha": "ad6263b458034adee658c803615a198ece1c52cf",
       "Requirements": [
         "DT",
         "R",
@@ -146,7 +146,7 @@
         "shiny",
         "shinydashboard"
       ],
-      "Hash": "b1c0789bbb2081a4bf29df4dc06333dc"
+      "Hash": "2cfa13741943bc625345f3169db0e778"
     },
     "askpass": {
       "Package": "askpass",
@@ -1907,7 +1907,7 @@
       "RemoteUsername": "us-amlr",
       "RemoteRepo": "tamatoamlr",
       "RemoteRef": "main",
-      "RemoteSha": "c149d49abcbbfdd0ade64c0c53a856ff1ca6eb3d",
+      "RemoteSha": "6cad79ce4ba25166b5159bdc7d4ae338d3758959",
       "RemoteHost": "api.github.com",
       "Remotes": "us-amlr/amlrDatabases",
       "Requirements": [
@@ -1932,7 +1932,7 @@
         "stringr",
         "tidyr"
       ],
-      "Hash": "243bbdf55b928a45ff9a1b572e31bc81"
+      "Hash": "cb5c1e1d3a33fa9fa1a1a999fd45c441"
     },
     "terra": {
       "Package": "terra",

@@ -8,7 +8,7 @@
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
 
-As shown in the badging, the repository is linked to Zenodo and generates a Zenodo DOI on each release. However, we ask users of these data to instead cite the manuscript and/or GBIF dataset, as [described below](#Data).
+As shown in the badging, the repository is linked to Zenodo and generates a Zenodo DOI on each release. However, we ask users of these data to instead cite the manuscript and/or GBIF dataset, as [described below](#-Data).
 
 This project uses [renv](https://github.com/rstudio/renv/) to manage the project environment. Users can clone this repo and run `renv::restore()` as described in the [renv docs](https://rstudio.github.io/renv/).
 

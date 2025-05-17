@@ -48,11 +48,11 @@ Other notes for the DwCA tables:
 
 This section contains notes for U.S. AMLR staff using this repository to update and publish the CS-PHOC tables, e.g. after a field season.
 
-1) Run the 'R/manuscript_data.R' script. This writes new CSV files to the 'data/manuscript' folder
+1) Run the [manuscript_data.R](R/manuscript_data.R) script. This writes new CSV files to the 'data/manuscript' folder
 
-2) Restart R. Run the 'R/data_to_dwca.R' script. This writes new Darwin Core Archive tables to the 'data/dwca' folder
+2) Restart R (optional, but recommended). Run the [data_to_dwca.R](R/data_to_dwca.R) script. This writes new Darwin Core Archive tables to the 'data/dwca' folder
 
-3) Push changes to GitHub
+3) Push changes to GitHub. Create a new tag + release so a new Zenodo DOI is made.
 
 4) Email the SCAR Biodiversity Portal folks to scrape and publish updated files from <https://github.com/us-amlr/cs-phoc/tree/main/data/dwca>
 

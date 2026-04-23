@@ -178,6 +178,8 @@ write_csv(cs.counts, here("data", "manuscript", "cs-phoc-counts.csv"), na = "")
 #-------------------------------------------------------------------------------
 # Sanity checks
 library(waldo)
+
+# Check no headers were dropped
 stopifnot(
   sum(is.na(cs.core.pst$header_id)) == 0,
   sum(is.na(cs.core.pst$species)) == 0,
@@ -187,22 +189,29 @@ stopifnot(
     (4 * nrow(cs.header) + 4 * sum(cs.header$surveyed_pst))
 )
 
-# # To explore an unexpected difference in row counts
-# d1 <- cs.core.pst %>% group_by(header_id) %>% summarise(n = n())
-# d2 <- cs.header %>% 
-#   mutate(n = 4L + 4L*as.integer(surveyed_pst)) %>% 
-#   select(header_id, n) %>% 
-#   arrange(header_id)
-# waldo::compare(d1, d2)
+# To explore an unexpected difference in row counts
+d1 <- cs.core.pst %>% group_by(header_id) %>% summarise(n = n())
+d2 <- cs.header %>%
+  mutate(n = 4L + 4L*as.integer(surveyed_pst)) %>%
+  select(header_id, n) %>%
+  arrange(header_id)
+waldo::compare(d1, d2)
 
+# Explore location groups that are NOT in the core locations
 cs.wide %>%
   filter(!(location_group %in% csphoc.core.location.groups)) %>%
   select(location_group) %>%
   tableNA()
 
+# Explore 'opportunistic' censuses, ie not core or PST
 opportunistic <- cs.wide %>% 
   filter(!(location_group %in% c(csphoc.core.location.groups, loc.pst)))
 
+opportunistic %>%
+  select(location_group) %>%
+  tableNA()
+
+# Check that summing up counts, adds back up to original values from DB
 waldo::compare(
   cs.wide %>%
     summarise(across(ends_with("_count"), \(x) sum(x, na.rm = TRUE))),

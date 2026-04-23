@@ -1,12 +1,14 @@
 # CS-PHOC
 
 <!-- badges: start -->
-
-[![Static Badge](https://img.shields.io/badge/Manuscript-s41597–024–03744–9-green)](https://doi.org/10.1038/s41597-024-03744-9) [![Dataset](https://img.shields.io/badge/DwC–A%20Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u) [![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.12735249.svg)](https://doi.org/10.5281/zenodo.12735249)
-
+[![Static Badge](https://img.shields.io/badge/Manuscript-s41597–024–03744–9-green)](https://doi.org/10.1038/s41597-024-03744-9)
+[![DwCA](https://img.shields.io/badge/DwC–A%20Dataset-10.48361/gklk1u-violet)](https://doi.org/10.48361/gklk1u)
+[![DOI](https://zenodo.org/badge/514008683.svg)](https://doi.org/10.5281/zenodo.8395876)
 <!-- badges: end -->
 
 This repository is an R project that contains the data, code, figures, and documentation relevant to the Cape Shirreff PHOcid Census (CS-PHOC) dataset and data paper. Repo contents and structure are described below.
+
+As shown in the badging, the repository is linked to Zenodo and generates a Zenodo DOI on each release. However, we ask users of these data to instead cite the manuscript and/or GBIF dataset, as [described below](#data).
 
 This project uses [renv](https://github.com/rstudio/renv/) to manage the project environment. Users can clone this repo and run `renv::restore()` as described in the [renv docs](https://rstudio.github.io/renv/).
 
@@ -46,11 +48,11 @@ Other notes for the DwCA tables:
 
 This section contains notes for U.S. AMLR staff using this repository to update and publish the CS-PHOC tables, e.g. after a field season.
 
-1) Run the 'R/manuscript_data.R' script. This writes new CSV files to the 'data/manuscript' folder
+1) Run the [manuscript_data.R](R/manuscript_data.R) script. This writes new CSV files to the 'data/manuscript' folder
 
-2) Restart R. Run the 'R/data_to_dwca.R' script. This writes new Darwin Core Archive tables to the 'data/dwca' folder
+2) Restart R (optional, but recommended). Run the [data_to_dwca.R](R/data_to_dwca.R) script. This writes new Darwin Core Archive tables to the 'data/dwca' folder
 
-3) Push changes to GitHub
+3) Push changes to GitHub. Create a new tag + release so a new Zenodo DOI is made.
 
 4) Email the SCAR Biodiversity Portal folks to scrape and publish updated files from <https://github.com/us-amlr/cs-phoc/tree/main/data/dwca>
 
